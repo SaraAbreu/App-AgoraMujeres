@@ -330,13 +330,14 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Diary entry creation flow"
-    - "AI chat functionality"
-    - "Subscription system"
-  stuck_tasks: []
+    - "Stripe API key renewal"
+  stuck_tasks:
+    - "Stripe customer creation"
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
   - agent: "main"
     message: "MVP implementation complete. All screens built with therapeutic design. Backend APIs working. Need testing agent to verify full flow - create diary entry, chat with Aurora, verify subscription tracking."
+  - agent: "testing"
+    message: "✅ BACKEND TESTING COMPLETE: 10/11 endpoints working perfectly. Core functionality (diary, AI chat, subscription tracking, weather, cycle) all operational. MongoDB persistence verified. AI responses are warm and therapeutic. ❌ CRITICAL: Stripe API key expired - blocks payment functionality. Need valid Stripe keys to complete payment integration."
