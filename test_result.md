@@ -221,27 +221,33 @@ backend:
 
   - task: "Cycle tracking"
     implemented: true
-    working: "NA"
+    working: true
     file: "server.py"
     stuck_count: 0
     priority: "low"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Basic implementation, needs testing"
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: Cycle tracking endpoints working. POST /api/cycle creates entries, GET /api/cycle/{device_id} retrieves entries. Proper UUID generation and MongoDB storage."
 
   - task: "Stripe customer creation"
     implemented: true
-    working: "NA"
+    working: false
     file: "server.py"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Stripe live keys configured"
+      - working: false
+        agent: "testing"
+        comment: "❌ CRITICAL ISSUE: Stripe API key expired. Error: 'Expired API Key provided: sk_live_*********************************************************************************************tAF2Xh'. Status code 520/401. Stripe integration blocked until valid API key provided."
 
 frontend:
   - task: "Home screen"
