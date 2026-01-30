@@ -97,7 +97,7 @@ export default function PatternsScreen() {
       {/* Summary Card */}
       <View style={styles.summaryCard}>
         <Text style={styles.summaryTitle}>
-          {últimos {patterns.period_days} días}
+          {`últimos ${patterns.period_days} días`}
         </Text>
         <Text style={styles.summaryValue}>
           {patterns.total_entries} {patterns.total_entries === 1 ? 'entrada' : 'entradas'}
