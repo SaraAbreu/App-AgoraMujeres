@@ -2,8 +2,8 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
-import { colors } from '../../src/theme/colors';
-import { Platform } from 'react-native';
+import { colors, typography } from '../../src/theme/colors';
+import { Platform, Text } from 'react-native';
 
 export default function TabLayout() {
   const { t } = useTranslation();
@@ -11,7 +11,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: colors.primary,
+        tabBarActiveTintColor: colors.primaryDark,
         tabBarInactiveTintColor: colors.textLight,
         tabBarStyle: {
           backgroundColor: colors.surface,
@@ -22,15 +22,16 @@ export default function TabLayout() {
           height: Platform.OS === 'ios' ? 88 : 64,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '500',
+          fontSize: 11,
+          fontFamily: 'Nunito_500Medium',
         },
         headerStyle: {
           backgroundColor: colors.background,
         },
         headerTintColor: colors.text,
         headerTitleStyle: {
-          fontWeight: '600',
+          fontFamily: 'Cormorant_600SemiBold',
+          fontSize: 20,
         },
         headerShadowVisible: false,
       }}
@@ -59,9 +60,9 @@ export default function TabLayout() {
         name="chat"
         options={{
           title: t('chat'),
-          headerTitle: t('chatWithAurora'),
+          headerTitle: t('chatWithAgora'),
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="chatbubble-ellipses-outline" size={size} color={color} />
+            <Ionicons name="leaf-outline" size={size} color={color} />
           ),
         }}
       />

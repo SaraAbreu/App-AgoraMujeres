@@ -132,7 +132,7 @@ export default function HomeScreen() {
             <Ionicons 
               name={getWeatherIcon(weather.condition) as any} 
               size={32} 
-              color={colors.primary} 
+              color={colors.warmAccent} 
             />
             <View style={styles.weatherInfo}>
               <Text style={styles.weatherTemp}>{Math.round(weather.temperature)}°C</Text>
@@ -157,7 +157,7 @@ export default function HomeScreen() {
             style={styles.actionCard}
             onPress={() => router.push('/diary/new')}
           >
-            <View style={[styles.actionIcon, { backgroundColor: colors.emotion.calma }]}>
+            <View style={[styles.actionIcon, { backgroundColor: colors.secondary }]}>
               <Ionicons name="create-outline" size={28} color={colors.white} />
             </View>
             <Text style={styles.actionTitle}>{t('writeEntry')}</Text>
@@ -167,17 +167,17 @@ export default function HomeScreen() {
             style={styles.actionCard}
             onPress={() => router.push('/(tabs)/chat')}
           >
-            <View style={[styles.actionIcon, { backgroundColor: colors.emotion.gratitud }]}>
-              <Ionicons name="chatbubble-ellipses-outline" size={28} color={colors.white} />
+            <View style={[styles.actionIcon, { backgroundColor: colors.warmAccent }]}>
+              <Ionicons name="leaf-outline" size={28} color={colors.white} />
             </View>
-            <Text style={styles.actionTitle}>{t('talkToAurora')}</Text>
+            <Text style={styles.actionTitle}>{t('talkToAgora')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.actionCard}
             onPress={() => router.push('/(tabs)/patterns')}
           >
-            <View style={[styles.actionIcon, { backgroundColor: colors.emotion.niebla }]}>
+            <View style={[styles.actionIcon, { backgroundColor: colors.accent }]}>
               <Ionicons name="analytics-outline" size={28} color={colors.white} />
             </View>
             <Text style={styles.actionTitle}>{t('viewPatterns')}</Text>
@@ -186,7 +186,7 @@ export default function HomeScreen() {
 
         {/* Gentle Reminder */}
         <View style={styles.reminderCard}>
-          <Ionicons name="heart-outline" size={24} color={colors.primary} />
+          <Ionicons name="leaf" size={24} color={colors.secondary} />
           <Text style={styles.reminderText}>
             {t('language') === 'es' 
               ? 'Cada día cuenta, incluso los más difíciles. Estás haciendo un trabajo increíble.'
@@ -215,11 +215,12 @@ const styles = StyleSheet.create({
   },
   appName: {
     fontSize: typography.sizes.xxl,
-    fontWeight: typography.weights.bold,
-    color: colors.primary,
+    fontFamily: 'Cormorant_700Bold',
+    color: colors.primaryDark,
   },
   tagline: {
     fontSize: typography.sizes.md,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
     marginTop: spacing.xs,
   },
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   expiredBanner: {
-    backgroundColor: '#F5E6E6',
+    backgroundColor: colors.accentLight,
   },
   trialContent: {
     flexDirection: 'row',
@@ -242,7 +243,7 @@ const styles = StyleSheet.create({
   },
   trialText: {
     fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.medium,
+    fontFamily: 'Nunito_500Medium',
     color: colors.primaryDark,
   },
   weatherCard: {
@@ -264,33 +265,35 @@ const styles = StyleSheet.create({
   },
   weatherTemp: {
     fontSize: typography.sizes.xl,
-    fontWeight: typography.weights.semibold,
+    fontFamily: 'Cormorant_600SemiBold',
     color: colors.text,
   },
   weatherDetail: {
     fontSize: typography.sizes.xs,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
     marginTop: 2,
   },
   welcomeCard: {
-    backgroundColor: colors.secondaryLight,
+    backgroundColor: colors.warmAccentLight,
     padding: spacing.xl,
     borderRadius: borderRadius.lg,
     marginBottom: spacing.lg,
   },
   welcomeTitle: {
     fontSize: typography.sizes.xl,
-    fontWeight: typography.weights.semibold,
+    fontFamily: 'Cormorant_600SemiBold',
     color: colors.text,
   },
   welcomeSubtitle: {
     fontSize: typography.sizes.md,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
     marginTop: spacing.xs,
   },
   sectionTitle: {
     fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.semibold,
+    fontFamily: 'Cormorant_600SemiBold',
     color: colors.text,
     marginBottom: spacing.md,
   },
@@ -323,14 +326,14 @@ const styles = StyleSheet.create({
   },
   actionTitle: {
     fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.medium,
+    fontFamily: 'Nunito_500Medium',
     color: colors.text,
     textAlign: 'center',
   },
   reminderCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: colors.accentLight,
+    backgroundColor: colors.secondaryLight,
     padding: spacing.lg,
     borderRadius: borderRadius.md,
     gap: spacing.md,
@@ -338,6 +341,7 @@ const styles = StyleSheet.create({
   reminderText: {
     flex: 1,
     fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_400Regular',
     color: colors.text,
     lineHeight: 22,
     fontStyle: 'italic',

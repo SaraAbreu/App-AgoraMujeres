@@ -12,7 +12,7 @@ const resources = {
       // Navigation
       home: 'Refugio',
       diary: 'Diario',
-      chat: 'Aurora',
+      chat: 'Ágora',
       patterns: 'Patrones',
       settings: 'Ajustes',
       
@@ -21,7 +21,7 @@ const resources = {
       howAreYou: '¿Cómo te sientes hoy?',
       quickActions: 'Acciones rápidas',
       writeEntry: 'Escribir en el diario',
-      talkToAurora: 'Hablar con Aurora',
+      talkToAgora: 'Hablar con Ágora',
       viewPatterns: 'Ver patrones',
       
       // Emotional States
@@ -48,8 +48,8 @@ const resources = {
       startWriting: 'Empieza a escribir tu primera entrada',
       
       // Chat
-      chatWithAurora: 'Conversa con Aurora',
-      auroraIntro: 'Hola, soy Aurora. Estoy aquí para escucharte y acompañarte. ¿Cómo puedo ayudarte hoy?',
+      chatWithAgora: 'Conversa con Ágora',
+      agoraIntro: 'Hola, soy Ágora. Estoy aquí para escucharte y acompañarte. ¿Cómo puedo ayudarte hoy?',
       typeMessage: 'Escribe tu mensaje...',
       send: 'Enviar',
       
@@ -112,7 +112,7 @@ const resources = {
       // Navigation
       home: 'Refuge',
       diary: 'Diary',
-      chat: 'Aurora',
+      chat: 'Ágora',
       patterns: 'Patterns',
       settings: 'Settings',
       
@@ -121,7 +121,7 @@ const resources = {
       howAreYou: 'How are you feeling today?',
       quickActions: 'Quick actions',
       writeEntry: 'Write in diary',
-      talkToAurora: 'Talk to Aurora',
+      talkToAgora: 'Talk to Ágora',
       viewPatterns: 'View patterns',
       
       // Emotional States
@@ -148,8 +148,8 @@ const resources = {
       startWriting: 'Start writing your first entry',
       
       // Chat
-      chatWithAurora: 'Chat with Aurora',
-      auroraIntro: "Hi, I'm Aurora. I'm here to listen and accompany you. How can I help you today?",
+      chatWithAgora: 'Chat with Ágora',
+      agoraIntro: "Hi, I'm Ágora. I'm here to listen and accompany you. How can I help you today?",
       typeMessage: 'Type your message...',
       send: 'Send',
       

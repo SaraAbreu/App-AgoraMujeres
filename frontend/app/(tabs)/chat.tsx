@@ -40,7 +40,7 @@ export default function ChatScreen() {
         // Add intro message
         setMessages([{
           role: 'assistant',
-          content: t('auroraIntro'),
+          content: t('agoraIntro'),
           created_at: new Date().toISOString(),
         }]);
       } else {
@@ -50,7 +50,7 @@ export default function ChatScreen() {
       console.error('Error loading chat history:', error);
       setMessages([{
         role: 'assistant',
-        content: t('auroraIntro'),
+        content: t('agoraIntro'),
         created_at: new Date().toISOString(),
       }]);
     } finally {
@@ -112,7 +112,7 @@ export default function ChatScreen() {
       ]}>
         {!isUser && (
           <View style={styles.avatarContainer}>
-            <Text style={styles.avatarText}>🌸</Text>
+            <Ionicons name="leaf" size={18} color={colors.secondary} />
           </View>
         )}
         <View style={[
@@ -156,7 +156,8 @@ export default function ChatScreen() {
       
       {sending && (
         <View style={styles.typingIndicator}>
-          <Text style={styles.typingText}>Aurora {language === 'es' ? 'está escribiendo...' : 'is typing...'}</Text>
+          <Ionicons name="leaf" size={14} color={colors.secondary} />
+          <Text style={styles.typingText}>Ágora {language === 'es' ? 'está escribiendo...' : 'is typing...'}</Text>
         </View>
       )}
       
@@ -218,13 +219,10 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.secondaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: spacing.sm,
-  },
-  avatarText: {
-    fontSize: 18,
   },
   messageBubble: {
     maxWidth: '75%',
@@ -232,7 +230,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
   },
   userBubble: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primaryDark,
     borderBottomRightRadius: spacing.xs,
   },
   assistantBubble: {
@@ -246,7 +244,8 @@ const styles = StyleSheet.create({
   },
   messageText: {
     fontSize: typography.sizes.md,
-    lineHeight: 22,
+    lineHeight: 24,
+    fontFamily: 'Nunito_400Regular',
   },
   userMessageText: {
     color: colors.white,
@@ -255,11 +254,15 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   typingIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
+    gap: spacing.xs,
   },
   typingText: {
     fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
     fontStyle: 'italic',
   },
@@ -281,13 +284,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     fontSize: typography.sizes.md,
+    fontFamily: 'Nunito_400Regular',
     color: colors.text,
   },
   sendButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.warmAccent,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: spacing.sm,

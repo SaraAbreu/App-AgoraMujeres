@@ -1,53 +1,57 @@
-// Therapeutic color palette for Ágora Mujeres
-// Designed to feel warm, safe, and calming
+// Boho-inspired therapeutic color palette for Ágora Mujeres
+// Earthy, warm, natural tones that feel organic and calming
 
 export const colors = {
-  // Primary colors - soft and calming
-  primary: '#B8A9C9',      // Soft lavender
-  primaryLight: '#E6E0ED', // Light lavender
-  primaryDark: '#8B7A9E',  // Darker lavender
+  // Primary colors - warm terracotta and earth tones
+  primary: '#C4A484',        // Warm tan/camel
+  primaryLight: '#E8DDD4',   // Light sand
+  primaryDark: '#A67B5B',    // Terracotta brown
   
-  // Secondary colors - warm and comforting
-  secondary: '#E8D5D5',    // Warm blush
-  secondaryLight: '#F5EDED', // Light blush
-  secondaryDark: '#C9ABAB',  // Darker blush
+  // Secondary colors - sage and olive
+  secondary: '#9CAF88',      // Sage green
+  secondaryLight: '#D4E2D4', // Light sage
+  secondaryDark: '#7A9A65',  // Olive green
   
-  // Accent colors - nature-inspired
-  accent: '#C1D9C6',       // Sage green (calm, healing)
-  accentLight: '#E4EFE6',  // Light sage
-  accentDark: '#9BBF9E',   // Darker sage
+  // Accent colors - dusty rose and burnt orange
+  accent: '#D4A5A5',         // Dusty rose
+  accentLight: '#F0E4E4',    // Light blush
+  accentDark: '#C08080',     // Muted rose
   
-  // Background colors
-  background: '#FDFBF9',   // Warm cream white
-  backgroundAlt: '#F7F3EF', // Slightly darker cream
-  surface: '#FFFFFF',      // Pure white for cards
+  // Warm accent
+  warmAccent: '#D4956A',     // Burnt sienna
+  warmAccentLight: '#F0DDD0',// Light peach
   
-  // Text colors
-  text: '#4A4A4A',         // Warm charcoal (not harsh black)
-  textSecondary: '#7A7A7A', // Muted gray
-  textLight: '#A0A0A0',    // Light gray
-  textOnPrimary: '#FFFFFF', // White on primary
+  // Background colors - natural cream and linen
+  background: '#FAF8F5',     // Warm off-white/linen
+  backgroundAlt: '#F5F0EB',  // Light beige
+  surface: '#FFFFFF',        // Pure white for cards
   
-  // Emotional state colors (soft, not alarming)
+  // Text colors - warm browns
+  text: '#5D4E43',           // Warm brown (softer than black)
+  textSecondary: '#8B7B6B',  // Muted brown
+  textLight: '#A99B8D',      // Light taupe
+  textOnPrimary: '#FFFFFF',  // White on primary
+  
+  // Emotional state colors (earthy, boho palette)
   emotion: {
-    calma: '#A8D5BA',      // Soft green
-    fatiga: '#D4C5A9',     // Muted gold
-    niebla: '#C5C5D4',     // Soft gray-blue
-    dolor: '#D4A9A9',      // Soft rose
-    gratitud: '#A9C5D4',   // Soft blue
-    tension: '#D4B8A9',    // Soft coral
+    calma: '#9CAF88',        // Sage green - peaceful
+    fatiga: '#C4A484',       // Warm tan - tired earth
+    niebla: '#B8AFA7',       // Warm gray - fog
+    dolor: '#D4A5A5',        // Dusty rose - gentle pain
+    gratitud: '#D4B896',     // Warm gold - grateful
+    tension: '#C9A587',      // Terracotta - tension
   },
   
-  // Status colors (gentle versions)
-  success: '#9BBF9E',      // Soft green
-  warning: '#D4C08A',      // Soft amber
-  error: '#C9A0A0',        // Soft red
-  info: '#A0B8C9',         // Soft blue
+  // Status colors (muted, natural)
+  success: '#9CAF88',        // Sage green
+  warning: '#D4956A',        // Burnt sienna
+  error: '#C08080',          // Dusty rose
+  info: '#A5B8C4',           // Muted blue-gray
   
   // Utility
-  border: '#E8E4E0',       // Soft border
-  shadow: 'rgba(0, 0, 0, 0.05)', // Very subtle shadow
-  overlay: 'rgba(74, 74, 74, 0.3)', // Soft overlay
+  border: '#E8E0D8',         // Warm beige border
+  shadow: 'rgba(93, 78, 67, 0.08)', // Warm shadow
+  overlay: 'rgba(93, 78, 67, 0.4)', // Warm overlay
   
   // Transparent versions
   transparent: 'transparent',
@@ -65,12 +69,12 @@ export const spacing = {
   xxl: 48,
 };
 
-// Border radius
+// Border radius - softer, more organic
 export const borderRadius = {
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 24,
+  sm: 12,
+  md: 16,
+  lg: 20,
+  xl: 28,
   full: 9999,
 };
 
@@ -80,9 +84,9 @@ export const typography = {
     xs: 12,
     sm: 14,
     md: 16,
-    lg: 18,
-    xl: 24,
-    xxl: 32,
+    lg: 20,
+    xl: 26,
+    xxl: 34,
   },
   weights: {
     regular: '400' as const,
@@ -90,6 +94,14 @@ export const typography = {
     semibold: '600' as const,
     bold: '700' as const,
   },
+  // Font families - will be loaded via expo-font
+  fonts: {
+    heading: 'Cormorant_600SemiBold',
+    headingBold: 'Cormorant_700Bold',
+    body: 'Nunito_400Regular',
+    bodyMedium: 'Nunito_500Medium',
+    bodySemibold: 'Nunito_600SemiBold',
+  }
 };
 
 export default { colors, spacing, borderRadius, typography };
