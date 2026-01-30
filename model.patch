@@ -1,0 +1,331 @@
+diff --git a/additional_tests.py b/additional_tests.py
+new file mode 100644
+index 0000000..4766960
+--- /dev/null
++++ b/additional_tests.py
+@@ -0,0 +1,160 @@
++#!/usr/bin/env python3
++"""
++Additional Backend API Tests for specific review requirements
++"""
++
++import requests
++import json
++
++BASE_URL = "https://safe-refuge.preview.emergentagent.com/api"
++TEST_DEVICE_ID = "test-device-abc"
++
++def test_ai_response_tone():
++    """Test that AI responses are warm and empathetic, not clinical"""
++    print("Testing AI Response Tone...")
++    
++    test_messages = [
++        "Me duele mucho todo el cuerpo",
++        "No puedo dormir por el dolor",
++        "Me siento muy triste hoy"
++    ]
++    
++    for message in test_messages:
++        try:
++            response = requests.post(
++                f"{BASE_URL}/chat",
++                json={
++                    "device_id": TEST_DEVICE_ID,
++                    "message": message,
++                    "language": "es"
++                },
++                headers={"Content-Type": "application/json"}
++            )
++            
++            if response.status_code == 200:
++                data = response.json()
++                ai_response = data.get("response", "")
++                
++                # Check for clinical language (should NOT be present)
++                clinical_words = ["diagnóstico", "medicamento", "tratamiento", "síntoma", "patología", "terapia"]
++                clinical_found = [word for word in clinical_words if word in ai_response.lower()]
++                
++                # Check for warm language (should be present)
++                warm_words = ["comprendo", "entiendo", "acompañ", "siento", "abrazo", "cariño", "querida"]
++                warm_found = [word for word in warm_words if word in ai_response.lower()]
++                
++                print(f"Message: '{message}'")
++                print(f"Response: '{ai_response}'")
++                print(f"Clinical words found: {clinical_found}")
++                print(f"Warm words found: {warm_found}")
++                print(f"Response length: {len(ai_response)} characters")
++                print("---")
++                
++        except Exception as e:
++            print(f"Error testing message '{message}': {e}")
++
++def test_mongodb_persistence():
++    """Test that data is properly stored in MongoDB"""
++    print("\nTesting MongoDB Data Persistence...")
++    
++    # Create a unique diary entry
++    unique_text = f"Test entry for persistence check - {int(time.time())}"
++    
++    # Create entry
++    create_response = requests.post(
++        f"{BASE_URL}/diary",
++        json={
++            "device_id": TEST_DEVICE_ID,
++            "texto": unique_text,
++            "emotional_state": {
++                "calma": 3,
++                "fatiga": 4,
++                "niebla_mental": 2,
++                "dolor_difuso": 3,
++                "gratitud": 4,
++                "tension": 2
++            }
++        }
++    )
++    
++    if create_response.status_code == 200:
++        entry_id = create_response.json().get("id")
++        print(f"✅ Created entry with ID: {entry_id}")
++        
++        # Retrieve entries to verify persistence
++        get_response = requests.get(f"{BASE_URL}/diary/{TEST_DEVICE_ID}")
++        if get_response.status_code == 200:
++            entries = get_response.json()
++            found_entry = None
++            for entry in entries:
++                if entry.get("texto") == unique_text:
++                    found_entry = entry
++                    break
++            
++            if found_entry:
++                print(f"✅ Entry persisted correctly in MongoDB")
++                print(f"   Text: {found_entry.get('texto')}")
++                print(f"   Emotional state: {found_entry.get('emotional_state')}")
++            else:
++                print(f"❌ Entry not found in retrieval")
++        else:
++            print(f"❌ Failed to retrieve entries: {get_response.status_code}")
++    else:
++        print(f"❌ Failed to create entry: {create_response.status_code}")
++
++def test_subscription_trial_tracking():
++    """Test subscription trial period tracking"""
++    print("\nTesting Subscription Trial Tracking...")
++    
++    # Get initial status
++    response1 = requests.get(f"{BASE_URL}/subscription/{TEST_DEVICE_ID}")
++    if response1.status_code == 200:
++        data1 = response1.json()
++        initial_remaining = data1.get("trial_remaining_seconds", 0)
++        print(f"Initial trial remaining: {initial_remaining} seconds")
++        
++        # Perform an action that should consume trial time (chat)
++        chat_response = requests.post(
++            f"{BASE_URL}/chat",
++            json={
++                "device_id": TEST_DEVICE_ID,
++                "message": "Test message for trial tracking",
++                "language": "es"
++            }
++        )
++        
++        if chat_response.status_code == 200:
++            print("✅ Chat action completed")
++            
++            # Check status again
++            response2 = requests.get(f"{BASE_URL}/subscription/{TEST_DEVICE_ID}")
++            if response2.status_code == 200:
++                data2 = response2.json()
++                final_remaining = data2.get("trial_remaining_seconds", 0)
++                print(f"Final trial remaining: {final_remaining} seconds")
++                
++                if final_remaining < initial_remaining:
++                    print("✅ Trial time correctly decremented")
++                else:
++                    print("❌ Trial time not decremented")
++            else:
++                print(f"❌ Failed to get final status: {response2.status_code}")
++        else:
++            print(f"❌ Chat failed: {chat_response.status_code}")
++    else:
++        print(f"❌ Failed to get initial status: {response1.status_code}")
++
++if __name__ == "__main__":
++    import time
++    
++    print("=" * 60)
++    print("ADDITIONAL BACKEND TESTS - SPECIFIC REQUIREMENTS")
++    print("=" * 60)
++    
++    test_ai_response_tone()
++    test_mongodb_persistence()
++    test_subscription_trial_tracking()
++    
++    print("\n" + "=" * 60)
++    print("ADDITIONAL TESTS COMPLETED")
++    print("=" * 60)
+\ No newline at end of file
+diff --git a/test_result.md b/test_result.md
+index 51ba006..62c9d5f 100644
+--- a/test_result.md
++++ b/test_result.md
+@@ -123,35 +123,44 @@ backend:
+     file: "server.py"
+     stuck_count: 0
+     priority: "high"
+-    needs_retesting: true
++    needs_retesting: false
+     status_history:
+       - working: true
+         agent: "main"
+         comment: "Tested with curl, creates entries with emotional/physical state"
++      - working: true
++        agent: "testing"
++        comment: "✅ VERIFIED: API creates diary entries correctly with UUID, stores emotional/physical state, persists in MongoDB. Entry created with ID: 94bac116-0730-42ea-bd97-a862d83eab05"
+ 
+   - task: "Diary entries retrieval"
+     implemented: true
+-    working: "NA"
++    working: true
+     file: "server.py"
+     stuck_count: 0
+     priority: "high"
+-    needs_retesting: true
++    needs_retesting: false
+     status_history:
+       - working: "NA"
+         agent: "main"
+         comment: "Implemented, needs testing"
++      - working: true
++        agent: "testing"
++        comment: "✅ VERIFIED: GET /api/diary/{device_id} returns array of diary entries correctly. Retrieved entries with proper structure and data persistence."
+ 
+   - task: "Pattern analysis"
+     implemented: true
+-    working: "NA"
++    working: true
+     file: "server.py"
+     stuck_count: 0
+     priority: "medium"
+-    needs_retesting: true
++    needs_retesting: false
+     status_history:
+       - working: "NA"
+         agent: "main"
+         comment: "Implemented local pattern processing"
++      - working: true
++        agent: "testing"
++        comment: "✅ VERIFIED: GET /api/diary/{device_id}/patterns?days=7 returns pattern analysis with emotional averages, physical averages, common words, and trends. Local processing working correctly."
+ 
+   - task: "AI Chat with Aurora"
+     implemented: true
+@@ -159,23 +168,29 @@ backend:
+     file: "server.py"
+     stuck_count: 0
+     priority: "high"
+-    needs_retesting: true
++    needs_retesting: false
+     status_history:
+       - working: true
+         agent: "main"
+         comment: "Tested with curl - Aurora responds with warm, empathetic tone in Spanish"
++      - working: true
++        agent: "testing"
++        comment: "✅ VERIFIED: AI chat working excellently. Aurora provides warm, empathetic responses in Spanish. NO clinical language detected. Responses are 400+ characters, supportive, and therapeutic. GPT-5.2 integration working perfectly."
+ 
+   - task: "Chat history"
+     implemented: true
+-    working: "NA"
++    working: true
+     file: "server.py"
+     stuck_count: 0
+     priority: "medium"
+-    needs_retesting: true
++    needs_retesting: false
+     status_history:
+       - working: "NA"
+         agent: "main"
+         comment: "Implemented, needs testing"
++      - working: true
++        agent: "testing"
++        comment: "✅ VERIFIED: GET /api/chat/{device_id}/history returns chat messages array with proper role, content, and timestamp structure."
+ 
+   - task: "Subscription status"
+     implemented: true
+@@ -183,11 +198,14 @@ backend:
+     file: "server.py"
+     stuck_count: 0
+     priority: "high"
+-    needs_retesting: true
++    needs_retesting: false
+     status_history:
+       - working: true
+         agent: "main"
+         comment: "Returns trial status with 2 hours remaining"
++      - working: true
++        agent: "testing"
++        comment: "✅ VERIFIED: Subscription trial tracking working perfectly. Correctly tracks usage time, decrements trial seconds (30s per chat, 60s per diary entry). Trial period management functional."
+ 
+   - task: "Weather integration"
+     implemented: true
+@@ -203,27 +221,33 @@ backend:
+ 
+   - task: "Cycle tracking"
+     implemented: true
+-    working: "NA"
++    working: true
+     file: "server.py"
+     stuck_count: 0
+     priority: "low"
+-    needs_retesting: true
++    needs_retesting: false
+     status_history:
+       - working: "NA"
+         agent: "main"
+         comment: "Basic implementation, needs testing"
++      - working: true
++        agent: "testing"
++        comment: "✅ VERIFIED: Cycle tracking endpoints working. POST /api/cycle creates entries, GET /api/cycle/{device_id} retrieves entries. Proper UUID generation and MongoDB storage."
+ 
+   - task: "Stripe customer creation"
+     implemented: true
+-    working: "NA"
++    working: false
+     file: "server.py"
+-    stuck_count: 0
++    stuck_count: 1
+     priority: "high"
+-    needs_retesting: true
++    needs_retesting: false
+     status_history:
+       - working: "NA"
+         agent: "main"
+         comment: "Stripe live keys configured"
++      - working: false
++        agent: "testing"
++        comment: "❌ CRITICAL ISSUE: Stripe API key expired. Error: 'Expired API Key provided: sk_live_*********************************************************************************************tAF2Xh'. Status code 520/401. Stripe integration blocked until valid API key provided."
+ 
+ frontend:
+   - task: "Home screen"
+@@ -306,13 +330,14 @@ metadata:
+ 
+ test_plan:
+   current_focus:
+-    - "Diary entry creation flow"
+-    - "AI chat functionality"
+-    - "Subscription system"
+-  stuck_tasks: []
++    - "Stripe API key renewal"
++  stuck_tasks:
++    - "Stripe customer creation"
+   test_all: false
+   test_priority: "high_first"
+ 
+ agent_communication:
+   - agent: "main"
+-    message: "MVP implementation complete. All screens built with therapeutic design. Backend APIs working. Need testing agent to verify full flow - create diary entry, chat with Aurora, verify subscription tracking."
+\ No newline at end of file
++    message: "MVP implementation complete. All screens built with therapeutic design. Backend APIs working. Need testing agent to verify full flow - create diary entry, chat with Aurora, verify subscription tracking."
++  - agent: "testing"
++    message: "✅ BACKEND TESTING COMPLETE: 10/11 endpoints working perfectly. Core functionality (diary, AI chat, subscription tracking, weather, cycle) all operational. MongoDB persistence verified. AI responses are warm and therapeutic. ❌ CRITICAL: Stripe API key expired - blocks payment functionality. Need valid Stripe keys to complete payment integration."
+\ No newline at end of file
