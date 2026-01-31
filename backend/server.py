@@ -520,6 +520,86 @@ async def get_weather(lat: float, lon: float):
         logger.error(f"Error getting weather: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ============== MONTHLY PAIN RECORD ENDPOINTS ==============
+
+@api_router.get("/monthly-record/{device_id}")
+async def get_monthly_record(device_id: str):
+    """Get the monthly pain record for a device"""
+    try:
+        record = await db.monthly_records.find_one({"device_id": device_id})
+        if not record:
+            # Return default new record
+            return {
+                "device_id": device_id,
+                "records": [],
+                "cycle_start_date": datetime.utcnow().isoformat(),
+                "created_at": datetime.utcnow().isoformat()
+            }
+        
+        # Check if cycle is older than 30 days
+        cycle_start = record.get("cycle_start_date", datetime.utcnow())
+        if isinstance(cycle_start, str):
+            cycle_start = datetime.fromisoformat(cycle_start.replace('Z', '+00:00').replace('+00:00', ''))
+        
+        days_passed = (datetime.utcnow() - cycle_start).days
+        if days_passed > 30:
+            # Cycle ended, but keep data for download
+            pass
+        
+        return {
+            "device_id": record["device_id"],
+            "records": record.get("records", []),
+            "cycle_start_date": record.get("cycle_start_date").isoformat() if isinstance(record.get("cycle_start_date"), datetime) else record.get("cycle_start_date"),
+            "created_at": record.get("created_at").isoformat() if isinstance(record.get("created_at"), datetime) else record.get("created_at")
+        }
+    except Exception as e:
+        logger.error(f"Error getting monthly record: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/monthly-record/{device_id}")
+async def save_monthly_record(device_id: str, data: MonthlyPainRecordCreate):
+    """Save or update the monthly pain record for a device"""
+    try:
+        # Parse cycle_start_date
+        cycle_start = datetime.fromisoformat(data.cycle_start_date.replace('Z', '+00:00').replace('+00:00', ''))
+        
+        record_data = {
+            "device_id": device_id,
+            "records": data.records,
+            "cycle_start_date": cycle_start,
+            "updated_at": datetime.utcnow()
+        }
+        
+        # Upsert the record
+        result = await db.monthly_records.update_one(
+            {"device_id": device_id},
+            {
+                "$set": record_data,
+                "$setOnInsert": {"created_at": datetime.utcnow()}
+            },
+            upsert=True
+        )
+        
+        return {
+            "device_id": device_id,
+            "records": data.records,
+            "cycle_start_date": cycle_start.isoformat(),
+            "message": "Record saved successfully"
+        }
+    except Exception as e:
+        logger.error(f"Error saving monthly record: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/monthly-record/{device_id}")
+async def delete_monthly_record(device_id: str):
+    """Delete the monthly pain record (start fresh cycle)"""
+    try:
+        await db.monthly_records.delete_one({"device_id": device_id})
+        return {"message": "Record deleted successfully", "device_id": device_id}
+    except Exception as e:
+        logger.error(f"Error deleting monthly record: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ============== ROOT ENDPOINTS ==============
 
 @api_router.get("/")
