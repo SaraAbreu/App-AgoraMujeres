@@ -71,14 +71,23 @@ class DiaryEntryCreate(BaseModel):
 class ChatMessage(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     device_id: str
+    conversation_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     role: str  # 'user' or 'assistant'
     content: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class ChatConversation(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    device_id: str
+    title: str = "Nueva conversación"
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
 
 class ChatRequest(BaseModel):
     device_id: str
     message: str
     language: str = "es"  # es, en
+    conversation_id: Optional[str] = None  # If None, creates new conversation
 
 class CycleEntry(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
