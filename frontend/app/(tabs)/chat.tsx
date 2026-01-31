@@ -15,23 +15,56 @@ import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, typography } from '../../src/theme/colors';
 import { useStore } from '../../src/store/useStore';
-import { sendChatMessage, getChatHistory, clearChatHistory, ChatMessage } from '../../src/services/api';
-import { useRouter } from 'expo-router';
+import { sendChatMessage, getChatHistory, clearChatHistory, getConversationMessages, ChatMessage } from '../../src/services/api';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ChatScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const params = useLocalSearchParams<{ conversationId?: string }>();
   const { deviceId, language } = useStore();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
+  const [currentConversationId, setCurrentConversationId] = useState<string | undefined>(params.conversationId);
   const flatListRef = useRef<FlatList>(null);
 
   useEffect(() => {
-    loadHistory();
-  }, [deviceId]);
+    if (params.conversationId) {
+      setCurrentConversationId(params.conversationId);
+      loadConversation(params.conversationId);
+    } else {
+      loadHistory();
+    }
+  }, [deviceId, params.conversationId]);
+
+  const loadConversation = async (conversationId: string) => {
+    if (!deviceId) return;
+    setLoading(true);
+    try {
+      const history = await getConversationMessages(deviceId, conversationId);
+      if (history.length === 0) {
+        setMessages([{
+          role: 'assistant',
+          content: t('agoraIntro'),
+          created_at: new Date().toISOString(),
+        }]);
+      } else {
+        setMessages(history);
+      }
+    } catch (error) {
+      console.error('Error loading conversation:', error);
+      setMessages([{
+        role: 'assistant',
+        content: t('agoraIntro'),
+        created_at: new Date().toISOString(),
+      }]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadHistory = async () => {
     if (!deviceId) return;
@@ -44,8 +77,13 @@ export default function ChatScreen() {
           content: t('agoraIntro'),
           created_at: new Date().toISOString(),
         }]);
+        setCurrentConversationId(undefined);
       } else {
         setMessages(history);
+        // Get conversation_id from first message if available
+        if (history[0]?.conversation_id) {
+          setCurrentConversationId(history[0].conversation_id);
+        }
       }
     } catch (error) {
       console.error('Error loading chat history:', error);
