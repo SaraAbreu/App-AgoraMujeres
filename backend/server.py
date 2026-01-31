@@ -340,6 +340,19 @@ async def get_chat_history(device_id: str, limit: int = 50):
         logger.error(f"Error getting chat history: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.delete("/chat/{device_id}/history")
+async def clear_chat_history(device_id: str):
+    """Clear all chat history for a device (start new conversation)"""
+    try:
+        result = await db.chat_messages.delete_many({"device_id": device_id})
+        return {
+            "message": "Chat history cleared successfully",
+            "deleted_count": result.deleted_count
+        }
+    except Exception as e:
+        logger.error(f"Error clearing chat history: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ============== CYCLE ENDPOINTS ==============
 
 @api_router.post("/cycle", response_model=CycleEntry)
