@@ -254,4 +254,46 @@ export const saveMonthlyRecord = async (deviceId: string, data: {
   return response.data;
 };
 
+// Resources
+export interface Resource {
+  id: string;
+  category: string;
+  type: 'article' | 'video';
+  title: string;
+  description: string;
+  content?: string;
+  video_url?: string;
+  thumbnail_url?: string;
+  author?: string;
+  author_credentials?: string;
+  duration?: string;
+  read_time?: string;
+  is_featured: boolean;
+}
+
+export interface ResourceCategory {
+  id: string;
+  name: string;
+  icon: string;
+  count: number;
+}
+
+export const getResources = async (category?: string, language: string = 'es'): Promise<Resource[]> => {
+  const params: any = { language };
+  if (category) params.category = category;
+  const response = await api.get('/resources', { params });
+  return response.data;
+};
+
+export const getResourceCategories = async (language: string = 'es'): Promise<ResourceCategory[]> => {
+  const response = await api.get('/resources/categories', { params: { language } });
+  return response.data;
+};
+
+// Admin
+export const verifyAdminCode = async (deviceId: string, code: string): Promise<{ success: boolean; message: string; is_admin: boolean }> => {
+  const response = await api.post('/admin/verify', { device_id: deviceId, code });
+  return response.data;
+};
+
 export default api;
