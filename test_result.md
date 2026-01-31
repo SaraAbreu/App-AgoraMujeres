@@ -287,9 +287,9 @@ backend:
 
   - task: "Stripe customer creation"
     implemented: true
-    working: false
+    working: true
     file: "server.py"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
@@ -299,6 +299,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "❌ CRITICAL ISSUE: Stripe API key expired. Error: 'Expired API Key provided: sk_live_*********************************************************************************************tAF2Xh'. Status code 520/401. Stripe integration blocked until valid API key provided."
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: NEW STRIPE API KEY IS WORKING! Customer creation successful with ID: cus_TtSFFOTxSADqqn. Payment intent creation also working with ID: pi_3SvfLFQ1DTK2YH902r1SnpVE. Both endpoints returning proper responses. Stripe integration fully operational."
 
 frontend:
   - task: "Home screen"
