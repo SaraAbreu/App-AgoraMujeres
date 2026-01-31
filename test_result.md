@@ -330,6 +330,7 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Monthly pain record endpoints"
     - "Stripe API key renewal"
   stuck_tasks:
     - "Stripe customer creation"
@@ -341,3 +342,5 @@ agent_communication:
     message: "MVP implementation complete. All screens built with therapeutic design. Backend APIs working. Need testing agent to verify full flow - create diary entry, chat with Aurora, verify subscription tracking."
   - agent: "testing"
     message: "✅ BACKEND TESTING COMPLETE: 10/11 endpoints working perfectly. Core functionality (diary, AI chat, subscription tracking, weather, cycle) all operational. MongoDB persistence verified. AI responses are warm and therapeutic. ❌ CRITICAL: Stripe API key expired - blocks payment functionality. Need valid Stripe keys to complete payment integration."
+  - agent: "main"
+    message: "Added monthly pain record feature: 3 new backend endpoints (GET/POST/DELETE /api/monthly-record/{device_id}), frontend screen with calendar at /monthly-record, navigation from Home screen. Ready for testing."
