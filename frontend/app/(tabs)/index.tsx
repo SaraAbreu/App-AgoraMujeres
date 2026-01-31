@@ -164,7 +164,7 @@ export default function HomeScreen() {
             onPress={() => router.push('/diary/new')}
             activeOpacity={0.8}
           >
-            <View style={[styles.actionIcon, { backgroundColor: '#5D4E43' }]}>
+            <View style={[styles.actionIcon, { backgroundColor: '#8B5A2B' }]}>
               <Ionicons name="create-outline" size={26} color={colors.softWhite} />
             </View>
             <Text style={styles.actionTitle}>{t('writeEntry')}</Text>
@@ -175,7 +175,7 @@ export default function HomeScreen() {
             onPress={() => router.push('/(tabs)/chat')}
             activeOpacity={0.8}
           >
-            <View style={[styles.actionIcon, { backgroundColor: '#7A6555' }]}>
+            <View style={[styles.actionIcon, { backgroundColor: '#B87333' }]}>
               <Ionicons name="leaf-outline" size={26} color={colors.softWhite} />
             </View>
             <Text style={styles.actionTitle}>{t('talkToAgora')}</Text>
@@ -186,7 +186,7 @@ export default function HomeScreen() {
             onPress={() => router.push('/(tabs)/patterns')}
             activeOpacity={0.8}
           >
-            <View style={[styles.actionIcon, { backgroundColor: '#8B7B6B' }]}>
+            <View style={[styles.actionIcon, { backgroundColor: '#D4956A' }]}>
               <Ionicons name="analytics-outline" size={26} color={colors.softWhite} />
             </View>
             <Text style={styles.actionTitle}>{t('viewPatterns')}</Text>
