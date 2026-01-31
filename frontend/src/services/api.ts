@@ -135,12 +135,40 @@ export const getPatterns = async (deviceId: string, days = 7): Promise<Patterns>
 };
 
 // Chat
-export const sendChatMessage = async (deviceId: string, message: string, language: string): Promise<{ response: string; requires_subscription: boolean }> => {
+export interface Conversation {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export const sendChatMessage = async (
+  deviceId: string, 
+  message: string, 
+  language: string,
+  conversationId?: string
+): Promise<{ response: string; conversation_id: string; requires_subscription: boolean }> => {
   const response = await api.post('/chat', {
     device_id: deviceId,
     message,
-    language
+    language,
+    conversation_id: conversationId
   });
+  return response.data;
+};
+
+export const getConversations = async (deviceId: string, limit = 20): Promise<Conversation[]> => {
+  const response = await api.get(`/chat/${deviceId}/conversations`, { params: { limit } });
+  return response.data;
+};
+
+export const getConversationMessages = async (deviceId: string, conversationId: string, limit = 50): Promise<ChatMessage[]> => {
+  const response = await api.get(`/chat/${deviceId}/conversation/${conversationId}`, { params: { limit } });
+  return response.data;
+};
+
+export const deleteConversation = async (deviceId: string, conversationId: string): Promise<{ message: string; deleted_messages: number }> => {
+  const response = await api.delete(`/chat/${deviceId}/conversation/${conversationId}`);
   return response.data;
 };
 
