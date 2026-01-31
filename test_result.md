@@ -117,6 +117,42 @@ backend:
         agent: "main"
         comment: "API root returns correct response"
 
+  - task: "Monthly pain record GET"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ Returns empty records with cycle_start_date for new device, persists data correctly"
+
+  - task: "Monthly pain record POST"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ Pain records saved successfully, upsert working"
+
+  - task: "Monthly pain record DELETE"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ Record deleted successfully, returns empty on subsequent GET"
+
   - task: "Diary entry creation"
     implemented: true
     working: true
