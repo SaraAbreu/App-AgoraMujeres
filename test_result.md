@@ -234,6 +234,21 @@ backend:
         agent: "testing"
         comment: "✅ VERIFIED: Cycle tracking endpoints working. POST /api/cycle creates entries, GET /api/cycle/{device_id} retrieves entries. Proper UUID generation and MongoDB storage."
 
+  - task: "Monthly pain record endpoints"
+    implemented: true
+    working: true
+    file: "server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added monthly pain record feature: 3 new backend endpoints (GET/POST/DELETE /api/monthly-record/{device_id}), frontend screen with calendar at /monthly-record, navigation from Home screen. Ready for testing."
+      - working: true
+        agent: "testing"
+        comment: "✅ VERIFIED: All 3 Monthly Pain Record endpoints working perfectly. GET returns empty records for new device_id with cycle_start_date. POST saves pain records successfully (tested with 3 entries). Data persists correctly in MongoDB. DELETE clears records successfully. GET after delete returns empty records as expected. Full CRUD cycle tested with device_id 'test-monthly-001'."
+
   - task: "Stripe customer creation"
     implemented: true
     working: false
