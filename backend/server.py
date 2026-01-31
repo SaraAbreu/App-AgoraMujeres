@@ -762,6 +762,230 @@ async def delete_monthly_record(device_id: str):
         logger.error(f"Error deleting monthly record: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ============== ADMIN ENDPOINTS ==============
+
+class AdminCodeRequest(BaseModel):
+    device_id: str
+    code: str
+
+@api_router.post("/admin/verify")
+async def verify_admin_code(request: AdminCodeRequest):
+    """Verify admin code and grant unlimited access"""
+    try:
+        if request.code == ADMIN_CODE:
+            # Grant admin access
+            await db.subscriptions.update_one(
+                {"device_id": request.device_id},
+                {
+                    "$set": {
+                        "is_admin": True,
+                        "status": "active"
+                    }
+                },
+                upsert=True
+            )
+            return {
+                "success": True,
+                "message": "Admin access granted",
+                "is_admin": True
+            }
+        else:
+            return {
+                "success": False,
+                "message": "Invalid admin code",
+                "is_admin": False
+            }
+    except Exception as e:
+        logger.error(f"Error verifying admin code: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ============== RESOURCES ENDPOINTS ==============
+
+@api_router.get("/resources")
+async def get_resources(category: Optional[str] = None, language: str = "es", limit: int = 50):
+    """Get resources (articles and videos)"""
+    try:
+        query = {"language": language}
+        if category:
+            query["category"] = category
+        
+        resources = await db.resources.find(query).sort([("is_featured", -1), ("order", 1), ("created_at", -1)]).limit(limit).to_list(limit)
+        
+        return [{
+            "id": r["id"],
+            "category": r["category"],
+            "type": r["type"],
+            "title": r["title"],
+            "description": r["description"],
+            "content": r.get("content"),
+            "video_url": r.get("video_url"),
+            "thumbnail_url": r.get("thumbnail_url"),
+            "author": r.get("author"),
+            "author_credentials": r.get("author_credentials"),
+            "duration": r.get("duration"),
+            "read_time": r.get("read_time"),
+            "is_featured": r.get("is_featured", False),
+        } for r in resources]
+    except Exception as e:
+        logger.error(f"Error getting resources: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/resources/categories")
+async def get_resource_categories(language: str = "es"):
+    """Get available resource categories with counts"""
+    try:
+        pipeline = [
+            {"$match": {"language": language}},
+            {"$group": {"_id": "$category", "count": {"$sum": 1}}},
+            {"$sort": {"count": -1}}
+        ]
+        
+        result = await db.resources.aggregate(pipeline).to_list(100)
+        
+        categories_info = {
+            "breathing": {"name_es": "Respiraciones", "name_en": "Breathing", "icon": "leaf"},
+            "stretching": {"name_es": "Estiramientos", "name_en": "Stretching", "icon": "body"},
+            "nutrition": {"name_es": "Nutrición", "name_en": "Nutrition", "icon": "nutrition"},
+            "sleep": {"name_es": "Sueño", "name_en": "Sleep", "icon": "moon"},
+            "mindfulness": {"name_es": "Mindfulness", "name_en": "Mindfulness", "icon": "flower"},
+            "professional": {"name_es": "Consejos profesionales", "name_en": "Professional advice", "icon": "medkit"},
+        }
+        
+        return [{
+            "id": cat["_id"],
+            "name": categories_info.get(cat["_id"], {}).get(f"name_{language}", cat["_id"]),
+            "icon": categories_info.get(cat["_id"], {}).get("icon", "document"),
+            "count": cat["count"]
+        } for cat in result]
+    except Exception as e:
+        logger.error(f"Error getting resource categories: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/resources")
+async def create_resource(resource: Resource):
+    """Create a new resource (admin only)"""
+    try:
+        await db.resources.insert_one(resource.model_dump())
+        return {"success": True, "id": resource.id}
+    except Exception as e:
+        logger.error(f"Error creating resource: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Seed some initial resources
+@api_router.post("/resources/seed")
+async def seed_resources():
+    """Seed initial resources for testing"""
+    try:
+        # Check if already seeded
+        count = await db.resources.count_documents({})
+        if count > 0:
+            return {"message": "Resources already seeded", "count": count}
+        
+        initial_resources = [
+            {
+                "id": str(uuid.uuid4()),
+                "category": "breathing",
+                "type": "video",
+                "title": "Respiración diafragmática para el dolor",
+                "description": "Técnica de respiración profunda que ayuda a reducir la tensión muscular y calmar el sistema nervioso.",
+                "video_url": "https://www.youtube.com/watch?v=example1",
+                "thumbnail_url": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400",
+                "author": "Dra. María López",
+                "author_credentials": "Fisioterapeuta especializada en dolor crónico",
+                "duration": "8:30",
+                "language": "es",
+                "is_featured": True,
+                "order": 1,
+                "created_at": datetime.utcnow()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "category": "stretching",
+                "type": "video",
+                "title": "Estiramientos suaves para la mañana",
+                "description": "Rutina de 10 minutos para comenzar el día con menos rigidez muscular.",
+                "video_url": "https://www.youtube.com/watch?v=example2",
+                "thumbnail_url": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400",
+                "author": "Laura Sánchez",
+                "author_credentials": "Instructora de yoga terapéutico",
+                "duration": "10:15",
+                "language": "es",
+                "is_featured": True,
+                "order": 2,
+                "created_at": datetime.utcnow()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "category": "mindfulness",
+                "type": "article",
+                "title": "Aceptar el dolor: una perspectiva mindful",
+                "description": "Cómo la práctica del mindfulness puede cambiar tu relación con el dolor crónico.",
+                "content": "La fibromialgia nos enseña a escuchar nuestro cuerpo de una manera diferente...",
+                "thumbnail_url": "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=400",
+                "author": "Carlos Ruiz",
+                "author_credentials": "Psicólogo clínico especializado en dolor crónico",
+                "read_time": "5 min",
+                "language": "es",
+                "is_featured": False,
+                "order": 3,
+                "created_at": datetime.utcnow()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "category": "sleep",
+                "type": "article",
+                "title": "Higiene del sueño con fibromialgia",
+                "description": "Consejos prácticos para mejorar la calidad del sueño cuando vives con dolor.",
+                "content": "El sueño reparador es fundamental para manejar la fibromialgia...",
+                "thumbnail_url": "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=400",
+                "author": "Dra. Ana García",
+                "author_credentials": "Neuróloga especialista en trastornos del sueño",
+                "read_time": "4 min",
+                "language": "es",
+                "is_featured": False,
+                "order": 4,
+                "created_at": datetime.utcnow()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "category": "professional",
+                "type": "article",
+                "title": "Comunicación con tu médico",
+                "description": "Cómo preparar tus citas médicas y comunicar mejor tus síntomas.",
+                "content": "Llevar un registro de tus síntomas puede mejorar significativamente la comunicación con tu equipo médico...",
+                "thumbnail_url": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400",
+                "author": "Dr. Pedro Martínez",
+                "author_credentials": "Reumatólogo",
+                "read_time": "6 min",
+                "language": "es",
+                "is_featured": False,
+                "order": 5,
+                "created_at": datetime.utcnow()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "category": "nutrition",
+                "type": "article",
+                "title": "Alimentación antiinflamatoria",
+                "description": "Alimentos que pueden ayudar a reducir la inflamación y mejorar tus síntomas.",
+                "content": "Una dieta rica en omega-3 y antioxidantes puede contribuir a reducir la inflamación...",
+                "thumbnail_url": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400",
+                "author": "Lucía Fernández",
+                "author_credentials": "Nutricionista especializada en enfermedades autoinmunes",
+                "read_time": "7 min",
+                "language": "es",
+                "is_featured": False,
+                "order": 6,
+                "created_at": datetime.utcnow()
+            }
+        ]
+        
+        await db.resources.insert_many(initial_resources)
+        return {"message": "Resources seeded successfully", "count": len(initial_resources)}
+    except Exception as e:
+        logger.error(f"Error seeding resources: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ============== ROOT ENDPOINTS ==============
 
 @api_router.get("/")
