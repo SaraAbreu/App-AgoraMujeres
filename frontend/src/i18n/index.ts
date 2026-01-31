@@ -23,6 +23,7 @@ const resources = {
       writeEntry: 'Escribir en el diario',
       talkToAgora: 'Hablar con Ágora',
       viewPatterns: 'Ver patrones',
+      wantToTalk: '¿Quieres hablar?',
       
       // Emotional States
       calma: 'Calma',
@@ -40,26 +41,28 @@ const resources = {
       // Diary
       newEntry: 'Nueva entrada',
       howDoYouFeel: '¿Cómo te sientes?',
-      writeThoughts: 'Escribe lo que sientes...',
+      writeThoughts: '¿Qué llevas dentro hoy?',
       physicalState: 'Estado físico (opcional)',
       saveEntry: 'Guardar',
-      entrySaved: 'Entrada guardada',
-      noEntries: 'Aún no tienes entradas',
-      startWriting: 'Empieza a escribir tu primera entrada',
+      entrySaved: 'Guardado con cariño',
+      noEntries: 'Tu diario te espera',
+      startWriting: 'Empieza a escribir cuando estés lista',
       
       // Chat
       chatWithAgora: 'Conversa con Ágora',
-      agoraIntro: 'Hola, soy Ágora. Estoy aquí para escucharte y acompañarte. ¿Cómo puedo ayudarte hoy?',
-      typeMessage: 'Escribe tu mensaje...',
+      agoraIntro: 'Hola, soy Ágora. Estoy aquí para escucharte y acompañarte en este momento. ¿Cómo puedo ayudarte hoy?',
+      typeMessage: 'Escribe lo que sientes...',
       send: 'Enviar',
+      agoraTyping: 'Ágora está escribiendo...',
       
       // Patterns
-      weeklyPatterns: 'Patrones semanales',
+      weeklyPatterns: 'Tus patrones',
       emotionalTrends: 'Tendencias emocionales',
       physicalTrends: 'Tendencias físicas',
-      commonWords: 'Palabras frecuentes',
-      noPatterns: 'Aún no hay suficientes datos',
-      keepWriting: 'Sigue escribiendo en tu diario para ver tus patrones',
+      commonWords: 'Palabras que más usas',
+      noPatterns: 'Aún estamos conociéndonos',
+      keepWriting: 'Sigue escribiendo para descubrir tus patrones',
+      notablePattern: 'Patrón destacado',
       
       // Cycle
       cycleTracking: 'Seguimiento del ciclo',
@@ -73,7 +76,7 @@ const resources = {
       spanish: 'Español',
       english: 'English',
       subscription: 'Suscripción',
-      trialRemaining: 'Tiempo de prueba restante',
+      trialRemaining: 'Tiempo de prueba',
       hours: 'horas',
       minutes: 'minutos',
       activateSubscription: 'Activar suscripción',
@@ -81,8 +84,8 @@ const resources = {
       priceMonthly: '10€/mes',
       
       // Subscription
-      trialExpired: 'Tu período de prueba ha terminado',
-      continueUsing: 'Para continuar usando Ágora, activa tu suscripción',
+      trialExpired: 'Tu prueba ha terminado',
+      continueUsing: 'Para seguir usando Ágora, activa tu suscripción',
       subscribe: 'Suscribirse por 10€/mes',
       enterEmail: 'Tu correo electrónico',
       
@@ -91,6 +94,9 @@ const resources = {
       temperature: 'Temperatura',
       humidity: 'Humedad',
       pressure: 'Presión',
+      
+      // Motivational
+      dailyReminder: 'Cada día cuenta, incluso los más difíciles. Estás haciendo un trabajo increíble.',
       
       // General
       loading: 'Cargando...',
@@ -101,6 +107,8 @@ const resources = {
       delete: 'Eliminar',
       confirm: 'Confirmar',
       back: 'Volver',
+      lastDays: 'últimos {{days}} días',
+      entries: 'entradas',
     }
   },
   en: {
@@ -120,9 +128,10 @@ const resources = {
       welcomeBack: 'Welcome back',
       howAreYou: 'How are you feeling today?',
       quickActions: 'Quick actions',
-      writeEntry: 'Write in diary',
+      writeEntry: 'Write in your diary',
       talkToAgora: 'Talk to Ágora',
       viewPatterns: 'View patterns',
+      wantToTalk: 'Want to talk?',
       
       // Emotional States
       calma: 'Calm',
@@ -140,26 +149,28 @@ const resources = {
       // Diary
       newEntry: 'New entry',
       howDoYouFeel: 'How do you feel?',
-      writeThoughts: 'Write what you feel...',
+      writeThoughts: 'What\'s on your heart today?',
       physicalState: 'Physical state (optional)',
       saveEntry: 'Save',
-      entrySaved: 'Entry saved',
-      noEntries: 'No entries yet',
-      startWriting: 'Start writing your first entry',
+      entrySaved: 'Saved with care',
+      noEntries: 'Your diary awaits',
+      startWriting: 'Start writing when you\'re ready',
       
       // Chat
       chatWithAgora: 'Chat with Ágora',
-      agoraIntro: "Hi, I'm Ágora. I'm here to listen and accompany you. How can I help you today?",
-      typeMessage: 'Type your message...',
+      agoraIntro: "Hello, I'm Ágora. I'm here to listen and walk alongside you in this moment. How can I help you today?",
+      typeMessage: 'Share what you\'re feeling...',
       send: 'Send',
+      agoraTyping: 'Ágora is typing...',
       
       // Patterns
-      weeklyPatterns: 'Weekly patterns',
+      weeklyPatterns: 'Your patterns',
       emotionalTrends: 'Emotional trends',
       physicalTrends: 'Physical trends',
-      commonWords: 'Common words',
-      noPatterns: 'Not enough data yet',
-      keepWriting: 'Keep writing in your diary to see your patterns',
+      commonWords: 'Words you use most',
+      noPatterns: 'We\'re still getting to know each other',
+      keepWriting: 'Keep writing to discover your patterns',
+      notablePattern: 'Notable pattern',
       
       // Cycle
       cycleTracking: 'Cycle tracking',
@@ -173,7 +184,7 @@ const resources = {
       spanish: 'Español',
       english: 'English',
       subscription: 'Subscription',
-      trialRemaining: 'Trial time remaining',
+      trialRemaining: 'Trial time left',
       hours: 'hours',
       minutes: 'minutes',
       activateSubscription: 'Activate subscription',
@@ -181,7 +192,7 @@ const resources = {
       priceMonthly: '€10/month',
       
       // Subscription
-      trialExpired: 'Your trial period has ended',
+      trialExpired: 'Your trial has ended',
       continueUsing: 'To continue using Ágora, activate your subscription',
       subscribe: 'Subscribe for €10/month',
       enterEmail: 'Your email address',
@@ -192,20 +203,24 @@ const resources = {
       humidity: 'Humidity',
       pressure: 'Pressure',
       
+      // Motivational
+      dailyReminder: 'Every day counts, even the hardest ones. You are doing an amazing job.',
+      
       // General
       loading: 'Loading...',
-      error: 'An error occurred',
-      retry: 'Retry',
+      error: 'Something went wrong',
+      retry: 'Try again',
       cancel: 'Cancel',
       save: 'Save',
       delete: 'Delete',
       confirm: 'Confirm',
       back: 'Back',
+      lastDays: 'last {{days}} days',
+      entries: 'entries',
     }
   }
 };
 
-// Get device language
 const deviceLanguage = Localization.getLocales()[0]?.languageCode || 'es';
 const defaultLanguage = ['es', 'en'].includes(deviceLanguage) ? deviceLanguage : 'es';
 

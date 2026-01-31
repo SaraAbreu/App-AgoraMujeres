@@ -124,7 +124,9 @@ export default function DiaryScreen() {
 
   const EmptyState = () => (
     <View style={styles.emptyState}>
-      <Ionicons name="book-outline" size={64} color={colors.primaryLight} />
+      <View style={styles.emptyIconContainer}>
+        <Ionicons name="book-outline" size={48} color={colors.mossGreen} />
+      </View>
       <Text style={styles.emptyTitle}>{t('noEntries')}</Text>
       <Text style={styles.emptySubtitle}>{t('startWriting')}</Text>
     </View>
@@ -141,7 +143,12 @@ export default function DiaryScreen() {
           entries.length === 0 && styles.emptyListContent
         ]}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={onRefresh} 
+            tintColor={colors.softWhite}
+            colors={[colors.warmBrown]}
+          />
         }
         ListEmptyComponent={!loading ? EmptyState : null}
         showsVerticalScrollIndicator={false}
@@ -151,8 +158,9 @@ export default function DiaryScreen() {
       <TouchableOpacity
         style={styles.fab}
         onPress={() => router.push('/diary/new')}
+        activeOpacity={0.8}
       >
-        <Ionicons name="add" size={28} color={colors.white} />
+        <Ionicons name="add" size={28} color={colors.softWhite} />
       </TouchableOpacity>
     </View>
   );
@@ -161,10 +169,11 @@ export default function DiaryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.mossGreen,
   },
   listContent: {
     padding: spacing.lg,
+    paddingBottom: 100,
   },
   emptyListContent: {
     flex: 1,
@@ -173,22 +182,24 @@ const styles = StyleSheet.create({
   entryCard: {
     backgroundColor: colors.surface,
     padding: spacing.lg,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.lg,
     marginBottom: spacing.md,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: colors.shadowDark,
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 1,
     shadowRadius: 8,
-    elevation: 2,
+    elevation: 3,
   },
   entryDate: {
     fontSize: typography.sizes.sm,
-    color: colors.textSecondary,
+    fontFamily: 'Nunito_500Medium',
+    color: colors.warmBrown,
     marginBottom: spacing.sm,
     textTransform: 'capitalize',
   },
   entryText: {
     fontSize: typography.sizes.md,
+    fontFamily: 'Nunito_400Regular',
     color: colors.text,
     lineHeight: 24,
     marginBottom: spacing.md,
@@ -206,8 +217,8 @@ const styles = StyleSheet.create({
   },
   emotionTagText: {
     fontSize: typography.sizes.xs,
-    color: colors.white,
-    fontWeight: typography.weights.medium,
+    fontFamily: 'Nunito_500Medium',
+    color: colors.softWhite,
   },
   physicalRow: {
     flexDirection: 'row',
@@ -218,38 +229,49 @@ const styles = StyleSheet.create({
   },
   physicalText: {
     fontSize: typography.sizes.xs,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
   },
   emptyState: {
     alignItems: 'center',
     paddingHorizontal: spacing.xl,
   },
+  emptyIconContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: colors.surface,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+  },
   emptyTitle: {
-    fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.semibold,
-    color: colors.text,
-    marginTop: spacing.lg,
+    fontSize: typography.sizes.xl,
+    fontFamily: 'Cormorant_600SemiBold',
+    color: colors.textOnDark,
+    marginBottom: spacing.xs,
   },
   emptySubtitle: {
     fontSize: typography.sizes.md,
-    color: colors.textSecondary,
-    marginTop: spacing.xs,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.textOnDark,
     textAlign: 'center',
+    opacity: 0.8,
   },
   fab: {
     position: 'absolute',
     right: spacing.lg,
     bottom: spacing.lg,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.primary,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: colors.warmBrown,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: colors.primaryDark,
+    shadowColor: colors.shadowDark,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.4,
     shadowRadius: 8,
-    elevation: 5,
+    elevation: 6,
   },
 });

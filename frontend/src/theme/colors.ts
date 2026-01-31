@@ -1,62 +1,79 @@
-// Boho-inspired therapeutic color palette for Ágora Mujeres
-// Earthy, warm, natural tones that feel organic and calming
+// Ágora Mujeres - Paleta de colores estilo Boho/Natural
+// Basada en las imágenes de referencia proporcionadas
+// Verde musgo, marrón cálido, beige crema
 
 export const colors = {
-  // Primary colors - warm terracotta and earth tones
-  primary: '#C4A484',        // Warm tan/camel
-  primaryLight: '#E8DDD4',   // Light sand
-  primaryDark: '#A67B5B',    // Terracotta brown
+  // Verde musgo - Color principal de fondo (de la imagen de referencia)
+  mossGreen: '#8A8C6C',
+  mossGreenLight: '#A5A78A',
+  mossGreenDark: '#6B6D52',
   
-  // Secondary colors - sage and olive
-  secondary: '#9CAF88',      // Sage green
-  secondaryLight: '#D4E2D4', // Light sage
-  secondaryDark: '#7A9A65',  // Olive green
+  // Marrón cálido/terracota - Para cabeceras y acentos (de la imagen de referencia)
+  warmBrown: '#B87333',
+  warmBrownLight: '#D4956A',
+  warmBrownDark: '#8B5A2B',
   
-  // Accent colors - dusty rose and burnt orange
-  accent: '#D4A5A5',         // Dusty rose
-  accentLight: '#F0E4E4',    // Light blush
-  accentDark: '#C08080',     // Muted rose
+  // Beige/crema - Para cards y superficies (de la imagen de referencia)
+  cream: '#D4C8BE',
+  creamLight: '#EDE8E3',
+  creamDark: '#C4B5A8',
   
-  // Warm accent
-  warmAccent: '#D4956A',     // Burnt sienna
-  warmAccentLight: '#F0DDD0',// Light peach
+  // Primary (usando verde musgo)
+  primary: '#8A8C6C',
+  primaryLight: '#A5A78A',
+  primaryDark: '#6B6D52',
   
-  // Background colors - natural cream and linen
-  background: '#FAF8F5',     // Warm off-white/linen
-  backgroundAlt: '#F5F0EB',  // Light beige
-  surface: '#FFFFFF',        // Pure white for cards
+  // Secondary (usando marrón cálido)
+  secondary: '#B87333',
+  secondaryLight: '#D4956A',
+  secondaryDark: '#8B5A2B',
   
-  // Text colors - warm browns
-  text: '#5D4E43',           // Warm brown (softer than black)
-  textSecondary: '#8B7B6B',  // Muted brown
-  textLight: '#A99B8D',      // Light taupe
-  textOnPrimary: '#FFFFFF',  // White on primary
+  // Accent (dusty rose suave)
+  accent: '#C9A59A',
+  accentLight: '#E8D5CE',
+  accentDark: '#A8857A',
   
-  // Emotional state colors (earthy, boho palette)
+  // Background - Verde musgo como principal
+  background: '#8A8C6C',
+  backgroundAlt: '#7D7F61',
+  surface: '#EDE8E3',        // Crema claro para cards
+  surfaceAlt: '#D4C8BE',     // Beige para cards secundarias
+  
+  // Text colors
+  text: '#3D3628',           // Marrón muy oscuro para texto principal
+  textSecondary: '#5D4E43',  // Marrón medio
+  textLight: '#8B7B6B',      // Marrón claro
+  textOnDark: '#F5F2EF',     // Blanco cálido para texto sobre fondo oscuro
+  textOnPrimary: '#F5F2EF',  // Texto sobre verde musgo
+  
+  // Emotional state colors (tonos pastel suaves)
   emotion: {
-    calma: '#9CAF88',        // Sage green - peaceful
-    fatiga: '#C4A484',       // Warm tan - tired earth
-    niebla: '#B8AFA7',       // Warm gray - fog
-    dolor: '#D4A5A5',        // Dusty rose - gentle pain
-    gratitud: '#D4B896',     // Warm gold - grateful
-    tension: '#C9A587',      // Terracotta - tension
+    calma: '#9CAF88',        // Verde salvia suave
+    fatiga: '#C4A484',       // Tan cálido
+    niebla: '#B8AFA7',       // Gris cálido
+    dolor: '#C9A59A',        // Rosa polvo
+    gratitud: '#D4B896',     // Dorado cálido
+    tension: '#C9A587',      // Terracota suave
   },
   
-  // Status colors (muted, natural)
-  success: '#9CAF88',        // Sage green
-  warning: '#D4956A',        // Burnt sienna
-  error: '#C08080',          // Dusty rose
-  info: '#A5B8C4',           // Muted blue-gray
+  // Status colors (versiones suaves)
+  success: '#9CAF88',
+  warning: '#D4956A',
+  error: '#C08080',
+  info: '#A5B8C4',
   
   // Utility
-  border: '#E8E0D8',         // Warm beige border
-  shadow: 'rgba(93, 78, 67, 0.08)', // Warm shadow
-  overlay: 'rgba(93, 78, 67, 0.4)', // Warm overlay
+  border: '#D4C8BE',
+  borderLight: '#EDE8E3',
+  shadow: 'rgba(61, 54, 40, 0.12)',
+  shadowDark: 'rgba(61, 54, 40, 0.2)',
+  overlay: 'rgba(61, 54, 40, 0.5)',
   
-  // Transparent versions
+  // Transparent
   transparent: 'transparent',
   white: '#FFFFFF',
   black: '#000000',
+  softWhite: '#F5F2EF',
 };
 
 // Spacing scale (8pt grid)
@@ -69,12 +86,12 @@ export const spacing = {
   xxl: 48,
 };
 
-// Border radius - softer, more organic
+// Border radius - más redondeados para sensación orgánica
 export const borderRadius = {
   sm: 12,
   md: 16,
-  lg: 20,
-  xl: 28,
+  lg: 24,
+  xl: 32,
   full: 9999,
 };
 
@@ -85,8 +102,8 @@ export const typography = {
     sm: 14,
     md: 16,
     lg: 20,
-    xl: 26,
-    xxl: 34,
+    xl: 28,
+    xxl: 36,
   },
   weights: {
     regular: '400' as const,
@@ -94,13 +111,17 @@ export const typography = {
     semibold: '600' as const,
     bold: '700' as const,
   },
-  // Font families - will be loaded via expo-font
   fonts: {
     heading: 'Cormorant_600SemiBold',
     headingBold: 'Cormorant_700Bold',
     body: 'Nunito_400Regular',
     bodyMedium: 'Nunito_500Medium',
     bodySemibold: 'Nunito_600SemiBold',
+  },
+  lineHeight: {
+    tight: 1.2,
+    normal: 1.5,
+    relaxed: 1.75,
   }
 };
 

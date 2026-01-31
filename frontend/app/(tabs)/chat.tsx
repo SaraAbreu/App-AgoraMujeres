@@ -37,7 +37,6 @@ export default function ChatScreen() {
     try {
       const history = await getChatHistory(deviceId);
       if (history.length === 0) {
-        // Add intro message
         setMessages([{
           role: 'assistant',
           content: t('agoraIntro'),
@@ -75,7 +74,6 @@ export default function ChatScreen() {
       const response = await sendChatMessage(deviceId, userMessage.content, language);
       
       if (response.requires_subscription) {
-        // Show subscription prompt
         router.push('/subscription');
         return;
       }
@@ -93,7 +91,7 @@ export default function ChatScreen() {
         role: 'assistant',
         content: language === 'es' 
           ? 'Lo siento, ha ocurrido un error. ¿Puedes intentarlo de nuevo?' 
-          : 'Sorry, an error occurred. Can you try again?',
+          : 'Sorry, something went wrong. Can you try again?',
         created_at: new Date().toISOString(),
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -112,7 +110,7 @@ export default function ChatScreen() {
       ]}>
         {!isUser && (
           <View style={styles.avatarContainer}>
-            <Ionicons name="leaf" size={18} color={colors.secondary} />
+            <Ionicons name="leaf" size={18} color={colors.mossGreen} />
           </View>
         )}
         <View style={[
@@ -133,7 +131,7 @@ export default function ChatScreen() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator size="large" color={colors.softWhite} />
       </View>
     );
   }
@@ -156,8 +154,8 @@ export default function ChatScreen() {
       
       {sending && (
         <View style={styles.typingIndicator}>
-          <Ionicons name="leaf" size={14} color={colors.secondary} />
-          <Text style={styles.typingText}>Ágora {language === 'es' ? 'está escribiendo...' : 'is typing...'}</Text>
+          <Ionicons name="leaf" size={14} color={colors.mossGreenLight} />
+          <Text style={styles.typingText}>{t('agoraTyping')}</Text>
         </View>
       )}
       
@@ -178,11 +176,12 @@ export default function ChatScreen() {
           ]}
           onPress={handleSend}
           disabled={!inputText.trim() || sending}
+          activeOpacity={0.8}
         >
           <Ionicons 
             name="send" 
             size={20} 
-            color={inputText.trim() && !sending ? colors.white : colors.textLight} 
+            color={inputText.trim() && !sending ? colors.softWhite : colors.textLight} 
           />
         </TouchableOpacity>
       </View>
@@ -193,13 +192,13 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.mossGreen,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.background,
+    backgroundColor: colors.mossGreen,
   },
   messagesList: {
     padding: spacing.md,
@@ -219,7 +218,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: colors.secondaryLight,
+    backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: spacing.sm,
@@ -230,17 +229,17 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
   },
   userBubble: {
-    backgroundColor: colors.primaryDark,
+    backgroundColor: colors.warmBrown,
     borderBottomRightRadius: spacing.xs,
   },
   assistantBubble: {
     backgroundColor: colors.surface,
     borderBottomLeftRadius: spacing.xs,
     shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 4,
-    elevation: 1,
+    elevation: 2,
   },
   messageText: {
     fontSize: typography.sizes.md,
@@ -248,7 +247,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_400Regular',
   },
   userMessageText: {
-    color: colors.white,
+    color: colors.softWhite,
   },
   assistantMessageText: {
     color: colors.text,
@@ -263,23 +262,22 @@ const styles = StyleSheet.create({
   typingText: {
     fontSize: typography.sizes.sm,
     fontFamily: 'Nunito_400Regular',
-    color: colors.textSecondary,
+    color: colors.textOnDark,
     fontStyle: 'italic',
+    opacity: 0.8,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     padding: spacing.md,
     paddingBottom: Platform.OS === 'ios' ? spacing.lg : spacing.md,
-    backgroundColor: colors.surface,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    backgroundColor: colors.mossGreenDark,
   },
   input: {
     flex: 1,
     minHeight: 44,
     maxHeight: 120,
-    backgroundColor: colors.backgroundAlt,
+    backgroundColor: colors.surface,
     borderRadius: borderRadius.lg,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
@@ -291,12 +289,12 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: colors.warmAccent,
+    backgroundColor: colors.warmBrown,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: spacing.sm,
   },
   sendButtonDisabled: {
-    backgroundColor: colors.border,
+    backgroundColor: colors.mossGreenLight,
   },
 });

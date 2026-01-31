@@ -2,8 +2,8 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, typography } from '../../src/theme/colors';
-import { Platform, Text } from 'react-native';
+import { colors } from '../../src/theme/colors';
+import { Platform } from 'react-native';
 
 export default function TabLayout() {
   const { t } = useTranslation();
@@ -11,27 +11,31 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: colors.primaryDark,
-        tabBarInactiveTintColor: colors.textLight,
+        tabBarActiveTintColor: colors.softWhite,
+        tabBarInactiveTintColor: colors.mossGreenLight,
         tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.border,
-          borderTopWidth: 1,
+          backgroundColor: colors.mossGreenDark,
+          borderTopWidth: 0,
           paddingTop: 8,
           paddingBottom: Platform.OS === 'ios' ? 24 : 8,
           height: Platform.OS === 'ios' ? 88 : 64,
+          elevation: 0,
+          shadowOpacity: 0,
         },
         tabBarLabelStyle: {
           fontSize: 11,
           fontFamily: 'Nunito_500Medium',
         },
         headerStyle: {
-          backgroundColor: colors.background,
+          backgroundColor: colors.mossGreen,
+          elevation: 0,
+          shadowOpacity: 0,
         },
-        headerTintColor: colors.text,
+        headerTintColor: colors.textOnDark,
         headerTitleStyle: {
           fontFamily: 'Cormorant_600SemiBold',
-          fontSize: 20,
+          fontSize: 22,
+          color: colors.textOnDark,
         },
         headerShadowVisible: false,
       }}

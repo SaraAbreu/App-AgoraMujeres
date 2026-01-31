@@ -11,10 +11,13 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { colors, spacing, borderRadius, typography } from '../../src/theme/colors';
 import { useStore } from '../../src/store/useStore';
 import { getSubscriptionStatus, getWeather } from '../../src/services/api';
 import * as Location from 'expo-location';
+
+const LOGO_URL = 'https://customer-assets.emergentagent.com/job_safe-refuge/artifacts/ywgi4kxk_Gemini_Generated_Image_529exc529exc529e.jpg';
 
 export default function HomeScreen() {
   const { t } = useTranslation();
@@ -27,11 +30,9 @@ export default function HomeScreen() {
     if (!deviceId) return;
     
     try {
-      // Load subscription status
       const status = await getSubscriptionStatus(deviceId);
       setSubscriptionStatus(status);
       
-      // Try to get weather
       try {
         const { status: locStatus } = await Location.requestForegroundPermissionsAsync();
         if (locStatus === 'granted') {
@@ -86,79 +87,85 @@ export default function HomeScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.content}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={onRefresh} 
+            tintColor={colors.softWhite}
+            colors={[colors.warmBrown]}
+          />
         }
+        showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
+        {/* Header with Logo */}
         <View style={styles.header}>
-          <Text style={styles.appName}>{t('appName')}</Text>
-          <Text style={styles.tagline}>{t('tagline')}</Text>
+          <Image
+            source={{ uri: LOGO_URL }}
+            style={styles.headerLogo}
+            contentFit="contain"
+          />
         </View>
 
-        {/* Trial Banner */}
-        {subscriptionStatus?.status === 'trial' && (
-          <TouchableOpacity 
-            style={styles.trialBanner}
-            onPress={() => router.push('/subscription')}
-          >
-            <View style={styles.trialContent}>
-              <Ionicons name="time-outline" size={20} color={colors.primaryDark} />
+        {/* Welcome Card */}
+        <View style={styles.welcomeCard}>
+          <Text style={styles.welcomeTitle}>{t('welcomeBack')}</Text>
+          <Text style={styles.welcomeSubtitle}>{t('howAreYou')}</Text>
+          
+          {/* Trial/Subscription Status */}
+          {subscriptionStatus?.status === 'trial' && (
+            <TouchableOpacity 
+              style={styles.trialBadge}
+              onPress={() => router.push('/subscription')}
+            >
+              <Ionicons name="time-outline" size={16} color={colors.warmBrown} />
               <Text style={styles.trialText}>
                 {t('trialRemaining')}: {formatTrialTime()}
               </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.primaryDark} />
-          </TouchableOpacity>
-        )}
+              <Ionicons name="chevron-forward" size={16} color={colors.warmBrown} />
+            </TouchableOpacity>
+          )}
 
-        {subscriptionStatus?.status === 'expired' && (
-          <TouchableOpacity 
-            style={[styles.trialBanner, styles.expiredBanner]}
-            onPress={() => router.push('/subscription')}
-          >
-            <View style={styles.trialContent}>
-              <Ionicons name="alert-circle-outline" size={20} color={colors.error} />
+          {subscriptionStatus?.status === 'expired' && (
+            <TouchableOpacity 
+              style={[styles.trialBadge, styles.expiredBadge]}
+              onPress={() => router.push('/subscription')}
+            >
+              <Ionicons name="alert-circle-outline" size={16} color={colors.error} />
               <Text style={[styles.trialText, { color: colors.error }]}>
                 {t('trialExpired')}
               </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.error} />
-          </TouchableOpacity>
-        )}
+              <Ionicons name="chevron-forward" size={16} color={colors.error} />
+            </TouchableOpacity>
+          )}
+        </View>
 
         {/* Weather Card */}
         {weather && (
           <View style={styles.weatherCard}>
             <Ionicons 
               name={getWeatherIcon(weather.condition) as any} 
-              size={32} 
-              color={colors.warmAccent} 
+              size={28} 
+              color={colors.warmBrown} 
             />
             <View style={styles.weatherInfo}>
               <Text style={styles.weatherTemp}>{Math.round(weather.temperature)}°C</Text>
               <Text style={styles.weatherDetail}>
-                {t('humidity')}: {weather.humidity}% • {t('pressure')}: {Math.round(weather.pressure)} hPa
+                {t('humidity')}: {weather.humidity}%
               </Text>
             </View>
           </View>
         )}
 
-        {/* Welcome Message */}
-        <View style={styles.welcomeCard}>
-          <Text style={styles.welcomeTitle}>{t('welcomeBack')}</Text>
-          <Text style={styles.welcomeSubtitle}>{t('howAreYou')}</Text>
-        </View>
-
         {/* Quick Actions */}
         <Text style={styles.sectionTitle}>{t('quickActions')}</Text>
         
-        <View style={styles.actionsGrid}>
+        <View style={styles.actionsContainer}>
           <TouchableOpacity
             style={styles.actionCard}
             onPress={() => router.push('/diary/new')}
+            activeOpacity={0.8}
           >
-            <View style={[styles.actionIcon, { backgroundColor: colors.secondary }]}>
-              <Ionicons name="create-outline" size={28} color={colors.white} />
+            <View style={[styles.actionIcon, { backgroundColor: colors.mossGreen }]}>
+              <Ionicons name="create-outline" size={26} color={colors.softWhite} />
             </View>
             <Text style={styles.actionTitle}>{t('writeEntry')}</Text>
           </TouchableOpacity>
@@ -166,9 +173,10 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={styles.actionCard}
             onPress={() => router.push('/(tabs)/chat')}
+            activeOpacity={0.8}
           >
-            <View style={[styles.actionIcon, { backgroundColor: colors.warmAccent }]}>
-              <Ionicons name="leaf-outline" size={28} color={colors.white} />
+            <View style={[styles.actionIcon, { backgroundColor: colors.mossGreen }]}>
+              <Ionicons name="leaf-outline" size={26} color={colors.softWhite} />
             </View>
             <Text style={styles.actionTitle}>{t('talkToAgora')}</Text>
           </TouchableOpacity>
@@ -176,22 +184,20 @@ export default function HomeScreen() {
           <TouchableOpacity
             style={styles.actionCard}
             onPress={() => router.push('/(tabs)/patterns')}
+            activeOpacity={0.8}
           >
-            <View style={[styles.actionIcon, { backgroundColor: colors.accent }]}>
-              <Ionicons name="analytics-outline" size={28} color={colors.white} />
+            <View style={[styles.actionIcon, { backgroundColor: colors.mossGreen }]}>
+              <Ionicons name="analytics-outline" size={26} color={colors.softWhite} />
             </View>
             <Text style={styles.actionTitle}>{t('viewPatterns')}</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Gentle Reminder */}
+        {/* Motivational Card */}
         <View style={styles.reminderCard}>
-          <Ionicons name="leaf" size={24} color={colors.secondary} />
+          <Ionicons name="heart" size={22} color={colors.warmBrown} />
           <Text style={styles.reminderText}>
-            {t('language') === 'es' 
-              ? 'Cada día cuenta, incluso los más difíciles. Estás haciendo un trabajo increíble.'
-              : 'Every day counts, even the hardest ones. You are doing an amazing job.'
-            }
+            {t('dailyReminder')}
           </Text>
         </View>
       </ScrollView>
@@ -202,49 +208,64 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.mossGreen,
   },
   scrollView: {
     flex: 1,
   },
   content: {
     padding: spacing.lg,
+    paddingBottom: spacing.xxl,
   },
   header: {
+    alignItems: 'center',
     marginBottom: spacing.lg,
   },
-  appName: {
-    fontSize: typography.sizes.xxl,
-    fontFamily: 'Cormorant_700Bold',
-    color: colors.primaryDark,
+  headerLogo: {
+    width: 140,
+    height: 140,
+    borderRadius: borderRadius.lg,
   },
-  tagline: {
+  welcomeCard: {
+    backgroundColor: colors.surface,
+    padding: spacing.xl,
+    borderRadius: borderRadius.lg,
+    marginBottom: spacing.lg,
+    shadowColor: colors.shadowDark,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  welcomeTitle: {
+    fontSize: typography.sizes.xl,
+    fontFamily: 'Cormorant_700Bold',
+    color: colors.warmBrown,
+    marginBottom: spacing.xs,
+  },
+  welcomeSubtitle: {
     fontSize: typography.sizes.md,
     fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
-    marginTop: spacing.xs,
   },
-  trialBanner: {
+  trialBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: colors.primaryLight,
-    padding: spacing.md,
-    borderRadius: borderRadius.md,
-    marginBottom: spacing.lg,
+    backgroundColor: colors.creamLight,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.full,
+    marginTop: spacing.md,
+    gap: spacing.xs,
+    alignSelf: 'flex-start',
   },
-  expiredBanner: {
+  expiredBadge: {
     backgroundColor: colors.accentLight,
-  },
-  trialContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
   },
   trialText: {
     fontSize: typography.sizes.sm,
     fontFamily: 'Nunito_500Medium',
-    color: colors.primaryDark,
+    color: colors.warmBrown,
   },
   weatherCard: {
     flexDirection: 'row',
@@ -257,14 +278,14 @@ const styles = StyleSheet.create({
     shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
-    shadowRadius: 8,
+    shadowRadius: 6,
     elevation: 2,
   },
   weatherInfo: {
     flex: 1,
   },
   weatherTemp: {
-    fontSize: typography.sizes.xl,
+    fontSize: typography.sizes.lg,
     fontFamily: 'Cormorant_600SemiBold',
     color: colors.text,
   },
@@ -272,54 +293,34 @@ const styles = StyleSheet.create({
     fontSize: typography.sizes.xs,
     fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
-    marginTop: 2,
-  },
-  welcomeCard: {
-    backgroundColor: colors.warmAccentLight,
-    padding: spacing.xl,
-    borderRadius: borderRadius.lg,
-    marginBottom: spacing.lg,
-  },
-  welcomeTitle: {
-    fontSize: typography.sizes.xl,
-    fontFamily: 'Cormorant_600SemiBold',
-    color: colors.text,
-  },
-  welcomeSubtitle: {
-    fontSize: typography.sizes.md,
-    fontFamily: 'Nunito_400Regular',
-    color: colors.textSecondary,
-    marginTop: spacing.xs,
   },
   sectionTitle: {
     fontSize: typography.sizes.lg,
     fontFamily: 'Cormorant_600SemiBold',
-    color: colors.text,
+    color: colors.textOnDark,
     marginBottom: spacing.md,
   },
-  actionsGrid: {
+  actionsContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: spacing.md,
     marginBottom: spacing.lg,
   },
   actionCard: {
     flex: 1,
-    minWidth: 100,
     backgroundColor: colors.surface,
     padding: spacing.md,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.lg,
     alignItems: 'center',
     shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
-    shadowRadius: 8,
+    shadowRadius: 6,
     elevation: 2,
   },
   actionIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: borderRadius.lg,
+    width: 52,
+    height: 52,
+    borderRadius: borderRadius.md,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.sm,
@@ -333,10 +334,15 @@ const styles = StyleSheet.create({
   reminderCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: colors.secondaryLight,
+    backgroundColor: colors.surface,
     padding: spacing.lg,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.lg,
     gap: spacing.md,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 6,
+    elevation: 2,
   },
   reminderText: {
     flex: 1,

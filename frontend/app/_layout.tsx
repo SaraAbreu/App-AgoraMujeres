@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, Text, Animated } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { I18nextProvider } from 'react-i18next';
 import { useFonts } from 'expo-font';
@@ -17,16 +17,23 @@ import {
   Nunito_600SemiBold,
   Nunito_700Bold
 } from '@expo-google-fonts/nunito';
+import { Image } from 'expo-image';
 import i18n from '../src/i18n';
 import { useStore } from '../src/store/useStore';
-import { colors, typography } from '../src/theme/colors';
+import { colors } from '../src/theme/colors';
 import { getSubscriptionStatus } from '../src/services/api';
+
+const LOGO_URL = 'https://customer-assets.emergentagent.com/job_safe-refuge/artifacts/ywgi4kxk_Gemini_Generated_Image_529exc529exc529e.jpg';
 
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   const { initializeDevice, setSubscriptionStatus, language } = useStore();
+  
+  // Animation values
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(30)).current;
 
-  // Load custom fonts
   const [fontsLoaded] = useFonts({
     Cormorant_400Regular,
     Cormorant_500Medium,
@@ -43,7 +50,6 @@ export default function RootLayout() {
       try {
         const deviceId = await initializeDevice();
         
-        // Load subscription status
         try {
           const status = await getSubscriptionStatus(deviceId);
           setSubscriptionStatus(status);
@@ -51,24 +57,67 @@ export default function RootLayout() {
           console.log('Error loading subscription status:', error);
         }
         
-        // Change i18n language
         i18n.changeLanguage(language);
-        
         setIsReady(true);
+        
+        // Start splash animation
+        Animated.parallel([
+          Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+          Animated.timing(slideAnim, {
+            toValue: 0,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+        ]).start();
+        
+        // Hide splash after animation
+        setTimeout(() => {
+          setShowSplash(false);
+        }, 2500);
+        
       } catch (error) {
         console.error('Initialization error:', error);
         setIsReady(true);
+        setShowSplash(false);
       }
     };
     
-    init();
-  }, []);
+    if (fontsLoaded) {
+      init();
+    }
+  }, [fontsLoaded]);
 
-  if (!isReady || !fontsLoaded) {
+  if (!fontsLoaded) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={styles.loadingText}>Ágora Mujeres</Text>
+        <ActivityIndicator size="large" color={colors.warmBrown} />
+      </View>
+    );
+  }
+
+  if (showSplash) {
+    return (
+      <View style={styles.splashContainer}>
+        <StatusBar style="dark" />
+        <Animated.View 
+          style={[
+            styles.splashContent,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateY: slideAnim }],
+            }
+          ]}
+        >
+          <Image
+            source={{ uri: LOGO_URL }}
+            style={styles.logo}
+            contentFit="contain"
+          />
+        </Animated.View>
       </View>
     );
   }
@@ -76,7 +125,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <I18nextProvider i18n={i18n}>
-        <StatusBar style="dark" />
+        <StatusBar style="light" />
         <Stack
           screenOptions={{
             headerShown: false,
@@ -112,10 +161,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.background,
   },
-  loadingText: {
-    marginTop: 16,
-    fontSize: 24,
-    color: colors.primary,
-    fontFamily: 'Cormorant_600SemiBold',
+  splashContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#D4C8BE', // Beige from reference
+  },
+  splashContent: {
+    alignItems: 'center',
+  },
+  logo: {
+    width: 280,
+    height: 280,
+    borderRadius: 20,
   },
 });
