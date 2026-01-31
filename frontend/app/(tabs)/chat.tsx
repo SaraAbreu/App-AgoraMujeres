@@ -125,11 +125,16 @@ export default function ChatScreen() {
     setSending(true);
     
     try {
-      const response = await sendChatMessage(deviceId, userMessage.content, language);
+      const response = await sendChatMessage(deviceId, userMessage.content, language, currentConversationId);
       
       if (response.requires_subscription) {
         router.push('/subscription');
         return;
+      }
+      
+      // Update the conversation ID if this was a new conversation
+      if (response.conversation_id && !currentConversationId) {
+        setCurrentConversationId(response.conversation_id);
       }
       
       const assistantMessage: ChatMessage = {
