@@ -253,6 +253,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.mossGreen,
   },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+    backgroundColor: colors.mossGreen,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.mossGreenLight,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  headerTitle: {
+    fontSize: typography.sizes.lg,
+    fontFamily: 'Cormorant_600SemiBold',
+    color: colors.textOnDark,
+  },
+  newChatButton: {
+    padding: spacing.xs,
+  },
+  chatContainer: {
+    flex: 1,
+  },
   messagesList: {
     padding: spacing.md,
     paddingBottom: spacing.lg,
