@@ -288,9 +288,26 @@ async def chat_with_aurora(request: ChatRequest):
                 "requires_subscription": True
             }
         
-        # Get conversation history
+        # Get or create conversation
+        conversation_id = request.conversation_id
+        if not conversation_id:
+            # Create new conversation
+            new_conv = ChatConversation(
+                device_id=request.device_id,
+                title=request.message[:50] + "..." if len(request.message) > 50 else request.message
+            )
+            await db.chat_conversations.insert_one(new_conv.model_dump())
+            conversation_id = new_conv.id
+        else:
+            # Update conversation timestamp
+            await db.chat_conversations.update_one(
+                {"id": conversation_id},
+                {"$set": {"updated_at": datetime.utcnow()}}
+            )
+        
+        # Get conversation history for this specific conversation
         history = await db.chat_messages.find(
-            {"device_id": request.device_id}
+            {"device_id": request.device_id, "conversation_id": conversation_id}
         ).sort("created_at", -1).limit(10).to_list(10)
         history.reverse()
         
@@ -300,7 +317,7 @@ async def chat_with_aurora(request: ChatRequest):
         
         chat = LlmChat(
             api_key=api_key,
-            session_id=f"aurora_{request.device_id}",
+            session_id=f"aurora_{request.device_id}_{conversation_id}",
             system_message=system_prompt
         ).with_model("openai", "gpt-5.2")
         
@@ -310,14 +327,16 @@ async def chat_with_aurora(request: ChatRequest):
         # Get response
         response = await chat.send_message(user_msg)
         
-        # Save messages
+        # Save messages with conversation_id
         user_message = ChatMessage(
             device_id=request.device_id,
+            conversation_id=conversation_id,
             role="user",
             content=request.message
         )
         assistant_message = ChatMessage(
             device_id=request.device_id,
+            conversation_id=conversation_id,
             role="assistant",
             content=response
         )
@@ -330,34 +349,114 @@ async def chat_with_aurora(request: ChatRequest):
         
         return {
             "response": response,
+            "conversation_id": conversation_id,
             "requires_subscription": False
         }
     except Exception as e:
         logger.error(f"Error in chat: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@api_router.get("/chat/{device_id}/history")
-async def get_chat_history(device_id: str, limit: int = 50):
-    """Get chat history for a device"""
+# ============== CONVERSATION ENDPOINTS ==============
+
+@api_router.get("/chat/{device_id}/conversations")
+async def get_conversations(device_id: str, limit: int = 20):
+    """Get all conversations for a device"""
+    try:
+        conversations = await db.chat_conversations.find(
+            {"device_id": device_id}
+        ).sort("updated_at", -1).limit(limit).to_list(limit)
+        
+        return [{
+            "id": c["id"],
+            "title": c.get("title", "Conversación"),
+            "created_at": c.get("created_at").isoformat() if isinstance(c.get("created_at"), datetime) else c.get("created_at"),
+            "updated_at": c.get("updated_at").isoformat() if isinstance(c.get("updated_at"), datetime) else c.get("updated_at"),
+        } for c in conversations]
+    except Exception as e:
+        logger.error(f"Error getting conversations: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/chat/{device_id}/conversation/{conversation_id}")
+async def get_conversation_messages(device_id: str, conversation_id: str, limit: int = 50):
+    """Get messages for a specific conversation"""
     try:
         messages = await db.chat_messages.find(
-            {"device_id": device_id}
-        ).sort("created_at", -1).limit(limit).to_list(limit)
-        messages.reverse()
-        return [{"role": m["role"], "content": m["content"], "created_at": m["created_at"]} for m in messages]
+            {"device_id": device_id, "conversation_id": conversation_id}
+        ).sort("created_at", 1).limit(limit).to_list(limit)
+        
+        return [{
+            "role": m["role"], 
+            "content": m["content"], 
+            "created_at": m.get("created_at").isoformat() if isinstance(m.get("created_at"), datetime) else m.get("created_at")
+        } for m in messages]
+    except Exception as e:
+        logger.error(f"Error getting conversation messages: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/chat/{device_id}/conversation/{conversation_id}")
+async def delete_conversation(device_id: str, conversation_id: str):
+    """Delete a specific conversation and its messages"""
+    try:
+        await db.chat_conversations.delete_one({"id": conversation_id, "device_id": device_id})
+        result = await db.chat_messages.delete_many({"conversation_id": conversation_id, "device_id": device_id})
+        return {
+            "message": "Conversation deleted successfully",
+            "deleted_messages": result.deleted_count
+        }
+    except Exception as e:
+        logger.error(f"Error deleting conversation: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/chat/{device_id}/history")
+async def get_chat_history(device_id: str, limit: int = 50):
+    """Get chat history for a device (legacy - returns latest conversation)"""
+    try:
+        # Get the latest conversation
+        latest_conv = await db.chat_conversations.find_one(
+            {"device_id": device_id},
+            sort=[("updated_at", -1)]
+        )
+        
+        if latest_conv:
+            messages = await db.chat_messages.find(
+                {"device_id": device_id, "conversation_id": latest_conv["id"]}
+            ).sort("created_at", 1).limit(limit).to_list(limit)
+        else:
+            # Fallback: get messages without conversation_id (old messages)
+            messages = await db.chat_messages.find(
+                {"device_id": device_id}
+            ).sort("created_at", -1).limit(limit).to_list(limit)
+            messages.reverse()
+        
+        return [{
+            "role": m["role"], 
+            "content": m["content"], 
+            "created_at": m.get("created_at").isoformat() if isinstance(m.get("created_at"), datetime) else m.get("created_at"),
+            "conversation_id": m.get("conversation_id")
+        } for m in messages]
     except Exception as e:
         logger.error(f"Error getting chat history: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @api_router.delete("/chat/{device_id}/history")
 async def clear_chat_history(device_id: str):
-    """Clear all chat history for a device (start new conversation)"""
+    """Clear current conversation (start new)"""
     try:
-        result = await db.chat_messages.delete_many({"device_id": device_id})
-        return {
-            "message": "Chat history cleared successfully",
-            "deleted_count": result.deleted_count
-        }
+        # Get the latest conversation and delete it
+        latest_conv = await db.chat_conversations.find_one(
+            {"device_id": device_id},
+            sort=[("updated_at", -1)]
+        )
+        
+        if latest_conv:
+            await db.chat_conversations.delete_one({"id": latest_conv["id"]})
+            result = await db.chat_messages.delete_many({"conversation_id": latest_conv["id"]})
+            return {
+                "message": "Current conversation cleared successfully",
+                "deleted_count": result.deleted_count
+            }
+        
+        return {"message": "No conversation to clear", "deleted_count": 0}
     except Exception as e:
         logger.error(f"Error clearing chat history: {e}")
         raise HTTPException(status_code=500, detail=str(e))
