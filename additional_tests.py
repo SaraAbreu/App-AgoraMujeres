@@ -6,7 +6,7 @@ Additional Backend API Tests for specific review requirements
 import requests
 import json
 
-BASE_URL = "https://safe-refuge.preview.emergentagent.com/api"
+BASE_URL = "https://comfort-coach.preview.emergentagent.com/api"
 TEST_DEVICE_ID = "test-device-abc"
 
 def test_ai_response_tone():
