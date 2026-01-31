@@ -68,7 +68,7 @@ export default function TabLayout() {
         name="chat"
         options={{
           title: t('chat'),
-          headerTitle: t('chatWithAgora'),
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="leaf-outline" size={size} color={color} />
           ),
