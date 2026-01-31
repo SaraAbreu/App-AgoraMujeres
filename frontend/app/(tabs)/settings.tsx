@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,18 +6,24 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  TextInput,
+  Modal,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, typography } from '../../src/theme/colors';
 import { useStore } from '../../src/store/useStore';
+import { verifyAdminCode } from '../../src/services/api';
 import i18n from '../../src/i18n';
 
 export default function SettingsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { language, setLanguage, subscriptionStatus } = useStore();
+  const { language, setLanguage, subscriptionStatus, deviceId, setSubscriptionStatus } = useStore();
+  const [showAdminModal, setShowAdminModal] = useState(false);
+  const [adminCode, setAdminCode] = useState('');
+  const [isAdmin, setIsAdmin] = useState(subscriptionStatus?.is_admin || false);
 
   const handleLanguageChange = async (lang: string) => {
     await setLanguage(lang);
@@ -25,10 +31,37 @@ export default function SettingsScreen() {
   };
 
   const formatTrialTime = () => {
+    if (isAdmin) return language === 'es' ? 'Ilimitado' : 'Unlimited';
     if (!subscriptionStatus?.trial_remaining_seconds) return '0h 0m';
     const hours = Math.floor(subscriptionStatus.trial_remaining_seconds / 3600);
     const minutes = Math.floor((subscriptionStatus.trial_remaining_seconds % 3600) / 60);
     return `${hours}h ${minutes}m`;
+  };
+
+  const handleAdminCodeSubmit = async () => {
+    if (!deviceId || !adminCode.trim()) return;
+    
+    try {
+      const result = await verifyAdminCode(deviceId, adminCode.trim());
+      if (result.success) {
+        setIsAdmin(true);
+        setSubscriptionStatus({ ...subscriptionStatus, status: 'active', is_admin: true });
+        setShowAdminModal(false);
+        setAdminCode('');
+        Alert.alert(
+          '✓',
+          language === 'es' ? 'Acceso de administrador activado' : 'Admin access activated'
+        );
+      } else {
+        Alert.alert(
+          '',
+          language === 'es' ? 'Código incorrecto' : 'Invalid code'
+        );
+      }
+    } catch (error) {
+      console.error('Error verifying admin code:', error);
+      Alert.alert('Error', language === 'es' ? 'Error al verificar' : 'Verification error');
+    }
   };
 
   return (
@@ -37,6 +70,16 @@ export default function SettingsScreen() {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
+      {/* Admin Badge */}
+      {isAdmin && (
+        <View style={styles.adminBadge}>
+          <Ionicons name="shield-checkmark" size={16} color={colors.warmBrown} />
+          <Text style={styles.adminBadgeText}>
+            {language === 'es' ? 'Modo Administrador' : 'Admin Mode'}
+          </Text>
+        </View>
+      )}
+
       {/* Language Section */}
       <Text style={styles.sectionTitle}>{t('language')}</Text>
       <View style={styles.card}>
