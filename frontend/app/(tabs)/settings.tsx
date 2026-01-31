@@ -175,6 +175,35 @@ export default function SettingsScreen() {
         </View>
       </TouchableOpacity>
 
+      {/* Resources */}
+      <Text style={styles.sectionTitle}>
+        {language === 'es' ? 'Recursos' : 'Resources'}
+      </Text>
+      <TouchableOpacity 
+        style={styles.card} 
+        onPress={() => router.push('/resources')}
+        activeOpacity={0.8}
+      >
+        <View style={styles.optionRow}>
+          <Ionicons name="library-outline" size={24} color={colors.mossGreen} />
+          <Text style={[styles.optionText, { marginLeft: spacing.md, flex: 1 }]}>
+            {language === 'es' ? 'Artículos y vídeos' : 'Articles and videos'}
+          </Text>
+          <Ionicons name="chevron-forward" size={20} color={colors.textLight} />
+        </View>
+      </TouchableOpacity>
+
+      {/* Admin Code (hidden at bottom) */}
+      <TouchableOpacity 
+        style={styles.adminLink}
+        onPress={() => setShowAdminModal(true)}
+        activeOpacity={0.6}
+      >
+        <Text style={styles.adminLinkText}>
+          {language === 'es' ? '¿Tienes un código de acceso?' : 'Have an access code?'}
+        </Text>
+      </TouchableOpacity>
+
       {/* About */}
       <View style={styles.aboutSection}>
         <Text style={styles.appName}>Ágora Mujeres</Text>
@@ -186,6 +215,50 @@ export default function SettingsScreen() {
           }
         </Text>
       </View>
+
+      {/* Admin Modal */}
+      <Modal
+        visible={showAdminModal}
+        animationType="fade"
+        transparent
+        onRequestClose={() => setShowAdminModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity 
+              style={styles.modalClose}
+              onPress={() => setShowAdminModal(false)}
+            >
+              <Ionicons name="close" size={24} color={colors.textSecondary} />
+            </TouchableOpacity>
+            
+            <Ionicons name="key-outline" size={40} color={colors.mossGreen} style={{ marginBottom: spacing.md }} />
+            
+            <Text style={styles.modalTitle}>
+              {language === 'es' ? 'Código de administrador' : 'Admin code'}
+            </Text>
+            
+            <TextInput
+              style={styles.adminInput}
+              value={adminCode}
+              onChangeText={setAdminCode}
+              placeholder={language === 'es' ? 'Introduce el código' : 'Enter code'}
+              placeholderTextColor={colors.textLight}
+              autoCapitalize="characters"
+              autoCorrect={false}
+            />
+            
+            <TouchableOpacity 
+              style={styles.adminSubmitButton}
+              onPress={handleAdminCodeSubmit}
+            >
+              <Text style={styles.adminSubmitText}>
+                {language === 'es' ? 'Verificar' : 'Verify'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
