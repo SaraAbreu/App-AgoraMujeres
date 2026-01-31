@@ -197,10 +197,17 @@ export default function ChatScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      {/* Custom Header with New Chat Button */}
+      {/* Custom Header with New Chat and History Buttons */}
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <Ionicons name="leaf" size={24} color={colors.softWhite} />
+        <TouchableOpacity 
+          style={styles.historyButton} 
+          onPress={handleViewHistory}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="time-outline" size={24} color={colors.softWhite} />
+        </TouchableOpacity>
+        <View style={styles.headerCenter}>
+          <Ionicons name="leaf" size={20} color={colors.softWhite} />
           <Text style={styles.headerTitle}>{t('chatWithAgora')}</Text>
         </View>
         <TouchableOpacity 
