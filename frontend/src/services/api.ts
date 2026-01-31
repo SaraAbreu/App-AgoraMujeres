@@ -149,6 +149,11 @@ export const getChatHistory = async (deviceId: string, limit = 50): Promise<Chat
   return response.data;
 };
 
+export const clearChatHistory = async (deviceId: string): Promise<{ message: string; deleted_count: number }> => {
+  const response = await api.delete(`/chat/${deviceId}/history`);
+  return response.data;
+};
+
 // Subscription
 export const getSubscriptionStatus = async (deviceId: string): Promise<SubscriptionStatus> => {
   const response = await api.get(`/subscription/${deviceId}`);
