@@ -334,6 +334,133 @@ class AgoraBackendTester:
         except Exception as e:
             self.log_test("Stripe Customer Creation", False, f"Exception: {str(e)}")
     
+    def test_monthly_pain_record_get_new(self):
+        """Test GET /api/monthly-record/{device_id} - Get monthly pain record for new device"""
+        try:
+            test_device = "test-monthly-001"
+            response = self.session.get(f"{self.base_url}/monthly-record/{test_device}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                if (data.get("device_id") == test_device and 
+                    isinstance(data.get("records"), list) and 
+                    len(data.get("records")) == 0 and
+                    "cycle_start_date" in data):
+                    self.log_test("Monthly Pain Record - GET New Device", True, 
+                                f"Returns empty records with cycle_start_date for new device")
+                else:
+                    self.log_test("Monthly Pain Record - GET New Device", False, 
+                                "Incorrect structure for new device", data)
+            else:
+                self.log_test("Monthly Pain Record - GET New Device", False, 
+                            f"Status code: {response.status_code}", response.text)
+                
+        except Exception as e:
+            self.log_test("Monthly Pain Record - GET New Device", False, f"Exception: {str(e)}")
+    
+    def test_monthly_pain_record_post(self):
+        """Test POST /api/monthly-record/{device_id} - Save monthly pain record"""
+        try:
+            test_device = "test-monthly-001"
+            pain_data = {
+                "records": [
+                    {"date": "2025-06-01", "intensity": 3},
+                    {"date": "2025-06-02", "intensity": 4},
+                    {"date": "2025-06-03", "intensity": 2}
+                ],
+                "cycle_start_date": "2025-06-01T00:00:00"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/monthly-record/{test_device}",
+                json=pain_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if (data.get("device_id") == test_device and 
+                    len(data.get("records", [])) == 3 and
+                    "message" in data):
+                    self.log_test("Monthly Pain Record - POST Save", True, 
+                                f"Pain records saved successfully: {len(data.get('records'))} entries")
+                else:
+                    self.log_test("Monthly Pain Record - POST Save", False, 
+                                "Incorrect response structure", data)
+            else:
+                self.log_test("Monthly Pain Record - POST Save", False, 
+                            f"Status code: {response.status_code}", response.text)
+                
+        except Exception as e:
+            self.log_test("Monthly Pain Record - POST Save", False, f"Exception: {str(e)}")
+    
+    def test_monthly_pain_record_get_persisted(self):
+        """Test GET /api/monthly-record/{device_id} - Verify data persistence"""
+        try:
+            test_device = "test-monthly-001"
+            response = self.session.get(f"{self.base_url}/monthly-record/{test_device}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                if (data.get("device_id") == test_device and 
+                    len(data.get("records", [])) == 3 and
+                    data.get("records")[0].get("intensity") == 3):
+                    self.log_test("Monthly Pain Record - GET Persistence", True, 
+                                f"Data persisted correctly: {len(data.get('records'))} entries")
+                else:
+                    self.log_test("Monthly Pain Record - GET Persistence", False, 
+                                "Data not persisted correctly", data)
+            else:
+                self.log_test("Monthly Pain Record - GET Persistence", False, 
+                            f"Status code: {response.status_code}", response.text)
+                
+        except Exception as e:
+            self.log_test("Monthly Pain Record - GET Persistence", False, f"Exception: {str(e)}")
+    
+    def test_monthly_pain_record_delete(self):
+        """Test DELETE /api/monthly-record/{device_id} - Delete monthly pain record"""
+        try:
+            test_device = "test-monthly-001"
+            response = self.session.delete(f"{self.base_url}/monthly-record/{test_device}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                if ("message" in data and data.get("device_id") == test_device):
+                    self.log_test("Monthly Pain Record - DELETE", True, 
+                                f"Record deleted successfully")
+                else:
+                    self.log_test("Monthly Pain Record - DELETE", False, 
+                                "Incorrect delete response", data)
+            else:
+                self.log_test("Monthly Pain Record - DELETE", False, 
+                            f"Status code: {response.status_code}", response.text)
+                
+        except Exception as e:
+            self.log_test("Monthly Pain Record - DELETE", False, f"Exception: {str(e)}")
+    
+    def test_monthly_pain_record_get_after_delete(self):
+        """Test GET /api/monthly-record/{device_id} - Verify empty after deletion"""
+        try:
+            test_device = "test-monthly-001"
+            response = self.session.get(f"{self.base_url}/monthly-record/{test_device}")
+            
+            if response.status_code == 200:
+                data = response.json()
+                if (data.get("device_id") == test_device and 
+                    isinstance(data.get("records"), list) and 
+                    len(data.get("records")) == 0):
+                    self.log_test("Monthly Pain Record - GET After Delete", True, 
+                                f"Returns empty records after deletion")
+                else:
+                    self.log_test("Monthly Pain Record - GET After Delete", False, 
+                                "Should return empty records after deletion", data)
+            else:
+                self.log_test("Monthly Pain Record - GET After Delete", False, 
+                            f"Status code: {response.status_code}", response.text)
+                
+        except Exception as e:
+            self.log_test("Monthly Pain Record - GET After Delete", False, f"Exception: {str(e)}")
+    
     def run_all_tests(self):
         """Run all backend tests"""
         print("=" * 60)
