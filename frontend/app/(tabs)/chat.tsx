@@ -9,13 +9,15 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, typography } from '../../src/theme/colors';
 import { useStore } from '../../src/store/useStore';
-import { sendChatMessage, getChatHistory, ChatMessage } from '../../src/services/api';
+import { sendChatMessage, getChatHistory, clearChatHistory, ChatMessage } from '../../src/services/api';
 import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ChatScreen() {
   const { t } = useTranslation();
@@ -55,6 +57,40 @@ export default function ChatScreen() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleNewChat = () => {
+    const title = language === 'es' ? 'Nueva conversación' : 'New conversation';
+    const message = language === 'es' 
+      ? '¿Deseas iniciar una nueva conversación? Se borrará el historial actual.'
+      : 'Do you want to start a new conversation? Current history will be cleared.';
+    const cancel = language === 'es' ? 'Cancelar' : 'Cancel';
+    const confirm = language === 'es' ? 'Sí, nueva' : 'Yes, new';
+
+    Alert.alert(
+      title,
+      message,
+      [
+        { text: cancel, style: 'cancel' },
+        { 
+          text: confirm, 
+          style: 'destructive',
+          onPress: async () => {
+            if (!deviceId) return;
+            try {
+              await clearChatHistory(deviceId);
+              setMessages([{
+                role: 'assistant',
+                content: t('agoraIntro'),
+                created_at: new Date().toISOString(),
+              }]);
+            } catch (error) {
+              console.error('Error clearing chat:', error);
+            }
+          }
+        }
+      ]
+    );
   };
 
   const handleSend = async () => {
