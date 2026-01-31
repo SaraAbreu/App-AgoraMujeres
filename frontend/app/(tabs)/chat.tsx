@@ -173,7 +173,7 @@ export default function ChatScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['bottom']}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       {/* Custom Header with New Chat Button */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
@@ -192,35 +192,42 @@ export default function ChatScreen() {
       <KeyboardAvoidingView 
         style={styles.chatContainer}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 20}
       >
         <FlatList
-        ref={flatListRef}
-        data={messages}
-        renderItem={renderMessage}
-        keyExtractor={(item, index) => `${item.created_at}-${index}`}
-        contentContainerStyle={styles.messagesList}
-        onContentSizeChange={() => flatListRef.current?.scrollToEnd()}
-        showsVerticalScrollIndicator={false}
-      />
-      
-      {sending && (
-        <View style={styles.typingIndicator}>
-          <Ionicons name="leaf" size={14} color={colors.mossGreenLight} />
-          <Text style={styles.typingText}>{t('agoraTyping')}</Text>
-        </View>
-      )}
-      
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          value={inputText}
-          onChangeText={setInputText}
-          placeholder={t('typeMessage')}
-          placeholderTextColor={colors.textLight}
-          multiline
-          maxLength={500}
+          ref={flatListRef}
+          data={messages}
+          renderItem={renderMessage}
+          keyExtractor={(item, index) => `${item.created_at}-${index}`}
+          contentContainerStyle={styles.messagesList}
+          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+          onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         />
+      
+        {sending && (
+          <View style={styles.typingIndicator}>
+            <Ionicons name="leaf" size={14} color={colors.mossGreenLight} />
+            <Text style={styles.typingText}>{t('agoraTyping')}</Text>
+          </View>
+        )}
+      
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            value={inputText}
+            onChangeText={setInputText}
+            placeholder={t('typeMessage')}
+            placeholderTextColor={colors.textLight}
+            multiline
+            maxLength={500}
+            onFocus={() => {
+              setTimeout(() => {
+                flatListRef.current?.scrollToEnd({ animated: true });
+              }, 100);
+            }}
+          />
         <TouchableOpacity
           style={[
             styles.sendButton,
