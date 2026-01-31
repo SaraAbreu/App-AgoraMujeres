@@ -112,6 +112,7 @@ class SubscriptionStatus(BaseModel):
     trial_end: datetime = Field(default_factory=lambda: datetime.utcnow() + timedelta(hours=2))
     usage_seconds: int = 0
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    is_admin: bool = False  # Admin bypass for trial limits
 
 class CustomerCreate(BaseModel):
     device_id: str
@@ -128,6 +129,29 @@ class MonthlyPainRecord(BaseModel):
 class MonthlyPainRecordCreate(BaseModel):
     records: List[Dict[str, Any]] = Field(default_factory=list)
     cycle_start_date: str
+
+# ============== RESOURCE MODELS ==============
+
+class Resource(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    category: str  # breathing, stretching, nutrition, sleep, mindfulness, professional
+    type: str  # article, video
+    title: str
+    description: str
+    content: Optional[str] = None  # For articles
+    video_url: Optional[str] = None  # For videos (YouTube, Vimeo)
+    thumbnail_url: Optional[str] = None
+    author: Optional[str] = None
+    author_credentials: Optional[str] = None  # e.g., "Fisioterapeuta especializada en dolor crónico"
+    duration: Optional[str] = None  # For videos: "5:30"
+    read_time: Optional[str] = None  # For articles: "3 min"
+    language: str = "es"
+    is_featured: bool = False
+    order: int = 0
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+# Admin code for bypassing trial (set your secret code here)
+ADMIN_CODE = "AGORA2025ADMIN"
 
 # ============== SYSTEM PROMPTS ==============
 
