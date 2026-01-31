@@ -5,17 +5,25 @@ import Constants from 'expo-constants';
 const getApiUrl = () => {
   // First try extra config from app.json
   const extraUrl = Constants.expoConfig?.extra?.EXPO_BACKEND_URL;
-  if (extraUrl) return extraUrl;
+  if (extraUrl) {
+    console.log('[API] Using extra config URL:', extraUrl);
+    return extraUrl;
+  }
   
   // Then try environment variables
   const envUrl = process.env.EXPO_PUBLIC_BACKEND_URL;
-  if (envUrl) return envUrl;
+  if (envUrl) {
+    console.log('[API] Using env URL:', envUrl);
+    return envUrl;
+  }
   
   // Fallback for development (empty string means relative URL)
+  console.log('[API] Using relative URL (fallback)');
   return '';
 };
 
 const API_BASE = getApiUrl();
+console.log('[API] Final base URL:', API_BASE);
 
 const api = axios.create({
   baseURL: `${API_BASE}/api`,
