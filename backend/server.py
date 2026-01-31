@@ -524,12 +524,17 @@ async def get_subscription_status_internal(device_id: str) -> dict:
         return {
             "status": "trial",
             "trial_remaining_seconds": 7200,  # 2 hours
-            "trial_end": new_sub.trial_end.isoformat()
+            "trial_end": new_sub.trial_end.isoformat(),
+            "is_admin": False
         }
+    
+    # Check if admin (bypass all limits)
+    if sub.get("is_admin", False):
+        return {"status": "active", "is_admin": True}
     
     # Check if subscription is active
     if sub.get("status") == "active":
-        return {"status": "active"}
+        return {"status": "active", "is_admin": False}
     
     # Check trial status
     trial_end = sub.get("trial_end")
@@ -540,13 +545,14 @@ async def get_subscription_status_internal(device_id: str) -> dict:
             {"device_id": device_id},
             {"$set": {"status": "expired"}}
         )
-        return {"status": "expired", "trial_remaining_seconds": 0}
+        return {"status": "expired", "trial_remaining_seconds": 0, "is_admin": False}
     
     return {
         "status": "trial",
         "trial_remaining_seconds": 7200 - usage_seconds,
         "trial_end": trial_end.isoformat() if trial_end else None,
-        "usage_seconds": usage_seconds
+        "usage_seconds": usage_seconds,
+        "is_admin": False
     }
 
 async def track_usage(device_id: str, seconds: int):
