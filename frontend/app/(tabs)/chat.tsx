@@ -98,37 +98,17 @@ export default function ChatScreen() {
   };
 
   const handleNewChat = () => {
-    const title = language === 'es' ? 'Nueva conversación' : 'New conversation';
-    const message = language === 'es' 
-      ? '¿Deseas iniciar una nueva conversación? Se borrará el historial actual.'
-      : 'Do you want to start a new conversation? Current history will be cleared.';
-    const cancel = language === 'es' ? 'Cancelar' : 'Cancel';
-    const confirm = language === 'es' ? 'Sí, nueva' : 'Yes, new';
+    // Simply reset to a new conversation
+    setCurrentConversationId(undefined);
+    setMessages([{
+      role: 'assistant',
+      content: t('agoraIntro'),
+      created_at: new Date().toISOString(),
+    }]);
+  };
 
-    Alert.alert(
-      title,
-      message,
-      [
-        { text: cancel, style: 'cancel' },
-        { 
-          text: confirm, 
-          style: 'destructive',
-          onPress: async () => {
-            if (!deviceId) return;
-            try {
-              await clearChatHistory(deviceId);
-              setMessages([{
-                role: 'assistant',
-                content: t('agoraIntro'),
-                created_at: new Date().toISOString(),
-              }]);
-            } catch (error) {
-              console.error('Error clearing chat:', error);
-            }
-          }
-        }
-      ]
-    );
+  const handleViewHistory = () => {
+    router.push('/conversations');
   };
 
   const handleSend = async () => {
