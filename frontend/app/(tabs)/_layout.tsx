@@ -107,5 +107,12 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+    
+    {/* Paywall Modal */}
+    <PaywallModal 
+      visible={showPaywall} 
+      onClose={() => setShowPaywall(false)} 
+    />
+    </>
   );
 }
