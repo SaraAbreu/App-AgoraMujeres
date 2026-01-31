@@ -8,6 +8,9 @@
     "scheme": "agora-mujeres",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "extra": {
+      "EXPO_BACKEND_URL": "https://comfort-coach.preview.emergentagent.com"
+    },
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
