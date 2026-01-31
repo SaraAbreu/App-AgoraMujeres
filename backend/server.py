@@ -109,6 +109,17 @@ class CustomerCreate(BaseModel):
     email: str
     name: Optional[str] = None
 
+class MonthlyPainRecord(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    device_id: str
+    records: List[Dict[str, Any]] = Field(default_factory=list)  # [{date, intensity, notes}]
+    cycle_start_date: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class MonthlyPainRecordCreate(BaseModel):
+    records: List[Dict[str, Any]] = Field(default_factory=list)
+    cycle_start_date: str
+
 # ============== SYSTEM PROMPTS ==============
 
 SYSTEM_PROMPTS = {
