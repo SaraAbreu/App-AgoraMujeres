@@ -173,12 +173,28 @@ export default function ChatScreen() {
   }
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-    >
-      <FlatList
+    <SafeAreaView style={styles.container} edges={['bottom']}>
+      {/* Custom Header with New Chat Button */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <Ionicons name="leaf" size={24} color={colors.softWhite} />
+          <Text style={styles.headerTitle}>{t('chatWithAgora')}</Text>
+        </View>
+        <TouchableOpacity 
+          style={styles.newChatButton} 
+          onPress={handleNewChat}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="add-circle-outline" size={24} color={colors.softWhite} />
+        </TouchableOpacity>
+      </View>
+
+      <KeyboardAvoidingView 
+        style={styles.chatContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      >
+        <FlatList
         ref={flatListRef}
         data={messages}
         renderItem={renderMessage}
