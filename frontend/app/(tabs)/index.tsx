@@ -158,39 +158,54 @@ export default function HomeScreen() {
         {/* Quick Actions */}
         <Text style={styles.sectionTitle}>{t('quickActions')}</Text>
         
-        <View style={styles.actionsContainer}>
-          <TouchableOpacity
-            style={styles.actionCard}
-            onPress={() => router.push('/diary/new')}
-            activeOpacity={0.8}
-          >
-            <View style={[styles.actionIcon, { backgroundColor: '#8B5A2B' }]}>
-              <Ionicons name="create-outline" size={26} color={colors.softWhite} />
-            </View>
-            <Text style={styles.actionTitle}>{t('writeEntry')}</Text>
-          </TouchableOpacity>
+        <View style={styles.actionsGrid}>
+          <View style={styles.actionsRow}>
+            <TouchableOpacity
+              style={styles.actionCard}
+              onPress={() => router.push('/diary/new')}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.actionIcon, { backgroundColor: '#8B5A2B' }]}>
+                <Ionicons name="create-outline" size={26} color={colors.softWhite} />
+              </View>
+              <Text style={styles.actionTitle}>{t('writeEntry')}</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.actionCard}
-            onPress={() => router.push('/(tabs)/chat')}
-            activeOpacity={0.8}
-          >
-            <View style={[styles.actionIcon, { backgroundColor: '#B87333' }]}>
-              <Ionicons name="leaf-outline" size={26} color={colors.softWhite} />
-            </View>
-            <Text style={styles.actionTitle}>{t('talkToAgora')}</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.actionCard}
+              onPress={() => router.push('/(tabs)/chat')}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.actionIcon, { backgroundColor: '#B87333' }]}>
+                <Ionicons name="leaf-outline" size={26} color={colors.softWhite} />
+              </View>
+              <Text style={styles.actionTitle}>{t('talkToAgora')}</Text>
+            </TouchableOpacity>
+          </View>
 
-          <TouchableOpacity
-            style={styles.actionCard}
-            onPress={() => router.push('/(tabs)/patterns')}
-            activeOpacity={0.8}
-          >
-            <View style={[styles.actionIcon, { backgroundColor: '#D4956A' }]}>
-              <Ionicons name="analytics-outline" size={26} color={colors.softWhite} />
-            </View>
-            <Text style={styles.actionTitle}>{t('viewPatterns')}</Text>
-          </TouchableOpacity>
+          <View style={styles.actionsRow}>
+            <TouchableOpacity
+              style={styles.actionCard}
+              onPress={() => router.push('/(tabs)/patterns')}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.actionIcon, { backgroundColor: '#D4956A' }]}>
+                <Ionicons name="analytics-outline" size={26} color={colors.softWhite} />
+              </View>
+              <Text style={styles.actionTitle}>{t('viewPatterns')}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.actionCard}
+              onPress={() => router.push('/monthly-record')}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.actionIcon, { backgroundColor: '#8A8C6C' }]}>
+                <Ionicons name="medical-outline" size={26} color={colors.softWhite} />
+              </View>
+              <Text style={styles.actionTitle}>{t('monthlyRecord')}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Motivational Card */}
