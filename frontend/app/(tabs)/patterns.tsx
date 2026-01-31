@@ -15,7 +15,7 @@ import { getPatterns, Patterns } from '../../src/services/api';
 
 export default function PatternsScreen() {
   const { t } = useTranslation();
-  const { deviceId } = useStore();
+  const { deviceId, language } = useStore();
   const [patterns, setPatterns] = useState<Patterns | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -71,7 +71,7 @@ export default function PatternsScreen() {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator size="large" color={colors.softWhite} />
       </View>
     );
   }
@@ -79,7 +79,9 @@ export default function PatternsScreen() {
   if (!patterns || patterns.total_entries === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name="analytics-outline" size={64} color={colors.primaryLight} />
+        <View style={styles.emptyIconContainer}>
+          <Ionicons name="analytics-outline" size={48} color={colors.mossGreen} />
+        </View>
         <Text style={styles.emptyTitle}>{t('noPatterns')}</Text>
         <Text style={styles.emptySubtitle}>{t('keepWriting')}</Text>
       </View>
@@ -91,16 +93,22 @@ export default function PatternsScreen() {
       style={styles.container}
       contentContainerStyle={styles.content}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
+        <RefreshControl 
+          refreshing={refreshing} 
+          onRefresh={onRefresh} 
+          tintColor={colors.softWhite}
+          colors={[colors.warmBrown]}
+        />
       }
+      showsVerticalScrollIndicator={false}
     >
       {/* Summary Card */}
       <View style={styles.summaryCard}>
         <Text style={styles.summaryTitle}>
-          {`últimos ${patterns.period_days} días`}
+          {language === 'es' ? `Últimos ${patterns.period_days} días` : `Last ${patterns.period_days} days`}
         </Text>
         <Text style={styles.summaryValue}>
-          {patterns.total_entries} {patterns.total_entries === 1 ? 'entrada' : 'entradas'}
+          {patterns.total_entries} {t('entries')}
         </Text>
       </View>
 
@@ -171,15 +179,13 @@ export default function PatternsScreen() {
 
       {/* Insight */}
       <View style={styles.insightCard}>
-        <Ionicons name="bulb-outline" size={24} color={colors.accent} />
+        <Ionicons name="bulb-outline" size={24} color={colors.warmBrown} />
         <View style={styles.insightContent}>
-          <Text style={styles.insightTitle}>
-            {patterns.language === 'es' ? 'Patrón destacado' : 'Notable pattern'}
-          </Text>
+          <Text style={styles.insightTitle}>{t('notablePattern')}</Text>
           <Text style={styles.insightText}>
-            {t('language') === 'es'
-              ? `Tu estado más frecuente ha sido "${getEmotionLabel(patterns.trends.highest_emotional)}". Recuerda que cada día es único.`
-              : `Your most frequent state has been "${getEmotionLabel(patterns.trends.highest_emotional)}". Remember that every day is unique.`
+            {language === 'es'
+              ? `Tu estado más frecuente ha sido "${getEmotionLabel(patterns.trends.highest_emotional)}". Cada día es único y valioso.`
+              : `Your most frequent state has been "${getEmotionLabel(patterns.trends.highest_emotional)}". Every day is unique and valuable.`
             }
           </Text>
         </View>
@@ -191,69 +197,86 @@ export default function PatternsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.mossGreen,
   },
   content: {
     padding: spacing.lg,
+    paddingBottom: spacing.xxl,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.background,
+    backgroundColor: colors.mossGreen,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.background,
+    backgroundColor: colors.mossGreen,
     paddingHorizontal: spacing.xl,
   },
+  emptyIconContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: colors.surface,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: spacing.lg,
+  },
   emptyTitle: {
-    fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.semibold,
-    color: colors.text,
-    marginTop: spacing.lg,
+    fontSize: typography.sizes.xl,
+    fontFamily: 'Cormorant_600SemiBold',
+    color: colors.textOnDark,
+    marginBottom: spacing.xs,
   },
   emptySubtitle: {
     fontSize: typography.sizes.md,
-    color: colors.textSecondary,
-    marginTop: spacing.xs,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.textOnDark,
     textAlign: 'center',
+    opacity: 0.8,
   },
   summaryCard: {
-    backgroundColor: colors.primaryLight,
-    padding: spacing.lg,
-    borderRadius: borderRadius.md,
+    backgroundColor: colors.surface,
+    padding: spacing.xl,
+    borderRadius: borderRadius.lg,
     marginBottom: spacing.lg,
     alignItems: 'center',
+    shadowColor: colors.shadowDark,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 1,
+    shadowRadius: 8,
+    elevation: 3,
   },
   summaryTitle: {
     fontSize: typography.sizes.sm,
-    color: colors.primaryDark,
+    fontFamily: 'Nunito_500Medium',
+    color: colors.warmBrown,
     textTransform: 'capitalize',
   },
   summaryValue: {
     fontSize: typography.sizes.xxl,
-    fontWeight: typography.weights.bold,
-    color: colors.primaryDark,
+    fontFamily: 'Cormorant_700Bold',
+    color: colors.text,
     marginTop: spacing.xs,
   },
   sectionTitle: {
     fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.semibold,
-    color: colors.text,
+    fontFamily: 'Cormorant_600SemiBold',
+    color: colors.textOnDark,
     marginBottom: spacing.md,
   },
   card: {
     backgroundColor: colors.surface,
     padding: spacing.lg,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.lg,
     marginBottom: spacing.lg,
     shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
-    shadowRadius: 8,
+    shadowRadius: 6,
     elevation: 2,
   },
   trendRow: {
@@ -264,7 +287,7 @@ const styles = StyleSheet.create({
   trendLabel: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: 120,
+    width: 110,
   },
   trendDot: {
     width: 10,
@@ -274,12 +297,13 @@ const styles = StyleSheet.create({
   },
   trendText: {
     fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_400Regular',
     color: colors.text,
   },
   trendBarContainer: {
     flex: 1,
     height: 8,
-    backgroundColor: colors.backgroundAlt,
+    backgroundColor: colors.creamLight,
     borderRadius: 4,
     marginHorizontal: spacing.sm,
   },
@@ -289,8 +313,9 @@ const styles = StyleSheet.create({
   },
   trendValue: {
     fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_500Medium',
     color: colors.textSecondary,
-    width: 30,
+    width: 35,
     textAlign: 'right',
   },
   physicalRow: {
@@ -302,12 +327,13 @@ const styles = StyleSheet.create({
   },
   physicalLabel: {
     fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
     marginBottom: spacing.xs,
   },
   physicalValue: {
     fontSize: typography.sizes.xl,
-    fontWeight: typography.weights.semibold,
+    fontFamily: 'Cormorant_600SemiBold',
     color: colors.text,
   },
   wordsContainer: {
@@ -318,38 +344,46 @@ const styles = StyleSheet.create({
   wordTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.backgroundAlt,
+    backgroundColor: colors.creamLight,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
     borderRadius: borderRadius.full,
   },
   wordText: {
     fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_400Regular',
     color: colors.text,
   },
   wordCount: {
     fontSize: typography.sizes.xs,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
     marginLeft: spacing.xs,
   },
   insightCard: {
     flexDirection: 'row',
-    backgroundColor: colors.accentLight,
+    backgroundColor: colors.surface,
     padding: spacing.lg,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.lg,
     gap: spacing.md,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 6,
+    elevation: 2,
   },
   insightContent: {
     flex: 1,
   },
   insightTitle: {
     fontSize: typography.sizes.md,
-    fontWeight: typography.weights.semibold,
-    color: colors.text,
+    fontFamily: 'Nunito_600SemiBold',
+    color: colors.warmBrown,
     marginBottom: spacing.xs,
   },
   insightText: {
     fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
     lineHeight: 20,
   },

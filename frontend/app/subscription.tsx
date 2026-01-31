@@ -15,9 +15,12 @@ import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { colors, spacing, borderRadius, typography } from '../src/theme/colors';
 import { useStore } from '../src/store/useStore';
 import { createCustomer, createPaymentIntent, activateSubscription, getSubscriptionStatus } from '../src/services/api';
+
+const LOGO_URL = 'https://customer-assets.emergentagent.com/job_safe-refuge/artifacts/ywgi4kxk_Gemini_Generated_Image_529exc529exc529e.jpg';
 
 export default function SubscriptionScreen() {
   const { t } = useTranslation();
@@ -27,7 +30,6 @@ export default function SubscriptionScreen() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<'email' | 'payment' | 'success'>('email');
-  const [customerCreated, setCustomerCreated] = useState(false);
 
   const handleCreateCustomer = async () => {
     if (!email.trim() || !deviceId) return;
@@ -35,7 +37,7 @@ export default function SubscriptionScreen() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
       Alert.alert(
-        language === 'es' ? 'Error' : 'Error',
+        '',
         language === 'es' ? 'Por favor, introduce un email válido' : 'Please enter a valid email'
       );
       return;
@@ -44,13 +46,12 @@ export default function SubscriptionScreen() {
     setLoading(true);
     try {
       await createCustomer(deviceId, email.trim());
-      setCustomerCreated(true);
       setStep('payment');
     } catch (error) {
       console.error('Error creating customer:', error);
       Alert.alert(
-        language === 'es' ? 'Error' : 'Error',
-        language === 'es' ? 'No se pudo crear el cliente' : 'Could not create customer'
+        '',
+        language === 'es' ? 'No se pudo procesar. Inténtalo de nuevo.' : 'Could not process. Please try again.'
       );
     } finally {
       setLoading(false);
@@ -62,14 +63,10 @@ export default function SubscriptionScreen() {
     
     setLoading(true);
     try {
-      // In a real app, you would use Stripe's payment sheet here
-      // For MVP, we'll simulate a successful payment
       const paymentIntent = await createPaymentIntent(deviceId);
       
-      // For demo purposes, we'll show a success message
-      // In production, this would open Stripe's payment sheet
       Alert.alert(
-        language === 'es' ? 'Pago pendiente' : 'Payment pending',
+        language === 'es' ? 'Pago en modo prueba' : 'Payment in test mode',
         language === 'es' 
           ? 'El sistema de pagos está en modo de prueba. Tu suscripción será activada.' 
           : 'The payment system is in test mode. Your subscription will be activated.',
@@ -77,14 +74,12 @@ export default function SubscriptionScreen() {
           {
             text: 'OK',
             onPress: async () => {
-              // Simulate successful payment
               try {
                 await activateSubscription(deviceId, paymentIntent.payment_intent_id);
                 const status = await getSubscriptionStatus(deviceId);
                 setSubscriptionStatus(status);
                 setStep('success');
               } catch (e) {
-                // For demo, still show success
                 setStep('success');
               }
             }
@@ -94,7 +89,7 @@ export default function SubscriptionScreen() {
     } catch (error) {
       console.error('Error processing payment:', error);
       Alert.alert(
-        language === 'es' ? 'Error' : 'Error',
+        '',
         language === 'es' ? 'No se pudo procesar el pago' : 'Could not process payment'
       );
     } finally {
@@ -126,13 +121,14 @@ export default function SubscriptionScreen() {
           style={styles.scrollView}
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          {/* Icon */}
-          <View style={styles.iconContainer}>
-            <Ionicons 
-              name={step === 'success' ? "checkmark-circle" : "heart"} 
-              size={64} 
-              color={step === 'success' ? colors.success : colors.primary} 
+          {/* Logo */}
+          <View style={styles.logoContainer}>
+            <Image
+              source={{ uri: LOGO_URL }}
+              style={styles.logo}
+              contentFit="contain"
             />
           </View>
 
@@ -149,7 +145,7 @@ export default function SubscriptionScreen() {
               {/* Trial Status */}
               {subscriptionStatus?.status === 'trial' && (
                 <View style={styles.trialBadge}>
-                  <Ionicons name="time-outline" size={16} color={colors.warning} />
+                  <Ionicons name="time-outline" size={16} color={colors.warmBrown} />
                   <Text style={styles.trialBadgeText}>
                     {t('trialRemaining')}: {formatTrialTime()}
                   </Text>
@@ -181,25 +177,25 @@ export default function SubscriptionScreen() {
                 </View>
                 <View style={styles.features}>
                   <View style={styles.featureRow}>
-                    <Ionicons name="checkmark" size={20} color={colors.success} />
+                    <Ionicons name="checkmark" size={20} color={colors.mossGreen} />
                     <Text style={styles.featureText}>
                       {language === 'es' ? 'Diario emocional ilimitado' : 'Unlimited emotional diary'}
                     </Text>
                   </View>
                   <View style={styles.featureRow}>
-                    <Ionicons name="checkmark" size={20} color={colors.success} />
+                    <Ionicons name="checkmark" size={20} color={colors.mossGreen} />
                     <Text style={styles.featureText}>
-                      {language === 'es' ? 'Conversaciones con Aurora' : 'Conversations with Aurora'}
+                      {language === 'es' ? 'Conversaciones con Ágora' : 'Conversations with Ágora'}
                     </Text>
                   </View>
                   <View style={styles.featureRow}>
-                    <Ionicons name="checkmark" size={20} color={colors.success} />
+                    <Ionicons name="checkmark" size={20} color={colors.mossGreen} />
                     <Text style={styles.featureText}>
                       {language === 'es' ? 'Análisis de patrones' : 'Pattern analysis'}
                     </Text>
                   </View>
                   <View style={styles.featureRow}>
-                    <Ionicons name="checkmark" size={20} color={colors.success} />
+                    <Ionicons name="checkmark" size={20} color={colors.mossGreen} />
                     <Text style={styles.featureText}>
                       {language === 'es' ? 'Privacidad total' : 'Total privacy'}
                     </Text>
@@ -227,9 +223,10 @@ export default function SubscriptionScreen() {
                     ]}
                     onPress={handleCreateCustomer}
                     disabled={!email.trim() || loading}
+                    activeOpacity={0.8}
                   >
                     {loading ? (
-                      <ActivityIndicator color={colors.white} />
+                      <ActivityIndicator color={colors.softWhite} />
                     ) : (
                       <Text style={styles.continueButtonText}>
                         {language === 'es' ? 'Continuar' : 'Continue'}
@@ -248,9 +245,10 @@ export default function SubscriptionScreen() {
                   ]}
                   onPress={handlePayment}
                   disabled={loading}
+                  activeOpacity={0.8}
                 >
                   {loading ? (
-                    <ActivityIndicator color={colors.white} />
+                    <ActivityIndicator color={colors.softWhite} />
                   ) : (
                     <Text style={styles.continueButtonText}>
                       {t('subscribe')}
@@ -264,6 +262,9 @@ export default function SubscriptionScreen() {
           {/* Success Step */}
           {step === 'success' && (
             <>
+              <View style={styles.successIcon}>
+                <Ionicons name="checkmark-circle" size={64} color={colors.mossGreen} />
+              </View>
               <Text style={styles.successText}>
                 {language === 'es' 
                   ? 'Tu suscripción está activa. Ahora puedes disfrutar de todas las funciones de Ágora.'
@@ -273,6 +274,7 @@ export default function SubscriptionScreen() {
               <TouchableOpacity
                 style={styles.continueButton}
                 onPress={() => router.replace('/(tabs)')}
+                activeOpacity={0.8}
               >
                 <Text style={styles.continueButtonText}>
                   {language === 'es' ? 'Comenzar' : 'Get started'}
@@ -297,7 +299,7 @@ export default function SubscriptionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.cream,
   },
   keyboardView: {
     flex: 1,
@@ -317,26 +319,25 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
     alignItems: 'center',
   },
-  iconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: colors.primaryLight,
-    justifyContent: 'center',
-    alignItems: 'center',
+  logoContainer: {
     marginBottom: spacing.lg,
   },
+  logo: {
+    width: 120,
+    height: 120,
+    borderRadius: borderRadius.lg,
+  },
   title: {
-    fontSize: typography.sizes.xxl,
-    fontWeight: typography.weights.bold,
-    color: colors.text,
+    fontSize: typography.sizes.xl,
+    fontFamily: 'Cormorant_700Bold',
+    color: colors.warmBrown,
     textAlign: 'center',
     marginBottom: spacing.md,
   },
   trialBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.creamLight,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.full,
@@ -344,15 +345,16 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   expiredBadge: {
-    backgroundColor: '#F5E6E6',
+    backgroundColor: colors.accentLight,
   },
   trialBadgeText: {
     fontSize: typography.sizes.sm,
-    color: colors.warning,
-    fontWeight: typography.weights.medium,
+    fontFamily: 'Nunito_500Medium',
+    color: colors.warmBrown,
   },
   description: {
     fontSize: typography.sizes.md,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: spacing.lg,
@@ -364,7 +366,7 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
     marginBottom: spacing.lg,
-    shadowColor: colors.shadow,
+    shadowColor: colors.shadowDark,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 12,
@@ -378,7 +380,7 @@ const styles = StyleSheet.create({
   },
   priceTitle: {
     fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.semibold,
+    fontFamily: 'Cormorant_600SemiBold',
     color: colors.text,
   },
   priceBadge: {
@@ -387,11 +389,12 @@ const styles = StyleSheet.create({
   },
   priceBadgeText: {
     fontSize: typography.sizes.xxl,
-    fontWeight: typography.weights.bold,
-    color: colors.primary,
+    fontFamily: 'Cormorant_700Bold',
+    color: colors.mossGreen,
   },
   priceMonth: {
     fontSize: typography.sizes.md,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
   },
   features: {
@@ -404,14 +407,16 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: typography.sizes.md,
+    fontFamily: 'Nunito_400Regular',
     color: colors.text,
   },
   emailInput: {
     width: '100%',
     backgroundColor: colors.surface,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.lg,
     padding: spacing.md,
     fontSize: typography.sizes.md,
+    fontFamily: 'Nunito_400Regular',
     color: colors.text,
     borderWidth: 1,
     borderColor: colors.border,
@@ -419,22 +424,26 @@ const styles = StyleSheet.create({
   },
   continueButton: {
     width: '100%',
-    backgroundColor: colors.primary,
+    backgroundColor: colors.mossGreen,
     padding: spacing.md,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.lg,
     alignItems: 'center',
     marginBottom: spacing.lg,
   },
   buttonDisabled: {
-    backgroundColor: colors.border,
+    backgroundColor: colors.mossGreenLight,
   },
   continueButtonText: {
     fontSize: typography.sizes.md,
-    fontWeight: typography.weights.semibold,
-    color: colors.white,
+    fontFamily: 'Nunito_600SemiBold',
+    color: colors.softWhite,
+  },
+  successIcon: {
+    marginBottom: spacing.lg,
   },
   successText: {
     fontSize: typography.sizes.md,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: spacing.xl,
@@ -442,6 +451,7 @@ const styles = StyleSheet.create({
   },
   privacyNote: {
     fontSize: typography.sizes.xs,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textLight,
     textAlign: 'center',
     fontStyle: 'italic',

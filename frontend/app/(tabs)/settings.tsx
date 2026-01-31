@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -32,7 +32,11 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView 
+      style={styles.container} 
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
       {/* Language Section */}
       <Text style={styles.sectionTitle}>{t('language')}</Text>
       <View style={styles.card}>
@@ -42,10 +46,11 @@ export default function SettingsScreen() {
             language === 'es' && styles.optionSelected
           ]}
           onPress={() => handleLanguageChange('es')}
+          activeOpacity={0.7}
         >
           <Text style={styles.optionText}>🇪🇸 {t('spanish')}</Text>
           {language === 'es' && (
-            <Ionicons name="checkmark" size={20} color={colors.primary} />
+            <Ionicons name="checkmark" size={20} color={colors.mossGreen} />
           )}
         </TouchableOpacity>
         <View style={styles.divider} />
@@ -55,10 +60,11 @@ export default function SettingsScreen() {
             language === 'en' && styles.optionSelected
           ]}
           onPress={() => handleLanguageChange('en')}
+          activeOpacity={0.7}
         >
           <Text style={styles.optionText}>🇬🇧 {t('english')}</Text>
           {language === 'en' && (
-            <Ionicons name="checkmark" size={20} color={colors.primary} />
+            <Ionicons name="checkmark" size={20} color={colors.mossGreen} />
           )}
         </TouchableOpacity>
       </View>
@@ -77,7 +83,7 @@ export default function SettingsScreen() {
         ) : subscriptionStatus?.status === 'trial' ? (
           <View>
             <View style={styles.statusRow}>
-              <Ionicons name="time-outline" size={24} color={colors.warning} />
+              <Ionicons name="time-outline" size={24} color={colors.warmBrown} />
               <View style={styles.statusContent}>
                 <Text style={styles.statusTitle}>{t('trialRemaining')}</Text>
                 <Text style={styles.trialTime}>{formatTrialTime()}</Text>
@@ -86,6 +92,7 @@ export default function SettingsScreen() {
             <TouchableOpacity
               style={styles.subscribeButton}
               onPress={() => router.push('/subscription')}
+              activeOpacity={0.8}
             >
               <Text style={styles.subscribeButtonText}>{t('activateSubscription')}</Text>
             </TouchableOpacity>
@@ -101,6 +108,7 @@ export default function SettingsScreen() {
             <TouchableOpacity
               style={styles.subscribeButton}
               onPress={() => router.push('/subscription')}
+              activeOpacity={0.8}
             >
               <Text style={styles.subscribeButtonText}>{t('activateSubscription')}</Text>
             </TouchableOpacity>
@@ -110,10 +118,14 @@ export default function SettingsScreen() {
 
       {/* Cycle Tracking */}
       <Text style={styles.sectionTitle}>{t('cycleTracking')}</Text>
-      <TouchableOpacity style={styles.card} onPress={() => Alert.alert('Coming soon')}>
+      <TouchableOpacity 
+        style={styles.card} 
+        onPress={() => Alert.alert(language === 'es' ? 'Próximamente' : 'Coming soon')}
+        activeOpacity={0.8}
+      >
         <View style={styles.optionRow}>
-          <Ionicons name="calendar-outline" size={24} color={colors.primary} />
-          <Text style={[styles.optionText, { marginLeft: spacing.md }]}>
+          <Ionicons name="calendar-outline" size={24} color={colors.mossGreen} />
+          <Text style={[styles.optionText, { marginLeft: spacing.md, flex: 1 }]}>
             {t('cycleTracking')}
           </Text>
           <Ionicons name="chevron-forward" size={20} color={colors.textLight} />
@@ -125,9 +137,9 @@ export default function SettingsScreen() {
         <Text style={styles.appName}>Ágora Mujeres</Text>
         <Text style={styles.version}>v1.0.0</Text>
         <Text style={styles.tagline}>
-          {t('language') === 'es' 
-            ? 'Un refugio para ti' 
-            : 'A refuge for you'
+          {language === 'es' 
+            ? 'Tu refugio emocional' 
+            : 'Your emotional refuge'
           }
         </Text>
       </View>
@@ -138,27 +150,29 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.mossGreen,
   },
   content: {
     padding: spacing.lg,
+    paddingBottom: spacing.xxl,
   },
   sectionTitle: {
     fontSize: typography.sizes.sm,
-    fontWeight: typography.weights.semibold,
-    color: colors.textSecondary,
+    fontFamily: 'Nunito_600SemiBold',
+    color: colors.textOnDark,
     textTransform: 'uppercase',
     marginBottom: spacing.sm,
     marginTop: spacing.md,
+    letterSpacing: 1,
   },
   card: {
     backgroundColor: colors.surface,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.lg,
     overflow: 'hidden',
     shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
-    shadowRadius: 8,
+    shadowRadius: 6,
     elevation: 2,
   },
   optionRow: {
@@ -168,10 +182,11 @@ const styles = StyleSheet.create({
     padding: spacing.md,
   },
   optionSelected: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.creamLight,
   },
   optionText: {
     fontSize: typography.sizes.md,
+    fontFamily: 'Nunito_400Regular',
     color: colors.text,
   },
   divider: {
@@ -189,22 +204,23 @@ const styles = StyleSheet.create({
   },
   statusTitle: {
     fontSize: typography.sizes.md,
-    fontWeight: typography.weights.medium,
+    fontFamily: 'Nunito_500Medium',
     color: colors.text,
   },
   statusSubtitle: {
     fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
     marginTop: 2,
   },
   trialTime: {
     fontSize: typography.sizes.xl,
-    fontWeight: typography.weights.bold,
-    color: colors.warning,
+    fontFamily: 'Cormorant_700Bold',
+    color: colors.warmBrown,
     marginTop: spacing.xs,
   },
   subscribeButton: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.mossGreen,
     margin: spacing.md,
     marginTop: 0,
     padding: spacing.md,
@@ -213,8 +229,8 @@ const styles = StyleSheet.create({
   },
   subscribeButtonText: {
     fontSize: typography.sizes.md,
-    fontWeight: typography.weights.semibold,
-    color: colors.white,
+    fontFamily: 'Nunito_600SemiBold',
+    color: colors.softWhite,
   },
   aboutSection: {
     alignItems: 'center',
@@ -222,19 +238,23 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xl,
   },
   appName: {
-    fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.semibold,
-    color: colors.primary,
+    fontSize: typography.sizes.xl,
+    fontFamily: 'Cormorant_700Bold',
+    color: colors.textOnDark,
   },
   version: {
     fontSize: typography.sizes.sm,
-    color: colors.textLight,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.textOnDark,
+    opacity: 0.7,
     marginTop: spacing.xs,
   },
   tagline: {
     fontSize: typography.sizes.sm,
-    color: colors.textSecondary,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.textOnDark,
     marginTop: spacing.sm,
     fontStyle: 'italic',
+    opacity: 0.9,
   },
 });

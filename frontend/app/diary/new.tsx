@@ -10,6 +10,7 @@ import {
   Platform,
   Alert,
   ActivityIndicator,
+  Animated,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'expo-router';
@@ -43,8 +44,16 @@ export default function NewDiaryEntry() {
   const [showPhysical, setShowPhysical] = useState(false);
   const [weather, setWeather] = useState<any>(null);
   const [saving, setSaving] = useState(false);
+  const fadeAnim = useState(new Animated.Value(0))[0];
 
   useEffect(() => {
+    // Fade in animation
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 400,
+      useNativeDriver: true,
+    }).start();
+    
     loadWeather();
   }, []);
 
@@ -83,7 +92,7 @@ export default function NewDiaryEntry() {
       });
       
       Alert.alert(
-        language === 'es' ? 'Guardado' : 'Saved',
+        '',
         t('entrySaved'),
         [{ text: 'OK', onPress: () => router.back() }]
       );
@@ -93,6 +102,10 @@ export default function NewDiaryEntry() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const goToChat = () => {
+    router.replace('/(tabs)/chat');
   };
 
   const getEmotionColor = (key: string) => {
@@ -137,7 +150,7 @@ export default function NewDiaryEntry() {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Ionicons name="close" size={28} color={colors.text} />
+            <Ionicons name="close" size={28} color={colors.textOnDark} />
           </TouchableOpacity>
           <Text style={styles.title}>{t('newEntry')}</Text>
           <TouchableOpacity 
@@ -146,29 +159,41 @@ export default function NewDiaryEntry() {
             disabled={saving}
           >
             {saving ? (
-              <ActivityIndicator size="small" color={colors.primary} />
+              <ActivityIndicator size="small" color={colors.softWhite} />
             ) : (
               <Text style={styles.saveButtonText}>{t('save')}</Text>
             )}
           </TouchableOpacity>
         </View>
 
-        <ScrollView 
-          style={styles.scrollView}
+        <Animated.ScrollView 
+          style={[styles.scrollView, { opacity: fadeAnim }]}
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
         >
-          {/* Text Input */}
-          <Text style={styles.sectionTitle}>{t('writeThoughts')}</Text>
-          <TextInput
-            style={styles.textInput}
-            multiline
-            placeholder={t('writeThoughts')}
-            placeholderTextColor={colors.textLight}
-            value={texto}
-            onChangeText={setTexto}
-            textAlignVertical="top"
-          />
+          {/* Text Input Card */}
+          <View style={styles.textCard}>
+            <Text style={styles.textLabel}>{t('writeThoughts')}</Text>
+            <TextInput
+              style={styles.textInput}
+              multiline
+              placeholder={language === 'es' ? 'Escribe aquí...' : 'Write here...'}
+              placeholderTextColor={colors.textLight}
+              value={texto}
+              onChangeText={setTexto}
+              textAlignVertical="top"
+            />
+            
+            {/* Want to Talk Button */}
+            <TouchableOpacity 
+              style={styles.wantToTalkButton}
+              onPress={goToChat}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="leaf-outline" size={18} color={colors.softWhite} />
+              <Text style={styles.wantToTalkText}>{t('wantToTalk')}</Text>
+            </TouchableOpacity>
+          </View>
 
           {/* Emotional State */}
           <Text style={styles.sectionTitle}>{t('howDoYouFeel')}</Text>
@@ -185,12 +210,13 @@ export default function NewDiaryEntry() {
           <TouchableOpacity 
             style={styles.physicalToggle}
             onPress={() => setShowPhysical(!showPhysical)}
+            activeOpacity={0.8}
           >
             <View style={styles.physicalToggleContent}>
               <Ionicons 
                 name={showPhysical ? "body" : "body-outline"} 
                 size={20} 
-                color={colors.primary} 
+                color={colors.mossGreen} 
               />
               <Text style={styles.physicalToggleText}>{t('physicalState')}</Text>
             </View>
@@ -203,7 +229,7 @@ export default function NewDiaryEntry() {
 
           {/* Physical State */}
           {showPhysical && (
-            <View style={styles.physicalCard}>
+            <Animated.View style={styles.physicalCard}>
               <View style={styles.sliderContainer}>
                 <View style={styles.sliderHeader}>
                   <Text style={styles.sliderLabel}>{t('nivel_dolor')}</Text>
@@ -255,19 +281,19 @@ export default function NewDiaryEntry() {
                   thumbTintColor={colors.emotion.niebla}
                 />
               </View>
-            </View>
+            </Animated.View>
           )}
 
           {/* Weather Info */}
           {weather && (
             <View style={styles.weatherInfo}>
-              <Ionicons name="partly-sunny-outline" size={16} color={colors.textSecondary} />
+              <Ionicons name="partly-sunny-outline" size={16} color={colors.textOnDark} />
               <Text style={styles.weatherText}>
                 {Math.round(weather.temperature)}°C • {weather.condition}
               </Text>
             </View>
           )}
-        </ScrollView>
+        </Animated.ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -276,7 +302,7 @@ export default function NewDiaryEntry() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.mossGreen,
   },
   keyboardView: {
     flex: 1,
@@ -287,16 +313,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
   backButton: {
     padding: spacing.xs,
   },
   title: {
     fontSize: typography.sizes.lg,
-    fontWeight: typography.weights.semibold,
-    color: colors.text,
+    fontFamily: 'Cormorant_600SemiBold',
+    color: colors.textOnDark,
   },
   saveButton: {
     paddingHorizontal: spacing.md,
@@ -304,37 +328,73 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     fontSize: typography.sizes.md,
-    fontWeight: typography.weights.semibold,
-    color: colors.primary,
+    fontFamily: 'Nunito_600SemiBold',
+    color: colors.softWhite,
   },
   scrollView: {
     flex: 1,
   },
   content: {
     padding: spacing.lg,
+    paddingBottom: spacing.xxl,
   },
-  sectionTitle: {
+  textCard: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
+    shadowColor: colors.shadowDark,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 1,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  textLabel: {
     fontSize: typography.sizes.md,
-    fontWeight: typography.weights.medium,
-    color: colors.text,
+    fontFamily: 'Cormorant_600SemiBold',
+    color: colors.warmBrown,
     marginBottom: spacing.sm,
   },
   textInput: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
     fontSize: typography.sizes.md,
+    fontFamily: 'Nunito_400Regular',
     color: colors.text,
     minHeight: 120,
-    marginBottom: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
+    lineHeight: 26,
+  },
+  wantToTalkButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.mossGreen,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    borderRadius: borderRadius.md,
+    marginTop: spacing.md,
+    gap: spacing.sm,
+    alignSelf: 'flex-end',
+  },
+  wantToTalkText: {
+    fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_500Medium',
+    color: colors.softWhite,
+  },
+  sectionTitle: {
+    fontSize: typography.sizes.lg,
+    fontFamily: 'Cormorant_600SemiBold',
+    color: colors.textOnDark,
+    marginBottom: spacing.md,
   },
   emotionsCard: {
     backgroundColor: colors.surface,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
     marginBottom: spacing.lg,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 6,
+    elevation: 2,
   },
   sliderContainer: {
     marginBottom: spacing.md,
@@ -353,12 +413,13 @@ const styles = StyleSheet.create({
   sliderLabel: {
     flex: 1,
     fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_400Regular',
     color: colors.text,
   },
   sliderValue: {
     fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_500Medium',
     color: colors.textSecondary,
-    fontWeight: typography.weights.medium,
   },
   slider: {
     height: 40,
@@ -370,7 +431,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: colors.surface,
     padding: spacing.md,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.lg,
     marginBottom: spacing.md,
   },
   physicalToggleContent: {
@@ -380,12 +441,13 @@ const styles = StyleSheet.create({
   },
   physicalToggleText: {
     fontSize: typography.sizes.md,
+    fontFamily: 'Nunito_400Regular',
     color: colors.text,
   },
   physicalCard: {
     backgroundColor: colors.surface,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
     marginBottom: spacing.lg,
   },
   weatherInfo: {
@@ -397,6 +459,8 @@ const styles = StyleSheet.create({
   },
   weatherText: {
     fontSize: typography.sizes.sm,
-    color: colors.textSecondary,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.textOnDark,
+    opacity: 0.8,
   },
 });
