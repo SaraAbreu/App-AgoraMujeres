@@ -86,6 +86,17 @@ export interface Patterns {
   };
 }
 
+export interface MonthlyPainRecord {
+  device_id: string;
+  records: Array<{
+    date: string;
+    intensity: number;
+    notes?: string;
+  }>;
+  cycle_start_date: string;
+  created_at?: string;
+}
+
 // API Functions
 
 // Diary
@@ -173,6 +184,27 @@ export const getCycleEntries = async (deviceId: string, limit = 12): Promise<Cyc
 // Weather
 export const getWeather = async (lat: number, lon: number): Promise<Weather> => {
   const response = await api.get('/weather', { params: { lat, lon } });
+  return response.data;
+};
+
+// Monthly Pain Record
+export const getMonthlyRecord = async (deviceId: string): Promise<MonthlyPainRecord | null> => {
+  try {
+    const response = await api.get(`/monthly-record/${deviceId}`);
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.status === 404) {
+      return null;
+    }
+    throw error;
+  }
+};
+
+export const saveMonthlyRecord = async (deviceId: string, data: {
+  records: Array<{ date: string; intensity: number; notes?: string }>;
+  cycle_start_date: string;
+}): Promise<MonthlyPainRecord> => {
+  const response = await api.post(`/monthly-record/${deviceId}`, data);
   return response.data;
 };
 
