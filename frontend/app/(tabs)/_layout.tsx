@@ -1,15 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../src/theme/colors';
 import { Platform } from 'react-native';
+import { useTrialCheck } from '../../src/hooks/useTrialCheck';
+import { PaywallModal } from '../../src/components/PaywallModal';
 
 export default function TabLayout() {
   const { t } = useTranslation();
+  const { isTrialExpired, isSubscribed } = useTrialCheck();
+  const [showPaywall, setShowPaywall] = useState(false);
+
+  useEffect(() => {
+    // Show paywall when trial expires (but not if subscribed)
+    if (isTrialExpired && !isSubscribed) {
+      setShowPaywall(true);
+    }
+  }, [isTrialExpired, isSubscribed]);
 
   return (
-    <Tabs
+    <>
+      <Tabs
       screenOptions={{
         tabBarActiveTintColor: colors.softWhite,
         tabBarInactiveTintColor: colors.mossGreenLight,
