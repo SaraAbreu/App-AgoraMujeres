@@ -3,10 +3,15 @@ import Constants from 'expo-constants';
 
 // Get the API URL from environment
 const getApiUrl = () => {
-  const envUrl = Constants.expoConfig?.extra?.EXPO_BACKEND_URL || process.env.EXPO_PUBLIC_API_URL;
+  // First try extra config from app.json
+  const extraUrl = Constants.expoConfig?.extra?.EXPO_BACKEND_URL;
+  if (extraUrl) return extraUrl;
+  
+  // Then try environment variables
+  const envUrl = process.env.EXPO_PUBLIC_BACKEND_URL;
   if (envUrl) return envUrl;
   
-  // Fallback for development
+  // Fallback for development (empty string means relative URL)
   return '';
 };
 
