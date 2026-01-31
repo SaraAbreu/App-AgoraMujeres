@@ -120,7 +120,7 @@ export default function SettingsScreen() {
       <Text style={styles.sectionTitle}>{t('cycleTracking')}</Text>
       <TouchableOpacity 
         style={styles.card} 
-        onPress={() => Alert.alert(language === 'es' ? 'Próximamente' : 'Coming soon')}
+        onPress={() => router.push('/cycle')}
         activeOpacity={0.8}
       >
         <View style={styles.optionRow}>
