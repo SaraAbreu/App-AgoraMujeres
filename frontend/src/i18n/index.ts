@@ -95,6 +95,11 @@ const resources = {
       humidity: 'Humedad',
       pressure: 'Presión',
       
+      // Monthly Record
+      monthlyRecord: 'Registro mensual',
+      monthlyRecordTitle: 'Registro de dolor',
+      monthlyRecordDesc: 'Para tu médico',
+      
       // Motivational
       dailyReminder: 'Cada día cuenta, incluso los más difíciles. Estás haciendo un trabajo increíble.',
       
@@ -202,6 +207,11 @@ const resources = {
       temperature: 'Temperature',
       humidity: 'Humidity',
       pressure: 'Pressure',
+      
+      // Monthly Record
+      monthlyRecord: 'Monthly record',
+      monthlyRecordTitle: 'Pain record',
+      monthlyRecordDesc: 'For your doctor',
       
       // Motivational
       dailyReminder: 'Every day counts, even the hardest ones. You are doing an amazing job.',
