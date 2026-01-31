@@ -482,6 +482,16 @@ class AgoraBackendTester:
         self.test_weather()
         self.test_cycle_entry_creation()
         self.test_cycle_entries_retrieval()
+        
+        # Monthly Pain Record tests (in sequence)
+        print("🩸 MONTHLY PAIN RECORD ENDPOINT TESTS")
+        print("-" * 40)
+        self.test_monthly_pain_record_get_new()
+        self.test_monthly_pain_record_post()
+        self.test_monthly_pain_record_get_persisted()
+        self.test_monthly_pain_record_delete()
+        self.test_monthly_pain_record_get_after_delete()
+        
         self.test_stripe_customer_creation()
         
         # Summary
