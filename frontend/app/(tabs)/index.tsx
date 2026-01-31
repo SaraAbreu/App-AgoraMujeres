@@ -315,10 +315,13 @@ const styles = StyleSheet.create({
     color: colors.textOnDark,
     marginBottom: spacing.md,
   },
-  actionsContainer: {
+  actionsGrid: {
+    marginBottom: spacing.lg,
+    gap: spacing.md,
+  },
+  actionsRow: {
     flexDirection: 'row',
     gap: spacing.md,
-    marginBottom: spacing.lg,
   },
   actionCard: {
     flex: 1,
