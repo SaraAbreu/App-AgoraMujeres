@@ -300,10 +300,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.mossGreenLight,
   },
-  headerLeft: {
+  historyButton: {
+    padding: spacing.xs,
+  },
+  headerCenter: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing.xs,
   },
   headerTitle: {
     fontSize: typography.sizes.lg,
