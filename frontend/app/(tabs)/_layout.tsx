@@ -16,19 +16,19 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: colors.mossGreenDark,
           borderTopWidth: 0,
-          paddingTop: 10,
-          paddingBottom: Platform.OS === 'ios' ? 30 : 12,
-          height: Platform.OS === 'ios' ? 95 : 70,
+          paddingTop: 12,
+          paddingBottom: Platform.OS === 'ios' ? 38 : 20,
+          height: Platform.OS === 'ios' ? 100 : 80,
           elevation: 0,
           shadowOpacity: 0,
         },
         tabBarLabelStyle: {
-          fontSize: 10,
+          fontSize: 11,
           fontFamily: 'Nunito_500Medium',
-          marginTop: 2,
+          marginTop: 4,
         },
         tabBarIconStyle: {
-          marginBottom: -2,
+          marginBottom: 0,
         },
         headerStyle: {
           backgroundColor: colors.mossGreen,
