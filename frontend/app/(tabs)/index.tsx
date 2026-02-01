@@ -234,16 +234,16 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
   },
   headerLogo: {
-    width: 140,
-    height: 140,
-    borderRadius: borderRadius.lg,
+    width: 180,
+    height: 180,
+    borderRadius: borderRadius.xl,
   },
   welcomeCard: {
     backgroundColor: colors.surface,
-    padding: spacing.xl,
+    padding: spacing.md,
     borderRadius: borderRadius.lg,
     marginBottom: spacing.lg,
     shadowColor: colors.shadowDark,
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   welcomeTitle: {
-    fontSize: typography.sizes.xl,
+    fontSize: typography.sizes.lg,
     fontFamily: 'Cormorant_700Bold',
     color: colors.warmBrown,
     marginBottom: spacing.xs,
