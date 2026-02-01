@@ -71,6 +71,9 @@ const resources = {
       addCycle: 'Añadir ciclo',
       noCycles: 'Sin registros de ciclo',
       
+      // Resources
+      resources: 'Recursos',
+      
       // Settings
       language: 'Idioma',
       spanish: 'Español',
