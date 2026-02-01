@@ -206,6 +206,30 @@ export default function HomeScreen() {
               <Text style={styles.actionTitle}>{t('monthlyRecord')}</Text>
             </TouchableOpacity>
           </View>
+
+          <View style={styles.actionsRow}>
+            <TouchableOpacity
+              style={styles.actionCard}
+              onPress={() => router.push('/resources')}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.actionIcon, { backgroundColor: '#9E7B5D' }]}>
+                <Ionicons name="library-outline" size={26} color={colors.softWhite} />
+              </View>
+              <Text style={styles.actionTitle}>{t('resources')}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.actionCard}
+              onPress={() => router.push('/cycle')}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.actionIcon, { backgroundColor: '#A67C5B' }]}>
+                <Ionicons name="calendar-outline" size={26} color={colors.softWhite} />
+              </View>
+              <Text style={styles.actionTitle}>{t('cycleTracking')}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Motivational Card */}
