@@ -187,6 +187,9 @@ const resources = {
       addCycle: 'Add cycle',
       noCycles: 'No cycle records',
       
+      // Resources
+      resources: 'Resources',
+      
       // Settings
       language: 'Language',
       spanish: 'Español',
