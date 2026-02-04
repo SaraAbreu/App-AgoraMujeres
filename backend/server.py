@@ -649,7 +649,7 @@ async def get_weather(lat: float, lon: float):
     try:
         async with httpx.AsyncClient() as http_client:
             response = await http_client.get(
-                f"https://api.open-meteo.com/v1/forecast",
+                "https://api.open-meteo.com/v1/forecast",
                 params={
                     "latitude": lat,
                     "longitude": lon,
