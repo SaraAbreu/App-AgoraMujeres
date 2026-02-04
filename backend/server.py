@@ -733,7 +733,7 @@ async def save_monthly_record(device_id: str, data: MonthlyPainRecordCreate):
         }
         
         # Upsert the record
-        result = await db.monthly_records.update_one(
+        await db.monthly_records.update_one(
             {"device_id": device_id},
             {
                 "$set": record_data,
