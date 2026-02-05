@@ -106,9 +106,6 @@ export default function HomeScreen() {
           <Text style={styles.tagline}>
             Un lugar donde no tienes que justificar cómo te sientes.
           </Text>
-          <Text style={styles.taglineSubtitle}>
-            Acompañamiento emocional para mujeres con fibromialgia.
-          </Text>
         </View>
 
         {/* Welcome Card */}
