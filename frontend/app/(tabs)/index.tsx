@@ -111,7 +111,6 @@ export default function HomeScreen() {
           <Text style={styles.tagline}>
             Un lugar donde no tienes que justificar cómo te sientes.
           </Text>
-          <Text style={styles.welcomeSubtitle}>{t('howAreYou')}</Text>
           
           {/* Trial/Subscription Status */}
           {subscriptionStatus?.status === 'trial' && (
@@ -139,6 +138,11 @@ export default function HomeScreen() {
               <Ionicons name="chevron-forward" size={16} color={colors.error} />
             </TouchableOpacity>
           )}
+        </View>
+
+        {/* How Are You Card - Intro to Quick Actions */}
+        <View style={styles.howAreYouCard}>
+          <Text style={styles.howAreYouText}>{t('howAreYou')}</Text>
         </View>
 
         {/* Weather Card */}
