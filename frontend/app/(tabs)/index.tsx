@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   tagline: {
     fontSize: typography.sizes.md,
     fontFamily: 'Cormorant_600SemiBold',
-    color: colors.softWhite,
+    color: '#8B5A2B',
     textAlign: 'center',
     marginTop: spacing.md,
     paddingHorizontal: spacing.md,
