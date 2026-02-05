@@ -166,7 +166,7 @@ const resources = {
       
       // Chat
       chatWithAgora: 'Chat with Ágora',
-      agoraIntro: "Hello, I'm Ágora. I'm here to listen and walk alongside you in this moment. How can I help you today?",
+      agoraIntro: "Hello, I'm Ágora. I'm here to listen and walk alongside you. Before we start, what would you like me to call you?",
       typeMessage: 'Share what you\'re feeling...',
       send: 'Send',
       agoraTyping: 'Ágora is typing...',
