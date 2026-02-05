@@ -103,14 +103,14 @@ export default function HomeScreen() {
             style={styles.headerLogo}
             contentFit="contain"
           />
-          <Text style={styles.tagline}>
-            Un lugar donde no tienes que justificar cómo te sientes.
-          </Text>
         </View>
 
         {/* Welcome Card */}
         <View style={styles.welcomeCard}>
-          <Text style={styles.welcomeTitle}>{t('welcomeBack')}</Text>
+          <Text style={styles.welcomeTitle}>Bienvenida a Ágora Mujeres</Text>
+          <Text style={styles.tagline}>
+            Un lugar donde no tienes que justificar cómo te sientes.
+          </Text>
           <Text style={styles.welcomeSubtitle}>{t('howAreYou')}</Text>
           
           {/* Trial/Subscription Status */}
