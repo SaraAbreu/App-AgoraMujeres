@@ -269,12 +269,12 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.xl,
   },
   tagline: {
-    fontSize: typography.sizes.md,
+    fontSize: typography.sizes.sm,
     fontFamily: 'Cormorant_600SemiBold',
     color: '#8B5A2B',
     textAlign: 'center',
-    marginTop: spacing.md,
-    paddingHorizontal: spacing.md,
+    marginTop: spacing.xs,
+    marginBottom: spacing.sm,
     fontStyle: 'italic',
   },
   taglineSubtitle: {
