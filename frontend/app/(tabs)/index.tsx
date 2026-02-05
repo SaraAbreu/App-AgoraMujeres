@@ -277,14 +277,6 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     fontStyle: 'italic',
   },
-  taglineSubtitle: {
-    fontSize: typography.sizes.sm,
-    fontFamily: 'Nunito_400Regular',
-    color: colors.mossGreenLight,
-    textAlign: 'center',
-    marginTop: spacing.xs,
-    paddingHorizontal: spacing.lg,
-  },
   welcomeCard: {
     backgroundColor: colors.surface,
     padding: spacing.md,
