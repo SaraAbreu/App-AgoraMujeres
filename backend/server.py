@@ -880,10 +880,8 @@ async def create_resource(resource: Resource):
 async def seed_resources():
     """Seed initial resources for testing"""
     try:
-        # Check if already seeded
-        count = await db.resources.count_documents({})
-        if count > 0:
-            return {"message": "Resources already seeded", "count": count}
+        # Delete existing resources first to allow re-seeding
+        await db.resources.delete_many({})
         
         initial_resources = [
             {
@@ -892,11 +890,11 @@ async def seed_resources():
                 "type": "video",
                 "title": "Respiración diafragmática para el dolor",
                 "description": "Técnica de respiración profunda que ayuda a reducir la tensión muscular y calmar el sistema nervioso.",
-                "video_url": "https://www.youtube.com/watch?v=example1",
+                "video_url": "https://www.youtube.com/watch?v=YRPh_GaiL8s",
                 "thumbnail_url": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400",
-                "author": "Dra. María López",
-                "author_credentials": "Fisioterapeuta especializada en dolor crónico",
-                "duration": "8:30",
+                "author": "Fisioterapia Online",
+                "author_credentials": "Fisioterapeutas especializados",
+                "duration": "5:42",
                 "language": "es",
                 "is_featured": True,
                 "order": 1,
@@ -906,18 +904,86 @@ async def seed_resources():
                 "id": str(uuid.uuid4()),
                 "category": "stretching",
                 "type": "video",
-                "title": "Estiramientos suaves para la mañana",
-                "description": "Rutina de 10 minutos para comenzar el día con menos rigidez muscular.",
-                "video_url": "https://www.youtube.com/watch?v=example2",
+                "title": "Estiramientos suaves para fibromialgia",
+                "description": "Rutina de estiramientos suaves diseñada específicamente para personas con fibromialgia.",
+                "video_url": "https://www.youtube.com/watch?v=4pKly2JojMw",
                 "thumbnail_url": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400",
-                "author": "Laura Sánchez",
-                "author_credentials": "Instructora de yoga terapéutico",
-                "duration": "10:15",
+                "author": "Fibromialgia Noticias",
+                "author_credentials": "Especialistas en fibromialgia",
+                "duration": "15:30",
                 "language": "es",
                 "is_featured": True,
                 "order": 2,
                 "created_at": datetime.utcnow()
             },
+            {
+                "id": str(uuid.uuid4()),
+                "category": "mindfulness",
+                "type": "video",
+                "title": "Meditación guiada para el dolor crónico",
+                "description": "Meditación de 10 minutos para ayudar a gestionar el dolor crónico con técnicas de mindfulness.",
+                "video_url": "https://www.youtube.com/watch?v=inpok4MKVLM",
+                "thumbnail_url": "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=400",
+                "author": "Mindfulness España",
+                "author_credentials": "Instructores certificados de mindfulness",
+                "duration": "10:00",
+                "language": "es",
+                "is_featured": False,
+                "order": 3,
+                "created_at": datetime.utcnow()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "category": "sleep",
+                "type": "video",
+                "title": "Técnicas para mejorar el sueño",
+                "description": "Consejos y técnicas para mejorar la calidad del sueño cuando tienes dolor crónico.",
+                "video_url": "https://www.youtube.com/watch?v=t0kACis_dJE",
+                "thumbnail_url": "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=400",
+                "author": "Salud y Bienestar",
+                "author_credentials": "Especialistas en trastornos del sueño",
+                "duration": "8:15",
+                "language": "es",
+                "is_featured": False,
+                "order": 4,
+                "created_at": datetime.utcnow()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "category": "professional",
+                "type": "video",
+                "title": "¿Qué es la fibromialgia? Explicación médica",
+                "description": "Un profesional médico explica qué es la fibromialgia, sus síntomas y opciones de tratamiento.",
+                "video_url": "https://www.youtube.com/watch?v=_4Vt88jIKAs",
+                "thumbnail_url": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400",
+                "author": "Dr. Medical",
+                "author_credentials": "Reumatólogo",
+                "duration": "12:45",
+                "language": "es",
+                "is_featured": False,
+                "order": 5,
+                "created_at": datetime.utcnow()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "category": "nutrition",
+                "type": "video",
+                "title": "Alimentación antiinflamatoria",
+                "description": "Alimentos que pueden ayudar a reducir la inflamación y mejorar los síntomas de fibromialgia.",
+                "video_url": "https://www.youtube.com/watch?v=Yv1v7-RFnNE",
+                "thumbnail_url": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400",
+                "author": "Nutrición Consciente",
+                "author_credentials": "Nutricionistas especializados",
+                "duration": "11:20",
+                "language": "es",
+                "is_featured": False,
+                "order": 6,
+                "created_at": datetime.utcnow()
+            }
+        ]
+        
+        await db.resources.insert_many(initial_resources)
+        return {"message": "Resources seeded successfully", "count": len(initial_resources)}
             {
                 "id": str(uuid.uuid4()),
                 "category": "mindfulness",
