@@ -264,12 +264,29 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
   headerLogo: {
     width: 180,
     height: 180,
     borderRadius: borderRadius.xl,
+  },
+  tagline: {
+    fontSize: typography.sizes.md,
+    fontFamily: 'Cormorant_600SemiBold',
+    color: colors.softWhite,
+    textAlign: 'center',
+    marginTop: spacing.md,
+    paddingHorizontal: spacing.md,
+    fontStyle: 'italic',
+  },
+  taglineSubtitle: {
+    fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.mossGreenLight,
+    textAlign: 'center',
+    marginTop: spacing.xs,
+    paddingHorizontal: spacing.lg,
   },
   welcomeCard: {
     backgroundColor: colors.surface,
