@@ -50,7 +50,7 @@ const resources = {
       
       // Chat
       chatWithAgora: 'Conversa con Ágora',
-      agoraIntro: 'Hola, soy Ágora. Estoy aquí para escucharte y acompañarte en este momento. ¿Cómo puedo ayudarte hoy?',
+      agoraIntro: 'Hola, soy Ágora. Estoy aquí para escucharte y acompañarte. Antes de empezar, ¿cómo te gustaría que te llame?',
       typeMessage: 'Escribe lo que sientes...',
       send: 'Enviar',
       agoraTyping: 'Ágora está escribiendo...',
