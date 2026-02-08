@@ -22,6 +22,8 @@ import i18n from '../src/i18n';
 import { useStore } from '../src/store/useStore';
 import { colors } from '../src/theme/colors';
 import { getSubscriptionStatus } from '../src/services/api';
+import { useOnboarding } from '../src/hooks/useOnboarding';
+import { OnboardingScreen } from '../src/components/OnboardingScreen';
 
 const LOGO_URL = require('../assets/images/logo-agora.png');
 
@@ -29,6 +31,7 @@ export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
   const { initializeDevice, setSubscriptionStatus, language } = useStore();
+  const { hasSeenOnboarding, loading: onboardingLoading, markOnboardingAsShown } = useOnboarding();
   
   // Animation values
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -91,7 +94,7 @@ export default function RootLayout() {
     }
   }, [fontsLoaded]);
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || onboardingLoading) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator size="large" color={colors.warmBrown} />
@@ -122,6 +125,14 @@ export default function RootLayout() {
     );
   }
 
+  if (!hasSeenOnboarding) {
+    return (
+      <SafeAreaProvider>
+        <OnboardingScreen onComplete={markOnboardingAsShown} />
+      </SafeAreaProvider>
+    );
+  }
+
   return (
     <SafeAreaProvider>
       <I18nextProvider i18n={i18n}>
@@ -139,6 +150,7 @@ export default function RootLayout() {
           }}
         >
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="crisis" options={{ headerShown: false }} />
           <Stack.Screen 
             name="diary/new" 
             options={{ 
@@ -153,6 +165,10 @@ export default function RootLayout() {
               animation: 'slide_from_bottom'
             }} 
           />
+          <Stack.Screen name="conversations/index" options={{ headerShown: false }} />
+          <Stack.Screen name="cycle/index" options={{ headerShown: false }} />
+          <Stack.Screen name="monthly-record/index" options={{ headerShown: false }} />
+          <Stack.Screen name="resources/index" options={{ headerShown: false }} />
         </Stack>
       </I18nextProvider>
     </SafeAreaProvider>

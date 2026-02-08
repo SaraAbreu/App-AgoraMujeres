@@ -200,6 +200,13 @@ export default function ChatScreen() {
       {/* Custom Header with New Chat and History Buttons */}
       <View style={styles.header}>
         <TouchableOpacity 
+          style={styles.crisisButton} 
+          onPress={() => router.push('/crisis')}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="alert-circle" size={24} color="white" />
+        </TouchableOpacity>
+        <TouchableOpacity 
           style={styles.historyButton} 
           onPress={handleViewHistory}
           activeOpacity={0.7}
@@ -299,6 +306,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.mossGreen,
     borderBottomWidth: 1,
     borderBottomColor: colors.mossGreenLight,
+  },
+  crisisButton: {
+    padding: spacing.xs,
+    backgroundColor: '#ff4444',
+    borderRadius: 50,
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   historyButton: {
     padding: spacing.xs,

@@ -153,6 +153,107 @@ class Resource(BaseModel):
 # Admin code for bypassing trial (set your secret code here)
 ADMIN_CODE = "AGORA2025ADMIN"
 
+# ============== CRISIS SUPPORT ==============
+
+class CrisisRequest(BaseModel):
+    device_id: str
+    pain_level: int = Field(ge=1, le=10)  # 1-10 pain scale
+    language: str = "es"  # es, en
+    symptoms: Optional[List[str]] = None  # ["mucho_dolor", "fatiga", "ansiedad", etc]
+
+class FavoriteMessage(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    device_id: str
+    message_content: str
+    category: str = "general"  # crisis, motivation, daily, coping
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+# Crisis response templates - instant support
+CRISIS_RESPONSES = {
+    "es": {
+        "breathing": {
+            "title": "🫁 Técnica 4-7-8 Calmante",
+            "steps": [
+                "Respira por la nariz contando hasta 4",
+                "Sostén el aire durante 7",
+                "Exhala por la boca contando hasta 8",
+                "Repite 4 veces lentamente"
+            ],
+            "message": "Tu sistema nervioso necesita calmarse. Esta técnica es como bajar el volumen del dolor. Hazlo a tu ritmo."
+        },
+        "grounding": {
+            "title": "⚓ Anclarte en el Presente",
+            "steps": [
+                "5 cosas que ves",
+                "4 que sientes en tu cuerpo",
+                "3 sonidos que escuchas",
+                "2 olores",
+                "1 sabor"
+            ],
+            "message": "Tu mente se metió en el dolor. Traígamosla al presente. Mira a tu alrededor lentamente."
+        },
+        "self_compassion": {
+            "title": "💙 Autocompasión en el Dolor",
+            "message": "Esto es difícil. Es comprensible que sufras. No estás sola. Hay personas que han pasado por esto y sobrevivieron. Tú también puedes.",
+            "mantras": [
+                "Este momento es difícil, pero pasará",
+                "Mi cuerpo está luchando, y eso es valiente",
+                "Merezco amabilidad, especialmente hoy"
+            ]
+        },
+        "immediate": {
+            "title": "🆘 En Este Momento",
+            "message": "Estoy aquí. El dolor que sientes es real. Tu valor también es real. Aunque duela, estás segura.",
+            "options": [
+                "Necesito una técnica rápida",
+                "Solo quiero que alguien escuche",
+                "Estoy en emergencia - necesito contacto profesional"
+            ]
+        }
+    },
+    "en": {
+        "breathing": {
+            "title": "🫁 Calming 4-7-8 Technique",
+            "steps": [
+                "Breathe in through your nose, counting to 4",
+                "Hold for a count of 7",
+                "Exhale through your mouth, counting to 8",
+                "Repeat 4 times slowly"
+            ],
+            "message": "Your nervous system needs to calm down. This technique is like turning down the volume on pain. Go at your pace."
+        },
+        "grounding": {
+            "title": "⚓ Grounding Yourself",
+            "steps": [
+                "5 things you see",
+                "4 things you feel on your body",
+                "3 sounds you hear",
+                "2 smells",
+                "1 taste"
+            ],
+            "message": "Your mind got stuck in the pain. Let's bring it to the present. Look around slowly."
+        },
+        "self_compassion": {
+            "title": "💙 Self-Compassion in Pain",
+            "message": "This is hard. It makes sense that you're suffering. You're not alone. Others have experienced this and survived. You can too.",
+            "mantras": [
+                "This moment is difficult, but it will pass",
+                "My body is fighting, and that is brave",
+                "I deserve kindness, especially today"
+            ]
+        },
+        "immediate": {
+            "title": "🆘 Right Now",
+            "message": "I'm here. The pain you feel is real. Your strength is also real. Even though it hurts, you are safe.",
+            "options": [
+                "I need a quick technique",
+                "I just need someone to listen",
+                "This is an emergency - I need professional help"
+            ]
+        }
+    }
+}
+
 # ============== SYSTEM PROMPTS ==============
 
 SYSTEM_PROMPTS = {
@@ -514,6 +615,95 @@ async def clear_chat_history(device_id: str):
         return {"message": "No conversation to clear", "deleted_count": 0}
     except Exception as e:
         logger.error(f"Error clearing chat history: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ============== CRISIS SUPPORT ENDPOINTS ==============
+
+@api_router.post("/crisis")
+async def crisis_support(request: CrisisRequest):
+    """Instant crisis support - bypasses OpenAI for ultra-fast response"""
+    try:
+        language = request.language or "es"
+        
+        # Determine which technique to recommend based on pain level and symptoms
+        if request.pain_level >= 8:
+            technique_key = "breathing" if "ansiedad" in (request.symptoms or []) else "grounding"
+        else:
+            technique_key = "self_compassion"
+        
+        technique = CRISIS_RESPONSES[language].get(technique_key)
+        immediate = CRISIS_RESPONSES[language].get("immediate")
+        
+        # Log crisis support request for analytics
+        await db.crisis_logs.insert_one({
+            "device_id": request.device_id,
+            "pain_level": request.pain_level,
+            "symptoms": request.symptoms or [],
+            "technique_offered": technique_key,
+            "created_at": datetime.utcnow()
+        })
+        
+        return {
+            "immediate": immediate,
+            "technique": technique,
+            "all_techniques": [
+                {"key": "breathing", **CRISIS_RESPONSES[language]["breathing"]},
+                {"key": "grounding", **CRISIS_RESPONSES[language]["grounding"]},
+                {"key": "self_compassion", **CRISIS_RESPONSES[language]["self_compassion"]}
+            ],
+            "emergency_contacts": {
+                "es": {
+                    "spain": "024 (Teléfono de la Esperanza)",
+                    "general": "112 (Emergencias)"
+                },
+                "en": {
+                    "us": "988 (Suicide & Crisis Lifeline)",
+                    "uk": "116 123 (Samaritans)"
+                }
+            }
+        }
+    except Exception as e:
+        logger.error(f"Error in crisis support: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.post("/favorites/save")
+async def save_favorite_message(msg: FavoriteMessage):
+    """Save a favorite Aurora message for later"""
+    try:
+        await db.favorite_messages.insert_one(msg.model_dump())
+        return {"id": msg.id, "status": "saved"}
+    except Exception as e:
+        logger.error(f"Error saving favorite: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.get("/favorites/{device_id}")
+async def get_favorite_messages(device_id: str, category: Optional[str] = None):
+    """Get all saved favorite messages"""
+    try:
+        query = {"device_id": device_id}
+        if category:
+            query["category"] = category
+        
+        messages = await db.favorite_messages.find(query).sort("created_at", -1).to_list(None)
+        
+        return [{
+            "id": m["id"],
+            "content": m["message_content"],
+            "category": m.get("category", "general"),
+            "created_at": m.get("created_at").isoformat() if isinstance(m.get("created_at"), datetime) else m.get("created_at")
+        } for m in messages]
+    except Exception as e:
+        logger.error(f"Error getting favorites: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/favorites/{device_id}/{message_id}")
+async def delete_favorite_message(device_id: str, message_id: str):
+    """Delete a favorite message"""
+    try:
+        result = await db.favorite_messages.delete_one({"id": message_id, "device_id": device_id})
+        return {"deleted": result.deleted_count > 0}
+    except Exception as e:
+        logger.error(f"Error deleting favorite: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # ============== CYCLE ENDPOINTS ==============
