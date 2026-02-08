@@ -91,6 +91,7 @@ export default function NewDiaryEntry() {
   const [expandedEmotion, setExpandedEmotion] = useState<string | null>(null);
   const [weather, setWeather] = useState<any>(null);
   const [saving, setSaving] = useState(false);
+  const [isQuickMode, setIsQuickMode] = useState(false);
   
   // Animation refs
   const fadeAnim = useRef(new Animated.Value(0)).current;

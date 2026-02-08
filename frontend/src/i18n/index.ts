@@ -17,8 +17,12 @@ const resources = {
       settings: 'Ajustes',
       
       // Home
-      welcomeBack: 'Bienvenida de nuevo',
-      howAreYou: '¿Cómo te sientes hoy?',
+      welcomeBack: 'Bienvenida, tu refugio está aquí',
+      howAreYou: 'Hoy puede ser un día difícil, regular o bueno. Sea cual sea, tu voz importa aquí.',
+      quickEntry: 'Entrada rápida (30 segundos)',
+      needHelp: 'Necesito ayuda ahora',
+      crisisSupport: 'Centro de Crisis',
+      emergencyText: 'Si estás en crisis, aquí hay apoyo inmediato',
       quickActions: 'Acciones rápidas',
       writeEntry: 'Escribir en el diario',
       talkToAgora: 'Hablar con Ágora',
@@ -41,7 +45,8 @@ const resources = {
       // Diary
       newEntry: 'Nueva entrada',
       howDoYouFeel: '¿Cómo te sientes?',
-      writeThoughts: '¿Qué llevas dentro hoy?',
+      writeThoughts: 'Desahógate sin filtro. Aquí no tienes que explicar, justificar ni ser fuerte.',
+      writeQuick: 'Cuéntame rápido: ¿Cómo está tu dolor? ¿Y tu ánimo?',
       physicalState: 'Estado físico (opcional)',
       saveEntry: 'Guardar',
       entrySaved: 'Guardado con cariño',
@@ -50,7 +55,9 @@ const resources = {
       
       // Chat
       chatWithAgora: 'Conversa con Ágora',
-      agoraIntro: 'Hola, soy Ágora. Estoy aquí para escucharte y acompañarte. Antes de empezar, ¿cómo te gustaría que te llame?',
+      agoraIntro: 'Hola, soy Ágora. Estoy aquí 24/7 para escucharte sin juzgar, acompañarte en tus días malos, celebrar los buenos, y simplemente estar cuando lo necesites. Yo NO soy terapeuta, pero sí soy tu apoyo. ¿Cómo prefieres que te hable hoy? ¿Buscas desahogarte o prefieres consejos?',
+      justListen: 'Solo escúchame, sin soluciones',
+      giveAdvice: 'Ayúdame a pensar diferente',
       typeMessage: 'Escribe lo que sientes...',
       send: 'Enviar',
       agoraTyping: 'Ágora está escribiendo...',
@@ -106,6 +113,11 @@ const resources = {
       // Motivational
       dailyReminder: 'Cada día cuenta, incluso los más difíciles. Estás haciendo un trabajo increíble.',
       
+      // Crisis & Support
+      inCrisis: '¿Estás en crisis?',
+      crisisMessage: 'Tu vida importa. Hay gente que puede ayudarte ahora mismo.',
+      needProfessional: 'Necesito hablar con un profesional',
+      
       // General
       loading: 'Cargando...',
       error: 'Ha ocurrido un error',
@@ -133,8 +145,12 @@ const resources = {
       settings: 'Settings',
       
       // Home
-      welcomeBack: 'Welcome back',
-      howAreYou: 'How are you feeling today?',
+      welcomeBack: 'Welcome back, your refuge is here',
+      howAreYou: 'Today might be a hard day, an okay day, or a good day. Whatever it is, your voice matters here.',
+      quickEntry: 'Quick entry (30 seconds)',
+      needHelp: 'I need help now',
+      crisisSupport: 'Crisis Support',
+      emergencyText: 'If you\'re in crisis, immediate support is here',
       quickActions: 'Quick actions',
       writeEntry: 'Write in your diary',
       talkToAgora: 'Talk to Ágora',
@@ -157,7 +173,8 @@ const resources = {
       // Diary
       newEntry: 'New entry',
       howDoYouFeel: 'How do you feel?',
-      writeThoughts: 'What\'s on your heart today?',
+      writeThoughts: 'Share without filter. You don\'t have to explain, justify, or be strong here.',
+      writeQuick: 'Tell me quickly: How\'s your pain? And your mood?',
       physicalState: 'Physical state (optional)',
       saveEntry: 'Save',
       entrySaved: 'Saved with care',
@@ -166,7 +183,9 @@ const resources = {
       
       // Chat
       chatWithAgora: 'Chat with Ágora',
-      agoraIntro: "Hello, I'm Ágora. I'm here to listen and walk alongside you. Before we start, what would you like me to call you?",
+      agoraIntro: "Hello, I'm Ágora. I'm here 24/7 to listen without judgment, walk with you through your hard days, celebrate the good ones, and simply be there when you need me. I'm NOT a therapist, but I am your support. How would you prefer I talk to you today? Do you want to share what\'s on your mind, or would talking through it help?",
+      justListen: 'Just listen to me, no solutions',
+      giveAdvice: 'Help me think differently',
       typeMessage: 'Share what you\'re feeling...',
       send: 'Send',
       agoraTyping: 'Ágora is typing...',
@@ -221,6 +240,11 @@ const resources = {
       
       // Motivational
       dailyReminder: 'Every day counts, even the hardest ones. You are doing an amazing job.',
+      
+      // Crisis & Support
+      inCrisis: 'Are you in crisis?',
+      crisisMessage: 'Your life matters. There are people who can help you right now.',
+      needProfessional: 'I need to talk to a professional',
       
       // General
       loading: 'Loading...',

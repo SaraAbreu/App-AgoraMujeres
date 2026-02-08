@@ -110,9 +110,9 @@ export default function HomeScreen() {
 
         {/* Welcome Card */}
         <View style={styles.welcomeCard}>
-          <Text style={styles.welcomeTitle}>Bienvenida a Ágora Mujeres</Text>
+          <Text style={styles.welcomeTitle}>{t('appName')}</Text>
           <Text style={styles.tagline}>
-            Un lugar donde no tienes que justificar cómo te sientes.
+            {t('tagline')}
           </Text>
           
           {/* Trial/Subscription Status */}
@@ -148,6 +148,19 @@ export default function HomeScreen() {
           <Text style={styles.howAreYouText}>{t('howAreYou')}</Text>
         </View>
 
+        {/* Crisis Support Button */}
+        <TouchableOpacity 
+          style={styles.crisisButton}
+          onPress={() => {
+            // TODO: Implement crisis support navigation
+            alert('📞 Líneas de apoyo:\n\n🇪🇸 España:\n- Teléfono de la Esperanza: 717 003 717\n- Telediagnóstico: 971 439 500\n\n🇺🇸 International:\n- Crisis Text Line: Text HOME to 741741');
+          }}
+          activeOpacity={0.85}
+        >
+          <Ionicons name="alert-circle" size={20} color={colors.softWhite} />
+          <Text style={styles.crisisButtonText}>{t('needHelp')}</Text>
+        </TouchableOpacity>
+
         {/* Weather Card */}
         {weather && (
           <View style={styles.weatherCard}>
@@ -164,6 +177,21 @@ export default function HomeScreen() {
             </View>
           </View>
         )}
+
+        {/* Quick Entry for Bad Days */}
+        <View style={styles.quickEntryCard}>
+          <View>
+            <Text style={styles.quickEntryTitle}>¿Día de mucho dolor o niebla mental?</Text>
+            <Text style={styles.quickEntrySubtitle}>{t('writeQuick')}</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.quickEntryButton}
+            onPress={() => router.push('/diary/new?mode=quick')}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="arrow-forward" size={20} color={colors.softWhite} />
+          </TouchableOpacity>
+        </View>
 
         {/* Quick Actions */}
         <Text style={styles.sectionTitle}>{t('quickActions')}</Text>
@@ -310,7 +338,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     padding: spacing.sm,
     borderRadius: borderRadius.lg,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
     shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
@@ -322,6 +350,62 @@ const styles = StyleSheet.create({
     fontSize: Platform.OS === 'web' ? 20 : typography.sizes.md,
     fontFamily: 'Cormorant_600SemiBold',
     color: colors.text,
+  },
+  crisisButton: {
+    backgroundColor: '#E8503D',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: borderRadius.lg,
+    marginBottom: spacing.lg,
+    gap: spacing.sm,
+    shadowColor: '#E8503D',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  crisisButtonText: {
+    color: colors.softWhite,
+    fontSize: Platform.OS === 'web' ? 16 : typography.sizes.md,
+    fontFamily: 'Nunito_700Bold',
+  },
+  quickEntryCard: {
+    backgroundColor: colors.surface,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: spacing.md,
+    borderRadius: borderRadius.lg,
+    marginBottom: spacing.lg,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.warmBrown,
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  quickEntryTitle: {
+    fontSize: Platform.OS === 'web' ? 16 : typography.sizes.sm,
+    fontFamily: 'Nunito_700Bold',
+    color: colors.text,
+    marginBottom: spacing.xs,
+  },
+  quickEntrySubtitle: {
+    fontSize: Platform.OS === 'web' ? 14 : typography.sizes.xs,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.textSecondary,
+  },
+  quickEntryButton: {
+    backgroundColor: colors.warmBrown,
+    width: 44,
+    height: 44,
+    borderRadius: borderRadius.full,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   welcomeSubtitle: {
     fontSize: typography.sizes.md,
