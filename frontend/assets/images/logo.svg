@@ -1,0 +1,31 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Woman silhouette -->
+  <g id="woman">
+    <!-- Head -->
+    <circle cx="100" cy="50" r="22" fill="black"/>
+    
+    <!-- Hair -->
+    <path d="M 78 45 Q 70 35 75 20 Q 85 10 100 8 Q 115 10 125 20 Q 130 35 122 45" fill="black"/>
+    
+    <!-- Leaf accent in hair -->
+    <path d="M 115 25 Q 125 20 128 15 Q 130 22 125 28" fill="#9DB88C" opacity="0.8"/>
+    
+    <!-- Neck -->
+    <rect x="95" y="70" width="10" height="8" fill="black"/>
+    
+    <!-- Shoulders and body -->
+    <path d="M 78 78 L 85 100 L 100 110 L 115 100 L 122 78 Z" fill="black"/>
+    
+    <!-- Arms -->
+    <path d="M 78 85 L 60 110" stroke="black" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <path d="M 122 85 L 140 110" stroke="black" stroke-width="8" fill="none" stroke-linecap="round"/>
+    
+    <!-- Hands -->
+    <circle cx="60" cy="115" r="6" fill="black"/>
+    <circle cx="140" cy="115" r="6" fill="black"/>
+    
+    <!-- Chest symbol (circular) -->
+    <circle cx="100" cy="95" r="12" fill="none" stroke="white" stroke-width="2"/>
+    <circle cx="100" cy="95" r="8" fill="none" stroke="white" stroke-width="1.5"/>
+  </g>
+</svg>

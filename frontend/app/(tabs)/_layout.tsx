@@ -1,0 +1,100 @@
+import React from 'react';
+import { Tabs } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
+import { colors } from '../../src/theme/colors';
+import { Platform } from 'react-native';
+
+export default function TabLayout() {
+  const { t } = useTranslation();
+
+  return (
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: colors.softWhite,
+        tabBarInactiveTintColor: colors.mossGreenLight,
+        tabBarStyle: {
+          backgroundColor: colors.mossGreenDark,
+          borderTopWidth: 0,
+          paddingTop: 14,
+          paddingBottom: Platform.OS === 'ios' ? 50 : 55,
+          height: Platform.OS === 'ios' ? 115 : 120,
+          elevation: 0,
+          shadowOpacity: 0,
+        },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontFamily: 'Nunito_500Medium',
+          marginTop: 4,
+          marginBottom: 0,
+        },
+        tabBarIconStyle: {
+          marginBottom: 0,
+        },
+        headerStyle: {
+          backgroundColor: colors.mossGreen,
+          elevation: 0,
+          shadowOpacity: 0,
+        },
+        headerTintColor: colors.textOnDark,
+        headerTitleStyle: {
+          fontFamily: 'Cormorant_600SemiBold',
+          fontSize: 22,
+          color: colors.textOnDark,
+        },
+        headerShadowVisible: false,
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: t('home'),
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="diary"
+        options={{
+          title: t('diary'),
+          headerTitle: t('diary'),
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="book-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="chat"
+        options={{
+          title: t('chat'),
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="leaf-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="patterns"
+        options={{
+          title: t('patterns'),
+          headerTitle: t('weeklyPatterns'),
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="analytics-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: t('settings'),
+          headerTitle: t('settings'),
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings-outline" size={size} color={color} />
+          ),
+        }}
+      />
+    </Tabs>
+  );
+}

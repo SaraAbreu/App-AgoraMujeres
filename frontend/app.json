@@ -1,0 +1,62 @@
+{
+  "expo": {
+    "name": "Ágora Mujeres",
+    "slug": "agora-mujeres",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "agora-mujeres",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "extra": {
+      "EXPO_BACKEND_URL": "https://comfort-coach.preview.emergentagent.com"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Access location for weather updates",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Access location for weather updates"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#FDFBF9"
+      },
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#FDFBF9"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Access location for weather updates"
+        }
+      ],
+      [
+        "expo-secure-store"
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
