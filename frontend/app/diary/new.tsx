@@ -325,10 +325,15 @@ export default function NewDiaryEntry() {
           {/* Emotional Header */}
           <View style={styles.emotionalHeader}>
             <Text style={styles.emotionalTitle}>
-              {language === 'es' ? 'Tómate un momento para escucharte' : 'Take a moment to listen to yourself'}
+              {language === 'es' ? 'Sin prisa, sin juicio. Aquí solo estás tú.' : 'No rush, no judgment. Just you here.'}
             </Text>
             <Text style={styles.emotionalSubtitle}>
-              {language === 'es' ? '¿Cómo te sientes ahora mismo?' : 'How are you feeling right now?'}
+              {language === 'es' ? '¿Qué lleva tu cuerpo y corazón hoy?' : 'What are your body and heart carrying today?'}
+            </Text>
+            <Text style={styles.reminderText}>
+              {language === 'es' 
+                ? 'Nota: No tienes que completar todo. Incluso un solo sentimiento es suficiente. Tu entrada cuenta, sea como sea.' 
+                : 'Note: You don\'t have to fill everything. Even one emotion is enough. Your entry counts, however it is.'}
             </Text>
           </View>
 
@@ -343,8 +348,8 @@ export default function NewDiaryEntry() {
           <View style={styles.writingSection}>
             <Text style={styles.writingPrompt}>
               {language === 'es' 
-                ? '¿Quieres contarnos un poco más sobre tu día?' 
-                : 'Would you like to tell us a bit more about your day?'}
+                ? 'Desahógate sin filtro. No tienes que explicar nada.' 
+                : 'Share without filter. You don\'t have to explain anything.'}
             </Text>
             
             <View style={styles.writingCard}>
@@ -459,6 +464,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
     textAlign: 'center',
+  },
+  reminderText: {
+    fontSize: typography.sizes.xs,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.warmBrown,
+    textAlign: 'center',
+    marginTop: spacing.sm,
+    fontStyle: 'italic',
   },
   
   // Emotions Section
