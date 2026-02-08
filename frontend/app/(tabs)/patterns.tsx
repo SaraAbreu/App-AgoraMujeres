@@ -179,13 +179,13 @@ export default function PatternsScreen() {
 
       {/* Insight */}
       <View style={styles.insightCard}>
-        <Ionicons name="bulb-outline" size={24} color={colors.warmBrown} />
+        <Ionicons name="heart" size={24} color={colors.warmBrown} />
         <View style={styles.insightContent}>
           <Text style={styles.insightTitle}>{t('notablePattern')}</Text>
           <Text style={styles.insightText}>
             {language === 'es'
-              ? `Tu estado más frecuente ha sido "${getEmotionLabel(patterns.trends.highest_emotional)}". Cada día es único y valioso.`
-              : `Your most frequent state has been "${getEmotionLabel(patterns.trends.highest_emotional)}". Every day is unique and valuable.`
+              ? `Hemos rastreado tus últimos ${patterns.period_days} días. Las estadísticas ayudan, pero lo importante es que estés aquí cada día, incluso los malos. Eso es suficiente.`
+              : `We've tracked your last ${patterns.period_days} days. Statistics help, but what matters is that you're here every day, even the hard ones. That's enough.`
             }
           </Text>
         </View>

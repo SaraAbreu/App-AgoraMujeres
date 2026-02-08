@@ -111,7 +111,7 @@ const resources = {
       monthlyRecordDesc: 'Para tu médico',
       
       // Motivational
-      dailyReminder: 'Cada día cuenta, incluso los más difíciles. Estás haciendo un trabajo increíble.',
+      dailyReminder: 'Día de mucho dolor, de niebla mental, o simplemente de dificultad. Sea cual sea, llegas aquí. Eso es toda la victoria que necesitas hoy.',,,
       
       // Crisis & Support
       inCrisis: '¿Estás en crisis?',
@@ -239,7 +239,7 @@ const resources = {
       monthlyRecordDesc: 'For your doctor',
       
       // Motivational
-      dailyReminder: 'Every day counts, even the hardest ones. You are doing an amazing job.',
+      dailyReminder: 'A high-pain day, a brain fog day, or simply a hard day. Whatever it is, you\'re here. That\'s all the victory you need today.',,
       
       // Crisis & Support
       inCrisis: 'Are you in crisis?',
