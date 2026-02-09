@@ -22,10 +22,11 @@ import i18n from '../src/i18n';
 import { useStore } from '../src/store/useStore';
 import { colors } from '../src/theme/colors';
 import { getSubscriptionStatus } from '../src/services/api';
+import { registerNotificationService } from '../src/services/notificationService';
 import { useOnboarding } from '../src/hooks/useOnboarding';
 import { OnboardingScreen } from '../src/components/OnboardingScreen';
 
-const LOGO_URL = require('../assets/images/logo-agora.png');
+const LOGO_URL = require('../assets/images/agora-logo.png');
 
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
@@ -62,6 +63,15 @@ export default function RootLayout() {
         
         i18n.changeLanguage(language);
         setIsReady(true);
+        
+        // Register notification service (web only)
+        if (Platform.OS === 'web') {
+          try {
+            await registerNotificationService();
+          } catch (error) {
+            console.log('Notification service registration skipped:', error);
+          }
+        }
         
         // Start splash animation
         Animated.parallel([

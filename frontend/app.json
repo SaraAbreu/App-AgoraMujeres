@@ -7,9 +7,9 @@
     "icon": "./assets/images/icon.png",
     "scheme": "agora-mujeres",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "extra": {
-      "EXPO_BACKEND_URL": "https://comfort-coach.preview.emergentagent.com"
+      "EXPO_BACKEND_URL": "http://localhost:5000"
     },
     "ios": {
       "supportsTablet": true,
@@ -39,7 +39,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/agora-logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#FDFBF9"

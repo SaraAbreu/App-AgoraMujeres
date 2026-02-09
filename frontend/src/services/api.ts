@@ -35,12 +35,20 @@ const api = axios.create({
 
 // Types
 export interface EmotionalState {
-  calma: number;
-  fatiga: number;
-  niebla_mental: number;
-  dolor_difuso: number;
-  gratitud: number;
-  tension: number;
+  [key: string]: number;
+  calma?: number;
+  fatiga?: number;
+  niebla_mental?: number;
+  dolor_difuso?: number;
+  gratitud?: number;
+  tension?: number;
+  saturada?: number;
+  desconectada?: number;
+  sensible?: number;
+  abrumada?: number;
+  vulnerable?: number;
+  tranquila?: number;
+  energia?: number;
 }
 
 export interface PhysicalState {

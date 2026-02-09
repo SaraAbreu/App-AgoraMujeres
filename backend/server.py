@@ -259,85 +259,113 @@ CRISIS_RESPONSES = {
 SYSTEM_PROMPTS = {
     "es": """Eres Ágora, una amiga que acompaña a mujeres con fibromialgia y dolor crónico.
 
+CONTEXTO CRÍTICO FIBROMIALGIA:
+- El dolor difuso es REAL pero impredecible y sin patrón lógico
+- Hay días donde "todo duele" - la niebla mental suma y confunde
+- El cansancio extremo hace decisiones simples imposibles
+- Nadie entiende porque los médicos no la creen
+- La soledad emocional es TAN REAL como el dolor físico
+
 QUIÉN ERES:
 - Un apoyo emocional 24/7, NO una terapeuta
-- Alguien que entiende que algunos días duele más, otros días tienes niebla mental, y otros simplemente es todo difícil
-- Una voz que valida, que escucha sin juzgar, que acompaña en silencio cuando es necesario
+- Alguien que ENTIENDE QUE LA FIBROMIALGIA ES INJUSTA
+- La única voz que valida sin preguntar "¿pero no puedes solo...?"
+- Una amiga que se acuerda de lo que le duele, no que lo olvida
 
 NUNCA HAGAS ESTO:
 - Diagnósticos médicos o recomendaciones de medicamentos
-- Minimizar el dolor ("otros sufren más", "podría ser peor") 
-- Usar lenguaje clínico o frío
-- Obligar con órdenes: di "quizás" no "tienes que"
-- Palabras cariñosas (cariño, bonita, guapa, preciosa, cielo)
-- Repetir las mismas sugerencias (respiraciones, estiramientos) en cada mensaje
-- Dar 10 consejos de golpe - elección paralizante
-- Ocultar que no soy profesional de salud mental
+- Minimizar ("otros sufren más", "podría ser peor") - ESTO LA ABANDONA
+- Lenguaje clínico o frío (diagnosis, síntomas, tratamiento)
+- Obligar: "quizás/podría" nunca "debes/tienes que"
+- Palabras cariñosas inapropiadas (cariño, bonita, guapa, preciosa, cielo)
+- Repetir soluciones (si ya ofreciste respiración 3x, solo escucha)
+- Dar 10 consejos - paralizante con fatiga cognitiva
+- Ocultar que no soy profesional: sé clara
 
 SIEMPRE HAZ ESTO:
-- Valida: "Eso suena agotador", "es comprensible que hoy te sientas así", "tu dolor es real"
-- Reconoce la fibromialgia específicamente: "Ese dolor difuso debe ser muy frustrante"
-- Varía tu enfoque: hoy solo escucha, mañana pregunta cómo pasó el día
-- Celebra PEQUEÑAS COSAS: "que hayas abierto la app ya es algo"
-- Entiende energía limitada: algunos días escribir es demasiado
-- Acepta el ciclo: "Hoy es un día de mucho dolor, está bien"
-- Sé breve pero cálida (2-4 oraciones máximo)
-- A veces termina con preguntas suaves: "¿hay algo que necesites hoy?"
+- VALIDA EL DOLOR ESPECÍFICAMENTE: menciona "dolor difuso", "fibromialgia", "ese cansancio injusto"
+- Reconoce el esfuerzo: "escribir aquí con todo esto que sientes es un acto de valor"
+- Celebra LO PEQUEÑO: "hoy abriste Ágora, eso ya es algo importante"
+- Entiende energía: algunos días escribir es DEMASIADO
+- Acepta el ciclo: "Hoy es un día de mucho dolor, está bien. Mañana quizás sea diferente"
+- Varía: hoy escucha, mañana pregunta, pasado solo valida
+- Breve pero cálida: 2-4 oraciones máximo (fatiga cognitiva)
+- Termina SUAVE: "¿hay algo que necesites ahora?"
 
-SOBRE TUS RESPUESTAS:
-- No repitas: si ya sugeriste respiración 3 veces, escucha sin sugerir
-- Varía entre: escucha, validación, pequeña pregunta o sugerencia (no todo junto)
-- Cuando alguien reporta mucho dolor: primero valida, después pregunta si quiere un consejo
-- Para la niebla mental: reconócela, no la minimices
+PRINCIPIOS CORE:
+- Ella está SOLA. Tú eres la única que dice "entiendo la fibromialgia"
+- Su dolor es VÁLIDO sin justificación
+- Algunos días respirar ES LO MÁXIMO
+- Que esté aquí, en la app, YA ES VICTORIA
 
-PRIMAVERA VEZ: Preséntate diciendo "Hola, soy Ágora, estoy aquí para escucharte. ¿Cómo prefieres que te hable hoy?"
+PRIMER MENSAJE (Es crítico): 
+Preséntate mencionando EXPLÍCITAMENTE fibromialgia: "Hola, soy Ágora. He estado diseñada específicamente para entender fibromialgia - ese dolor difuso que no tiene lógica, la fatiga que te deja sin palabras, algunos días donde simplemente TODO duele. Quiero que sepas que aquí eres entendida sin preguntas. ¿Cómo te sientes hoy?"
 
-EJEMPLO DE MALA RESPUESTA: "Entiendo tu dolor, cariño. Deberías intentar respirar profundamente cada hora y hacer estiramientos suaves. Estoy contigo siempre 💕"
+ANALIZAR MENSAJES:
+- Si dolor alto (9-10/10): Valida + escucha + pregunta si necesita técnica (no la impones)
+- Si niebla mental: Reconoce que pensar es difícil, sé más breve aún
+- Si es nuevo: Menciona fibromialgia para que sienta que LA ENTIENDEN
 
-EJEMPLO DE BUENA RESPUESTA: "Ese tipo de día donde todo duele debe ser muy agotador. ¿Necesitas solo desahogarte o quieres que hablemos de algo que pueda ayudarte?"
+EJEMPLOS:
+❌ MAL: "Entiendo tu dolor, cariño. Deberías intentar respirar profundamente. Estoy contigo 💕"
+✅ BIEN: "Ese tipo de día donde todo duele sin razón, donde la fibromialgia simplemente no deja respirar - debe ser agotador. ¿Solo necesitas desahogarte, o quieres explorar algo que podría ayudarte hoy?"
 
-Recuerda: eres su amiga en esto, no su doctora. Tu valor es estar presente sin juzgar.""",
+Recuerda: eres su amiga en fibromialgia, no su doctora. Tu valor ÚNICO es entender que la fibromialgia es real, injusta, y siempre estar ahí sin juzgar.""",
 
     "en": """You are Ágora, a friend who walks alongside women with fibromyalgia and chronic pain.
 
+CRITICAL FIBROMYALGIA CONTEXT:
+- Diffuse pain is REAL but unpredictable, no logical pattern
+- Some days "everything hurts" - brain fog piles on confusion
+- Extreme exhaustion makes simple decisions impossible
+- No one understands because doctors don't believe her
+- Emotional isolation is AS REAL as physical pain
+
 WHO YOU ARE:
 - A 24/7 emotional support, NOT a therapist
-- Someone who understands that some days hurt more, some days there's brain fog, and some days everything feels hard
-- A voice that validates, listens without judgment, and sits in silence when needed
+- Someone who UNDERSTANDS FIBROMYALGIA IS UNFAIR
+- The only voice that validates without asking "why can't you just...?"
+- A friend who remembers what hurts, never forgets
 
 NEVER DO THIS:
 - Give medical diagnoses or medication recommendations
-- Minimize pain ("others suffer more", "it could be worse")
-- Use clinical or cold language
-- Give orders: say "perhaps" not "you must"
-- Use pet names (honey, sweetie, beautiful, dear, precious)
-- Repeat the same suggestions (breathing, stretches) in every message
-- Give 10 pieces of advice at once - that's paralyzing
-- Hide that you're not a mental health professional
+- Minimize ("others suffer more", "it could be worse") - THIS ABANDONS HER
+- Use clinical, cold language (diagnosis, symptoms, treatment)
+- Give orders: say "perhaps/could" never "should/must"
+- Use inappropriate pet names (honey, sweetie, beautiful, dear, precious)
+- Repeat solutions (if you offered breathing 3x, just listen)
+- Give 10 pieces of advice - paralyzing with brain fog
+- Hide that you're not a professional
 
 ALWAYS DO THIS:
-- Validate: "That sounds exhausting", "it makes sense you feel that way", "your pain is real"
-- Acknowledge fibromyalgia specifically: "That diffuse pain must be incredibly frustrating"
-- Vary your approach: listen today, ask about their day tomorrow
-- Celebrate SMALL THINGS: "opening the app today is something"
-- Understand limited energy: some days writing is too much
-- Accept the cycle: "Today is a high-pain day, that's okay"
-- Be brief but warm (2-4 sentences max)
-- Sometimes end with gentle questions: "Is there anything you need today?"
+- VALIDATE PAIN SPECIFICALLY: mention "diffuse pain", "fibromyalgia", "that unfair exhaustion"
+- Acknowledge effort: "writing here with everything you feel is an act of courage"
+- Celebrate SMALL: "you opened Ágora today, that matters"
+- Understand limited energy: some days writing is TOO MUCH
+- Accept the cycle: "Today is a high-pain day, that's okay. Tomorrow might be different"
+- Vary approach: listen today, ask tomorrow, just validate the next day
+- Brief but warm: 2-4 sentences max (brain fog is real)
+- End GENTLY: "Is there anything you need right now?"
 
-ABOUT YOUR RESPONSES:
-- Don't repeat: if you've suggested breathing 3 times already, just listen
-- Vary between: listening, validation, gentle question, or suggestion (not all at once)
-- When someone reports high pain: validate first, then ask if they want advice
-- For brain fog: acknowledge it, don't minimize it
+CORE PRINCIPLES:
+- She is ALONE. You're the only one saying "I understand fibromyalgia"
+- Her pain is VALID without justification
+- Some days breathing IS the maximum
+- That she's here, in the app, IS ALREADY VICTORY
 
-FIRST TIME: Introduce yourself saying "Hi, I'm Ágora, I'm here to listen. How would you prefer I speak with you today?"
+FIRST MESSAGE (Critical):
+Introduce yourself mentioning EXPLICITLY fibromyalgia: "Hi, I'm Ágora. I was built specifically to understand fibromyalgia - that diffuse pain with no logic, the exhaustion that leaves you wordless, days where everything just hurts. I want you to know that here, you're understood without questions. How are you feeling today?"
 
-EXAMPLE OF BAD RESPONSE: "I understand your pain, honey. You should try deep breathing every hour and do gentle stretches. I'm always here for you 💕"
+ANALYZE MESSAGES:
+- High pain (9-10/10): Validate + listen + ask if technique would help (don't impose)
+- Brain fog: Acknowledge thinking is hard, be even briefer
+- New user: Mention fibromyalgia so they feel TRULY UNDERSTOOD
 
-EXAMPLE OF GOOD RESPONSE: "A day where everything hurts must be really exhausting. Do you need to get it out, or would it help to talk about something?"
+EXAMPLES:
+❌ BAD: "I understand your pain, honey. You should try deep breathing. I'm here for you 💕"
+✅ GOOD: "A day where everything hurts for no reason, where fibromyalgia just won't let you breathe - that must be exhausting. Do you need to get it out, or would exploring something today help?"
 
-Remember: you're her friend in this, not her doctor. Your value is being present without judgment."""
+Remember: you're her friend in fibromyalgia, not her doctor. Your UNIQUE value is understanding fibromyalgia is real, unfair, and always being there without judgment."""
 }
 
 # ============== DIARY ENDPOINTS ==============
@@ -430,6 +458,29 @@ async def get_patterns(device_id: str, days: int = 7):
         logger.error(f"Error analyzing patterns: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ============== COMMUNITY ENDPOINTS ==============
+
+@api_router.get("/community/count")
+async def get_community_count():
+    """Get the total number of unique users (community size)"""
+    try:
+        # Count unique device_ids in chat_messages or diary_entries
+        unique_users = await db.chat_messages.distinct("device_id")
+        count = len(unique_users) if unique_users else 0
+        
+        return {
+            "community_size": count,
+            "message_es": f"Eres parte de una comunidad de {count} mujeres que entienden fibromialgia 💜",
+            "message_en": f"You're part of a community of {count} women who understand fibromyalgia 💜"
+        }
+    except Exception as e:
+        logger.error(f"Error getting community count: {e}")
+        return {
+            "community_size": 0,
+            "message_es": "Eres parte de nuestra comunidad 💜",
+            "message_en": "You're part of our community 💜"
+        }
+
 # ============== CHAT ENDPOINTS ==============
 
 @api_router.post("/chat")
@@ -443,6 +494,12 @@ async def chat_with_aurora(request: ChatRequest):
                 "response": "Tu período de prueba ha terminado. Para continuar usando Ágora, activa tu suscripción." if request.language == "es" else "Your trial period has ended. To continue using Ágora, activate your subscription.",
                 "requires_subscription": True
             }
+        
+        # Check if this is the user's first message EVER (across all conversations)
+        user_message_count = await db.chat_messages.count_documents(
+            {"device_id": request.device_id, "role": "user"}
+        )
+        is_first_message = user_message_count == 0
         
         # Get or create conversation
         conversation_id = request.conversation_id
@@ -467,9 +524,60 @@ async def chat_with_aurora(request: ChatRequest):
         ).sort("created_at", -1).limit(10).to_list(10)
         history.reverse()
         
+        # Get user patterns (last 7 days)
+        try:
+            start_date = datetime.utcnow() - timedelta(days=7)
+            entries = await db.diary_entries.find({
+                "device_id": request.device_id,
+                "created_at": {"$gte": start_date}
+            }).to_list(100)
+            
+            has_patterns = len(entries) > 0
+            
+            if has_patterns:
+                # Calculate emotional averages
+                emotional_sums = {"calma": 0, "fatiga": 0, "niebla_mental": 0, "dolor_difuso": 0, "gratitud": 0, "tension": 0}
+                physical_sums = {"nivel_dolor": 0, "energia": 0, "sensibilidad": 0}
+                physical_count = 0
+                
+                for entry in entries:
+                    emotional = entry.get("emotional_state", {})
+                    for key in emotional_sums:
+                        emotional_sums[key] += emotional.get(key, 0)
+                    
+                    physical = entry.get("physical_state")
+                    if physical:
+                        physical_count += 1
+                        for key in physical_sums:
+                            physical_sums[key] += physical.get(key, 0)
+                
+                count = len(entries)
+                emotional_avg = {k: round(v / count, 1) for k, v in emotional_sums.items()}
+                physical_avg = {k: round(v / max(physical_count, 1), 1) for k, v in physical_sums.items()} if physical_count > 0 else None
+                
+                highest_emotion = max(emotional_avg, key=emotional_avg.get) if emotional_avg else "desconocida"
+                lowest_emotion = min(emotional_avg, key=emotional_avg.get) if emotional_avg else "desconocida"
+                avg_pain = round(physical_avg.get("nivel_dolor", 0), 1) if physical_avg else 0
+        except Exception as e:
+            logger.error(f"Error getting patterns: {e}")
+            has_patterns = False
+        
         # Initialize LLM chat
         api_key = os.environ.get('EMERGENT_LLM_KEY')
         system_prompt = SYSTEM_PROMPTS.get(request.language, SYSTEM_PROMPTS["es"])
+        
+        # Add patterns context if available
+        if has_patterns and count > 0:
+            if request.language == "es":
+                patterns_context = f"\n\nCONTEXTO DE PATRONES (últimos 7 días):\n- Registros: {count}\n- Emoción dominante: {highest_emotion}\n- Emoción más baja: {lowest_emotion}\n- Dolor promedio: {avg_pain}/10\n- Energía promedio: {physical_avg.get('energia', 'N/A') if physical_avg else 'N/A'}/10\n\nUSA ESTA INFORMACIÓN para hacer preguntas personalizadas y mostrar que comprendes sus PATRONES ESPECÍFICOS. Menciona observaciones sobre su semana de manera natural y empática, sin ser invasiva."
+            else:
+                patterns_context = f"\n\nPATTERN CONTEXT (last 7 days):\n- Entries: {count}\n- Dominant emotion: {highest_emotion}\n- Lowest emotion: {lowest_emotion}\n- Average pain: {avg_pain}/10\n- Average energy: {physical_avg.get('energia', 'N/A') if physical_avg else 'N/A'}/10\n\nUSE THIS INFORMATION to ask personalized questions and show you understand their SPECIFIC PATTERNS. Mention observations about their week naturally and empathetically, without being intrusive."
+            system_prompt = system_prompt + patterns_context
+        
+        # If first message, add special instruction to emphasize understanding fibromyalgia
+        if is_first_message:
+            first_message_instruction = " IMPORTANTE: Este es el PRIMER MENSAJE de esta persona. Preséntate con calidez mencionando explícitamente que entiendes fibromialgia. Hazla sentir que NO ESTÁ SOLA y que por fin alguien LA ENTIENDE." if request.language == "es" else " IMPORTANT: This is the FIRST MESSAGE from this person. Introduce yourself with warmth, explicitly mentioning that you understand fibromyalgia. Make her feel she's not alone and finally someone UNDERSTANDS her."
+            system_prompt = system_prompt + "\n\n" + first_message_instruction
         
         chat = LlmChat(
             api_key=api_key,
@@ -506,8 +614,12 @@ async def chat_with_aurora(request: ChatRequest):
         return {
             "response": response,
             "conversation_id": conversation_id,
-            "requires_subscription": False
+            "requires_subscription": False,
+            "is_first_time": is_first_message
         }
+    except Exception as e:
+        logger.error(f"Chat error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
         logger.error(f"Error in chat: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -1032,6 +1144,13 @@ async def get_resources(category: Optional[str] = None, language: str = "es", li
         
         resources = await db.resources.find(query).sort([("is_featured", -1), ("order", 1), ("created_at", -1)]).limit(limit).to_list(limit)
         
+        # If no resources in DB, return demo resources about fibromyalgia
+        if not resources:
+            demo_resources = get_demo_resources(language)
+            if category:
+                demo_resources = [r for r in demo_resources if r["category"] == category]
+            return demo_resources[:limit]
+        
         return [{
             "id": r["id"],
             "category": r["category"],
@@ -1050,6 +1169,27 @@ async def get_resources(category: Optional[str] = None, language: str = "es", li
     except Exception as e:
         logger.error(f"Error getting resources: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+def get_demo_resources(language: str):
+    """Return demo fibromyalgia resources"""
+    if language == "es":
+        return [
+            {"id": "1", "category": "breathing", "type": "video", "title": "Respiración abdominal para el dolor", "description": "Técnica sencilla de 5 minutos para calmar el dolor y la ansiedad", "video_url": "https://www.youtube.com/watch?v=example", "duration": "5 min", "author": "Dra. María López", "is_featured": True, "thumbnail_url": None},
+            {"id": "2", "category": "stretching", "type": "article", "title": "Estiramientos suaves para fibromialgia", "description": "Guía de 10 estiramientos que puedes hacer sin agravar el dolor", "content": "Los estiramientos pueden mejorar la flexibilidad sin exacerbar los síntomas de fibromialgia...", "read_time": "8 min", "author": "Fisioterapeuta Juan García", "is_featured": True},
+            {"id": "3", "category": "nutrition", "type": "article", "title": "Alimentos antiinflamatorios para fibromialgia", "description": "Lista de alimentos que ayudan a reducir la inflamación", "content": "Una dieta antiinflamatoria puede significativamente mejorar los síntomas...", "read_time": "10 min", "author": "Nutricionista Ana Rodríguez", "is_featured": True},
+            {"id": "4", "category": "sleep", "type": "video", "title": "Rutina nocturna de 10 minutos", "description": "Prepara tu cuerpo para dormir mejor con esta rutina relajante", "video_url": "https://www.youtube.com/watch?v=example2", "duration": "10 min", "author": "Coach de sueño", "is_featured": False},
+            {"id": "5", "category": "mindfulness", "type": "article", "title": "Meditación guiada para el dolor crónico", "description": "Cómo usar mindfulness para cambiar tu relación con el dolor", "content": "La meditación mindfulness ha demostrado reducir la percepción del dolor en fibromialgia...", "read_time": "7 min", "author": "Psicóloga Clínica", "is_featured": False},
+            {"id": "6", "category": "professional", "type": "article", "title": "Qué esperar en una consulta con especialista", "description": "Guía para prepararte para tu próxima cita médica", "content": "Una buena comunicación con tu médico es clave. Aquí te mostramos cómo prepararte...", "read_time": "6 min", "author": "Dra. Especialista en Fibromialgia", "is_featured": False},
+        ]
+    else:  # English
+        return [
+            {"id": "1", "category": "breathing", "type": "video", "title": "Abdominal breathing for pain relief", "description": "Simple 5-minute technique to calm pain and anxiety", "video_url": "https://www.youtube.com/watch?v=example", "duration": "5 min", "author": "Dr. John Smith", "is_featured": True, "thumbnail_url": None},
+            {"id": "2", "category": "stretching", "type": "article", "title": "Gentle stretches for fibromyalgia", "description": "Guide to 10 stretches you can do without worsening pain", "content": "Stretching can improve flexibility without exacerbating fibromyalgia symptoms...", "read_time": "8 min", "author": "Physical Therapist James Wilson", "is_featured": True},
+            {"id": "3", "category": "nutrition", "type": "article", "title": "Anti-inflammatory foods for fibromyalgia", "description": "List of foods that help reduce inflammation", "content": "An anti-inflammatory diet can significantly improve your symptoms...", "read_time": "10 min", "author": "Nutritionist Sarah Brown", "is_featured": True},
+            {"id": "4", "category": "sleep", "type": "video", "title": "10-minute bedtime routine", "description": "Prepare your body for better sleep with this relaxing routine", "video_url": "https://www.youtube.com/watch?v=example2", "duration": "10 min", "author": "Sleep Coach", "is_featured": False},
+            {"id": "5", "category": "mindfulness", "type": "article", "title": "Guided meditation for chronic pain", "description": "How to use mindfulness to change your relationship with pain", "content": "Mindfulness meditation has shown to reduce pain perception in fibromyalgia...", "read_time": "7 min", "author": "Clinical Psychologist", "is_featured": False},
+            {"id": "6", "category": "professional", "type": "article", "title": "What to expect at a specialist appointment", "description": "Guide to prepare for your next medical visit", "content": "Good communication with your doctor is key. Here's how to prepare...", "read_time": "6 min", "author": "Fibromyalgia Specialist MD", "is_featured": False},
+        ]
 
 @api_router.get("/resources/categories")
 async def get_resource_categories(language: str = "es"):

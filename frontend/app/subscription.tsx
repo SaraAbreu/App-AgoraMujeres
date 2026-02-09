@@ -299,7 +299,7 @@ export default function SubscriptionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.cream,
+    backgroundColor: '#80704f',
   },
   keyboardView: {
     flex: 1,

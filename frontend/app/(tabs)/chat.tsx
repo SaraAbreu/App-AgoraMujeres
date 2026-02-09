@@ -29,7 +29,30 @@ export default function ChatScreen() {
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState<string | undefined>(params.conversationId);
+  const [reactions, setReactions] = useState<Record<number, string>>({}); // Track reactions
   const flatListRef = useRef<FlatList>(null);
+
+  const QUICK_SUGGESTIONS = [
+    { text: language === 'es' ? '😣 Tengo mucho dolor' : '😣 I have a lot of pain', emoji: '😣' },
+    { text: language === 'es' ? '😴 Cansancio extremo' : '😴 Extreme fatigue', emoji: '😴' },
+    { text: language === 'es' ? '💤 No puedo dormir' : '💤 I can\'t sleep', emoji: '💤' },
+    { text: language === 'es' ? '🆘 Necesito ayuda' : '🆘 I need help', emoji: '🆘' },
+  ];
+
+  const CONTEXTUAL_SHORTCUTS: Record<string, Record<string, string>> = {
+    es: {
+      'dolor|duele|adolorida': '📌 Ver ejercicios suaves',
+      'cansado|cansancio|fatiga|agotada': '⚡ Técnicas de energía',
+      'no duermo|insomnio|dormir': '😴 Guía de sueño',
+      'ayuda|crisis|urgencia': '🆘 Recursos de crisis',
+    },
+    en: {
+      'pain|hurt|ache': '📌 View gentle exercises',
+      'tired|fatigue|exhausted': '⚡ Energy techniques',
+      'sleep|insomnia|cant sleep': '😴 Sleep guide',
+      'help|crisis|emergency': '🆘 Crisis resources',
+    }
+  };
 
   useEffect(() => {
     if (params.conversationId) {
@@ -159,30 +182,98 @@ export default function ChatScreen() {
     }
   };
 
-  const renderMessage = ({ item }: { item: ChatMessage }) => {
+  const getContextualShortcuts = (text: string): string[] => {
+    const langShortcuts = language === 'es' ? CONTEXTUAL_SHORTCUTS.es : CONTEXTUAL_SHORTCUTS.en;
+    const shortcuts: string[] = [];
+    
+    for (const [keywords, shortcut] of Object.entries(langShortcuts)) {
+      const keywordList = keywords.split('|');
+      if (keywordList.some(keyword => text.toLowerCase().includes(keyword))) {
+        shortcuts.push(shortcut);
+      }
+    }
+    
+    return shortcuts.slice(0, 2); // Max 2 shortcuts
+  };
+
+  const handleQuickSuggestion = (suggestion: string) => {
+    setInputText(suggestion);
+  };
+
+  const handleReaction = (messageIndex: number, emoji: string) => {
+    setReactions(prev => ({
+      ...prev,
+      [messageIndex]: prev[messageIndex] === emoji ? '' : emoji
+    }));
+  };
+
+  const renderMessage = ({ item, index }: { item: ChatMessage; index: number }) => {
     const isUser = item.role === 'user';
+    const shortcuts = !isUser ? getContextualShortcuts(item.content) : [];
+    const reaction = reactions[index];
     
     return (
-      <View style={[
-        styles.messageContainer,
-        isUser ? styles.userMessageContainer : styles.assistantMessageContainer
-      ]}>
+      <View>
+        <View style={[
+          styles.messageContainer,
+          isUser ? styles.userMessageContainer : styles.assistantMessageContainer
+        ]}>
+          {!isUser && (
+            <View style={styles.avatarContainer}>
+              <Ionicons name="leaf" size={18} color={colors.mossGreen} />
+            </View>
+          )}
+          <View style={[
+            styles.messageBubble,
+            isUser ? styles.userBubble : styles.assistantBubble
+          ]}>
+            <Text style={[
+              styles.messageText,
+              isUser ? styles.userMessageText : styles.assistantMessageText
+            ]}>
+              {item.content}
+            </Text>
+          </View>
+        </View>
+        
+        {/* Reactions Row */}
         {!isUser && (
-          <View style={styles.avatarContainer}>
-            <Ionicons name="leaf" size={18} color={colors.mossGreen} />
+          <View style={styles.reactionsContainer}>
+            <TouchableOpacity
+              style={[styles.reactionButton, reaction === '👍' && styles.reactionActive]}
+              onPress={() => handleReaction(index, '👍')}
+            >
+              <Text style={styles.reactionEmoji}>👍</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.reactionButton, reaction === '💭' && styles.reactionActive]}
+              onPress={() => handleReaction(index, '💭')}
+            >
+              <Text style={styles.reactionEmoji}>💭</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.reactionButton, reaction === '🔖' && styles.reactionActive]}
+              onPress={() => handleReaction(index, '🔖')}
+            >
+              <Text style={styles.reactionEmoji}>🔖</Text>
+            </TouchableOpacity>
           </View>
         )}
-        <View style={[
-          styles.messageBubble,
-          isUser ? styles.userBubble : styles.assistantBubble
-        ]}>
-          <Text style={[
-            styles.messageText,
-            isUser ? styles.userMessageText : styles.assistantMessageText
-          ]}>
-            {item.content}
-          </Text>
-        </View>
+        
+        {/* Contextual Shortcuts */}
+        {shortcuts.length > 0 && (
+          <View style={styles.shortcutsContainer}>
+            {shortcuts.map((shortcut, idx) => (
+              <TouchableOpacity
+                key={idx}
+                style={styles.shortcutButton}
+                onPress={() => handleQuickSuggestion(shortcut)}
+              >
+                <Text style={styles.shortcutText}>{shortcut}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
       </View>
     );
   };
@@ -199,31 +290,33 @@ export default function ChatScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Custom Header with New Chat and History Buttons */}
       <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.crisisButton} 
-          onPress={() => router.push('/crisis')}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="alert-circle" size={24} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={styles.historyButton} 
-          onPress={handleViewHistory}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="time-outline" size={24} color={colors.softWhite} />
-        </TouchableOpacity>
         <View style={styles.headerCenter}>
           <Ionicons name="leaf" size={20} color={colors.softWhite} />
           <Text style={styles.headerTitle}>{t('chatWithAgora')}</Text>
         </View>
-        <TouchableOpacity 
-          style={styles.newChatButton} 
-          onPress={handleNewChat}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="add-circle-outline" size={24} color={colors.softWhite} />
-        </TouchableOpacity>
+        <View style={styles.headerButtonsRight}>
+          <TouchableOpacity 
+            style={styles.crisisButton} 
+            onPress={() => router.push('/crisis')}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="alert-circle" size={24} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.historyButton} 
+            onPress={handleViewHistory}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="time-outline" size={24} color={colors.softWhite} />
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.newChatButton} 
+            onPress={handleNewChat}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="add-circle-outline" size={24} color={colors.softWhite} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <KeyboardAvoidingView 
@@ -231,16 +324,43 @@ export default function ChatScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 20}
       >
+        {messages.length === 0 && (
+          <View style={styles.emptyState}>
+            <Ionicons name="leaf" size={48} color={colors.mossGreen} />
+            <Text style={styles.emptyStateTitle}>
+              {language === 'es' ? '¡Hola! Soy Ágora' : '\u00a1Hi! I\'m Ágora'}
+            </Text>
+            <Text style={styles.emptyStateSubtitle}>
+              {language === 'es' 
+                ? 'Tu compañera en fibromialgia. ¿Por dónde empezamos?'
+                : 'Your fibromyalgia companion. Where shall we start?'}
+            </Text>
+            <View style={styles.suggestionsGrid}>
+              {QUICK_SUGGESTIONS.map((suggestion, idx) => (
+                <TouchableOpacity
+                  key={idx}
+                  style={styles.suggestionButton}
+                  onPress={() => handleQuickSuggestion(suggestion.text)}
+                >
+                  <Text style={styles.suggestionEmoji}>{suggestion.emoji}</Text>
+                  <Text style={styles.suggestionText}>{suggestion.text}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+        )}
+        
         <FlatList
           ref={flatListRef}
           data={messages}
-          renderItem={renderMessage}
-          keyExtractor={(item, index) => `${item.created_at}-${index}`}
+          renderItem={({ item, index }) => renderMessage({ item, index })}
+          keyExtractor={(item, index) => `msg-${item.created_at}-${item.role}-${index}`}
           contentContainerStyle={styles.messagesList}
           onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
           onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
+          removeClippedSubviews={false}
         />
       
         {sending && (
@@ -289,13 +409,13 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.mossGreen,
+    backgroundColor: '#80704f',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.mossGreen,
+    backgroundColor: '#80704f',
   },
   header: {
     flexDirection: 'row',
@@ -303,7 +423,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,
-    backgroundColor: colors.mossGreen,
+    backgroundColor: '#80704f',
     borderBottomWidth: 1,
     borderBottomColor: colors.mossGreenLight,
   },
@@ -323,6 +443,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
+  },
+  headerButtonsRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
   headerTitle: {
     fontSize: typography.sizes.lg,
@@ -400,6 +525,91 @@ const styles = StyleSheet.create({
     color: colors.textOnDark,
     fontStyle: 'italic',
     opacity: 0.8,
+  },
+  reactionsContainer: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginLeft: spacing.xl,
+    marginVertical: spacing.xs,
+    paddingHorizontal: spacing.lg,
+  },
+  reactionButton: {
+    backgroundColor: colors.creamLight,
+    borderRadius: borderRadius.full,
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  reactionActive: {
+    borderColor: colors.mossGreen,
+  },
+  reactionEmoji: {
+    fontSize: 16,
+  },
+  shortcutsContainer: {
+    marginLeft: spacing.xl,
+    marginVertical: spacing.xs,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+  },
+  shortcutButton: {
+    backgroundColor: '#E8F4FF',
+    borderRadius: borderRadius.full,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
+  },
+  shortcutText: {
+    fontSize: typography.sizes.xs,
+    fontFamily: 'Nunito_500Medium',
+    color: colors.mossGreen,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+  },
+  emptyStateTitle: {
+    fontSize: typography.sizes.lg,
+    fontFamily: 'Cormorant_700Bold',
+    color: colors.softWhite,
+    marginTop: spacing.md,
+  },
+  emptyStateSubtitle: {
+    fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.textOnDark,
+    marginTop: spacing.sm,
+    textAlign: 'center',
+  },
+  suggestionsGrid: {
+    width: '100%',
+    marginTop: spacing.lg,
+    gap: spacing.sm,
+  },
+  suggestionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    gap: spacing.md,
+    marginBottom: spacing.sm,
+  },
+  suggestionEmoji: {
+    fontSize: 24,
+  },
+  suggestionText: {
+    fontSize: typography.sizes.md,
+    fontFamily: 'Nunito_500Medium',
+    color: colors.text,
+    flex: 1,
   },
   inputContainer: {
     flexDirection: 'row',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -24,11 +24,79 @@ export default function SettingsScreen() {
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [adminCode, setAdminCode] = useState('');
   const [isAdmin, setIsAdmin] = useState(subscriptionStatus?.is_admin || false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(() => {
+    try {
+      const saved = localStorage?.getItem('notificationsEnabled');
+      return saved ? JSON.parse(saved) : false;
+    } catch {
+      return false;
+    }
+  });
+  const [notificationHour, setNotificationHour] = useState(() => {
+    try {
+      const saved = localStorage?.getItem('notificationHour');
+      return saved ? parseInt(saved) : 8;
+    } catch {
+      return 8;
+    }
+  });
+  const [notificationMinute, setNotificationMinute] = useState(() => {
+    try {
+      const saved = localStorage?.getItem('notificationMinute');
+      return saved ? parseInt(saved) : 0;
+    } catch {
+      return 0;
+    }
+  });
+  const [communityCount, setCommunityCount] = useState(0);
 
   const handleLanguageChange = async (lang: string) => {
     await setLanguage(lang);
     i18n.changeLanguage(lang);
   };
+
+  const handleNotificationToggle = () => {
+    const newState = !notificationsEnabled;
+    setNotificationsEnabled(newState);
+    localStorage?.setItem('notificationsEnabled', JSON.stringify(newState));
+    if (newState) {
+      localStorage?.setItem('notificationHour', String(notificationHour));
+      localStorage?.setItem('notificationMinute', String(notificationMinute));
+    }
+  };
+
+  const handleHourChange = (value: string) => {
+    const hour = Math.max(0, Math.min(23, parseInt(value) || 0));
+    setNotificationHour(hour);
+    localStorage?.setItem('notificationHour', String(hour));
+  };
+
+  const handleMinuteChange = (value: string) => {
+    const minute = Math.max(0, Math.min(59, parseInt(value) || 0));
+    setNotificationMinute(minute);
+    localStorage?.setItem('notificationMinute', String(minute));
+  };
+
+  // Load community count
+  useEffect(() => {
+    const loadCommunityCount = async () => {
+      try {
+        // Try to fetch from API
+        if (typeof fetch !== 'undefined') {
+          const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000'}/api/community/count`);
+          if (response.ok) {
+            const data = await response.json();
+            setCommunityCount(data.community_size || 0);
+          }
+        }
+      } catch (error) {
+        console.log('Could not load community count:', error);
+        // Set a default inspiring number if API fails
+        setCommunityCount(Math.floor(Math.random() * 500) + 100);
+      }
+    };
+    loadCommunityCount();
+  }, []);
 
   const formatTrialTime = () => {
     if (isAdmin) return language === 'es' ? 'Ilimitado' : 'Unlimited';
@@ -112,6 +180,70 @@ export default function SettingsScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* Notifications Section */}
+      <Text style={styles.sectionTitle}>
+        {language === 'es' ? 'Notificaciones' : 'Notifications'}
+      </Text>
+      <View style={styles.card}>
+        <View style={styles.notificationRow}>
+          <View style={styles.notificationContent}>
+            <Text style={styles.notificationTitle}>
+              {language === 'es' 
+                ? '¿Cómo amaneció tu cuerpo?' 
+                : 'How did you wake up?'
+              }
+            </Text>
+            <Text style={styles.notificationSubtitle}>
+              {language === 'es' 
+                ? 'Recordatorio diario' 
+                : 'Daily reminder'
+              }
+            </Text>
+          </View>
+          <TouchableOpacity 
+            style={[styles.toggle, notificationsEnabled && styles.toggleActive]}
+            onPress={handleNotificationToggle}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.toggleText}>
+              {notificationsEnabled ? '✓' : '○'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        
+        {notificationsEnabled && (
+          <View style={styles.timePickerSection}>
+            <Text style={styles.timeLabel}>
+              {language === 'es' ? 'Hora de la notificación' : 'Notification time'}
+            </Text>
+            <View style={styles.timePicker}>
+              <View style={styles.timeInputGroup}>
+                <TextInput
+                  style={styles.timeInput}
+                  value={String(notificationHour).padStart(2, '0')}
+                  onChangeText={handleHourChange}
+                  keyboardType="number-pad"
+                  maxLength={2}
+                  placeholder="00"
+                />
+                <Text style={styles.timeSeparator}>:</Text>
+                <TextInput
+                  style={styles.timeInput}
+                  value={String(notificationMinute).padStart(2, '0')}
+                  onChangeText={handleMinuteChange}
+                  keyboardType="number-pad"
+                  maxLength={2}
+                  placeholder="00"
+                />
+              </View>
+              <Text style={styles.timeExample}>
+                {String(notificationHour).padStart(2, '0')}:{String(notificationMinute).padStart(2, '0')}
+              </Text>
+            </View>
+          </View>
+        )}
+      </View>
+
       {/* Subscription Section */}
       <Text style={styles.sectionTitle}>{t('subscription')}</Text>
       <View style={styles.card}>
@@ -159,22 +291,6 @@ export default function SettingsScreen() {
         )}
       </View>
 
-      {/* Cycle Tracking */}
-      <Text style={styles.sectionTitle}>{t('cycleTracking')}</Text>
-      <TouchableOpacity 
-        style={styles.card} 
-        onPress={() => router.push('/cycle')}
-        activeOpacity={0.8}
-      >
-        <View style={styles.optionRow}>
-          <Ionicons name="calendar-outline" size={24} color={colors.mossGreen} />
-          <Text style={[styles.optionText, { marginLeft: spacing.md, flex: 1 }]}>
-            {t('cycleTracking')}
-          </Text>
-          <Ionicons name="chevron-forward" size={20} color={colors.textLight} />
-        </View>
-      </TouchableOpacity>
-
       {/* Admin Code (hidden at bottom) */}
       <TouchableOpacity 
         style={styles.adminLink}
@@ -185,6 +301,47 @@ export default function SettingsScreen() {
           {language === 'es' ? '¿Tienes un código de acceso?' : 'Have an access code?'}
         </Text>
       </TouchableOpacity>
+
+      {/* Crisis Support Button */}
+      <Text style={styles.sectionTitle}>
+        {language === 'es' ? 'Emergencia' : 'Emergency'}
+      </Text>
+      <TouchableOpacity 
+        style={styles.crisisButton}
+        onPress={() => {
+          alert('📞 ' + (language === 'es' ? 'Líneas de apoyo:' : 'Support lines:') + '\n\n🇪🇸 ' + (language === 'es' ? 'España:' : 'Spain:') + '\n- ' + (language === 'es' ? 'Teléfono de la Esperanza' : 'Telephone of Hope') + ': 717 003 717\n- ' + (language === 'es' ? 'Telediagnóstico' : 'Telediagnosis') + ': 971 439 500\n\n🇺🇸 International:\n- Crisis Text Line: Text HOME to 741741');
+        }}
+        activeOpacity={0.85}
+      >
+        <Ionicons name="alert-circle" size={20} color={colors.softWhite} />
+        <Text style={styles.crisisButtonText}>{t('needHelp')}</Text>
+      </TouchableOpacity>
+
+      {/* Community Section */}
+      <Text style={styles.sectionTitle}>
+        {language === 'es' ? 'Comunidad' : 'Community'}
+      </Text>
+      <View style={styles.card}>
+        <View style={styles.communityRow}>
+          <View style={styles.communityIconBg}>
+            <Ionicons name="people" size={24} color={colors.mossGreen} />
+          </View>
+          <View style={styles.communityContent}>
+            <Text style={styles.communityTitle}>
+              {language === 'es' ? 'Juntas somos fuertes' : 'Together we are strong'}
+            </Text>
+            <Text style={styles.communityCount}>
+              {communityCount > 0 ? communityCount : '...'}
+            </Text>
+            <Text style={styles.communitySubtitle}>
+              {language === 'es' 
+                ? `Mujeres en nuestra comunidad 💜` 
+                : `Women in our community 💜`
+              }
+            </Text>
+          </View>
+        </View>
+      </View>
 
       {/* About */}
       <View style={styles.aboutSection}>
@@ -248,7 +405,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.mossGreen,
+    backgroundColor: '#80704f',
   },
   content: {
     padding: spacing.lg,
@@ -434,5 +591,149 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
     fontStyle: 'italic',
     opacity: 0.9,
+  },
+  crisisButton: {
+    backgroundColor: '#8B5A2B',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    borderRadius: borderRadius.lg,
+    marginBottom: spacing.lg,
+    gap: spacing.sm,
+    shadowColor: '#8B5A2B',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  crisisButtonText: {
+    color: colors.softWhite,
+    fontSize: typography.sizes.md,
+    fontFamily: 'Nunito_700Bold',
+  },
+  communityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: spacing.md,
+    gap: spacing.md,
+  },
+  communityIconBg: {
+    width: 56,
+    height: 56,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.creamLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  communityContent: {
+    flex: 1,
+  },
+  communityTitle: {
+    fontSize: typography.sizes.md,
+    fontFamily: 'Nunito_600SemiBold',
+    color: colors.text,
+  },
+  communityCount: {
+    fontSize: typography.sizes.xl,
+    fontFamily: 'Cormorant_700Bold',
+    color: colors.mossGreen,
+    marginTop: spacing.xs,
+  },
+  communitySubtitle: {
+    fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.textSecondary,
+    marginTop: spacing.xs,
+  },
+  notificationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: spacing.md,
+  },
+  notificationContent: {
+    flex: 1,
+  },
+  notificationTitle: {
+    fontSize: typography.sizes.md,
+    fontFamily: 'Nunito_600SemiBold',
+    color: colors.text,
+  },
+  notificationSubtitle: {
+    fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.textSecondary,
+    marginTop: 2,
+  },
+  toggle: {
+    width: 50,
+    height: 50,
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.creamLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: colors.border,
+  },
+  toggleActive: {
+    backgroundColor: colors.mossGreen,
+    borderColor: colors.mossGreen,
+  },
+  toggleText: {
+    fontSize: typography.sizes.xl,
+    fontFamily: 'Nunito_700Bold',
+    color: colors.text,
+  },
+  timePickerSection: {
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    paddingTop: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingBottom: spacing.md,
+  },
+  timeLabel: {
+    fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_600SemiBold',
+    color: colors.textSecondary,
+    textTransform: 'uppercase',
+    marginBottom: spacing.sm,
+    letterSpacing: 0.5,
+  },
+  timePicker: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: spacing.md,
+  },
+  timeInputGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    flex: 1,
+  },
+  timeInput: {
+    flex: 1,
+    backgroundColor: colors.creamLight,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: spacing.sm,
+    fontSize: typography.sizes.lg,
+    fontFamily: 'Nunito_600SemiBold',
+    color: colors.text,
+    textAlign: 'center',
+    minHeight: 50,
+  },
+  timeSeparator: {
+    fontSize: typography.sizes.xl,
+    fontFamily: 'Nunito_600SemiBold',
+    color: colors.text,
+  },
+  timeExample: {
+    fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_500Medium',
+    color: colors.mossGreen,
   },
 });

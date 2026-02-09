@@ -1,115 +1,78 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Image, Platform } from 'react-native';
 import { colors, spacing } from '@/src/theme/colors';
 
 interface OnboardingProps {
   onComplete: () => void;
 }
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
+const isWeb = Platform.OS === 'web';
 
 const SCREENS = [
   {
-    icon: 'heart',
-    title: '💙 Hola, soy Ágora',
-    description: 'Estoy aquí para acompañarte en los momentos más difíciles de la fibromialgia.',
-    subtitle: 'No estás sola en esto',
-    color: colors.primary,
-  },
-  {
-    icon: 'chatbubbles',
-    title: '🫂 Una Amiga que Entiende',
-    description: 'No soy un doctor. Soy alguien que escucha sin juzgar, que valida tu dolor, y que está aquí 24/7.\n\nAlgunos días duele más, otros tienes niebla mental, y otros simplemente todo es difícil. Aquí está bien sentir todo eso.',
-    subtitle: 'Apoyo emocional, no clínico',
-    color: colors.accent,
-  },
-  {
-    icon: 'leaf',
-    title: '🌿 Tu Compañera en la Sanación',
-    description: 'Con Ágora puedes:\n• Registrar cómo te sientes cada día\n• Conversar sobre lo que llevas en el corazón\n• Ver patrones en tu energía y dolor\n• Guardar palabras que te ayuden\n• Tener técnicas para crisis\n\nTodo con tu privacidad protegida.',
-    subtitle: 'Hecha para ti, con ti',
-    color: colors.warmBrown,
+    type: 'complete',
+    title: '¡Hola soy Ágora!',
+    subtitle: 'Tu acompañante en el cuidado de tu salud',
+    sectionTitle: 'Te ayudaré a:',
+    features: [
+      'Registrar y entender tu ciclo menstrual',
+      'Monitorear tus síntomas y patrones de salud',
+      'Recibir recomendaciones personalizadas',
+      'Conectar con información sobre salud menstrual',
+      'Acceder a recursos y consejos útiles',
+      'Tomar decisiones informadas sobre tu bienestar',
+    ],
+    disclaimer: 'Ágora es una herramienta de seguimiento y educación. No reemplaza la consulta médica profesional. Si tienes inquietudes de salud, consulta con tu médico.',
   },
 ];
 
 export function OnboardingScreen({ onComplete }: OnboardingProps) {
-  const [currentScreen, setCurrentScreen] = useState(0);
-  const screen = SCREENS[currentScreen];
-
-  const handleNext = () => {
-    if (currentScreen < SCREENS.length - 1) {
-      setCurrentScreen(currentScreen + 1);
-    } else {
-      onComplete();
-    }
-  };
-
-  const handleBack = () => {
-    if (currentScreen > 0) {
-      setCurrentScreen(currentScreen - 1);
-    }
-  };
+  const screen = SCREENS[0];
 
   return (
     <View style={styles.container}>
-      {/* Progress Bar */}
-      <View style={styles.progressContainer}>
-        {SCREENS.map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.progressDot,
-              index === currentScreen && styles.progressDotActive,
-            ]}
-          />
-        ))}
-      </View>
-
       {/* Content */}
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Icon/Emoji */}
-        <View style={[styles.iconContainer, { backgroundColor: screen.color + '20' }]}>
-          <Text style={styles.emoji}>{screen.title.substring(0, 2)}</Text>
+        {/* Logo - Arriba */}
+        <Image 
+          source={require('../../assets/images/agora-logo.png')}
+          style={styles.welcomeImage}
+        />
+        
+        {/* Título Principal */}
+        <Text style={styles.title}>{screen.title}</Text>
+        
+        {/* Subtítulo */}
+        <Text style={styles.subtitle}>{screen.subtitle}</Text>
+        
+        {/* Sección de Características */}
+        <Text style={styles.sectionTitle}>{screen.sectionTitle}</Text>
+        
+        <View style={styles.featuresList}>
+          {screen.features && screen.features.map((feature, index) => (
+            <View key={index} style={styles.featureItem}>
+              <Text style={styles.featureText}>{feature}</Text>
+            </View>
+          ))}
         </View>
 
-        {/* Title */}
-        <Text style={styles.title}>{screen.title}</Text>
-
-        {/* Description */}
-        <Text style={styles.description}>{screen.description}</Text>
-
-        {/* Subtitle */}
-        <View style={styles.subtitleContainer}>
-          <Text style={styles.subtitle}>{screen.subtitle}</Text>
+        {/* Disclaimer */}
+        <View style={styles.disclaimerBox}>
+          <Text style={styles.disclaimer}>{screen.disclaimer}</Text>
         </View>
       </ScrollView>
 
       {/* Button Container */}
       <View style={styles.buttonContainer}>
-        {currentScreen > 0 && (
-          <TouchableOpacity 
-            style={[styles.button, styles.backButton]}
-            onPress={handleBack}
-          >
-            <Text style={styles.backButtonText}>Anterior</Text>
-          </TouchableOpacity>
-        )}
-        
         <TouchableOpacity 
-          style={[
-            styles.button, 
-            styles.nextButton,
-            currentScreen === 0 && styles.fullButton
-          ]}
-          onPress={handleNext}
+          style={[styles.button, styles.nextButton]}
+          onPress={onComplete}
         >
-          <Text style={styles.nextButtonText}>
-            {currentScreen === SCREENS.length - 1 ? '¡Empecemos!' : 'Siguiente'}
-          </Text>
+          <Text style={styles.nextButtonText}>Empezar</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -119,75 +82,107 @@ export function OnboardingScreen({ onComplete }: OnboardingProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
-  },
-  progressContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: spacing.lg,
-    gap: spacing.sm,
-  },
-  progressDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#d0d0d0',
-  },
-  progressDotActive: {
-    backgroundColor: colors.primary,
-    width: 24,
+    backgroundColor: '#80704f',
   },
   scrollContent: {
     flex: 1,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.xl,
+    paddingHorizontal: isWeb ? spacing.xl : spacing.lg,
+    paddingVertical: isWeb ? spacing.lg : spacing.lg,
     justifyContent: 'center',
   },
-  iconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
+  
+  // Pantalla 1: Bienvenida
+  welcomeImage: {
+    width: isWeb ? Math.min(width - spacing.lg * 2, 400) : '100%',
+    height: isWeb ? 350 : 320,
+    borderRadius: 20,
+    marginBottom: spacing.xl,
+    marginHorizontal: isWeb ? 'auto' : 0,
+    resizeMode: 'contain',
     alignSelf: 'center',
-    marginBottom: spacing.xl,
   },
-  emoji: {
-    fontSize: 60,
+  
+  // Pantalla 2: Características
+  featuresList: {
+    marginVertical: spacing.xl,
+    paddingHorizontal: spacing.md,
   },
-  title: {
-    fontSize: 32,
-    fontFamily: 'Cormorant_600SemiBold',
-    color: colors.text,
-    textAlign: 'center',
+  featureItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: spacing.lg,
-    lineHeight: 40,
+    paddingHorizontal: spacing.md,
+    justifyContent: 'center',
   },
-  description: {
-    fontSize: 16,
+  featureBullet: {
+    fontSize: 28,
+    color: colors.accent,
+    marginRight: spacing.md,
+    lineHeight: 32,
+    fontWeight: 'bold',
+  },
+  featureText: {
+    flex: 1,
+    fontSize: isWeb ? 18 : 16,
     fontFamily: 'Nunito_400Regular',
-    color: colors.text,
-    textAlign: 'center',
+    color: 'white',
     lineHeight: 28,
-    marginBottom: spacing.xl,
-    opacity: 0.85,
+    fontWeight: '500',
+    textAlign: 'center',
   },
-  subtitleContainer: {
-    backgroundColor: colors.secondary,
-    paddingVertical: spacing.md,
+  
+  disclaimerBox: {
+    backgroundColor: colors.accent + '30',
+    paddingVertical: spacing.lg,
     paddingHorizontal: spacing.lg,
     borderRadius: 12,
     borderLeftWidth: 4,
-    borderLeftColor: colors.primary,
+    borderLeftColor: colors.accent,
+    marginTop: spacing.xl,
   },
-  subtitle: {
-    fontSize: 14,
-    fontFamily: 'Nunito_500Medium',
-    color: colors.accent,
+  disclaimer: {
+    fontSize: 15,
+    fontFamily: 'Nunito_600SemiBold',
+    color: colors.text,
     textAlign: 'center',
     fontStyle: 'italic',
   },
+  
+  // Común
+  title: {
+    fontSize: isWeb ? 36 : 32,
+    fontFamily: 'Cormorant_600SemiBold',
+    color: colors.warmBrownLight,
+    textAlign: 'center',
+    marginBottom: spacing.lg,
+    lineHeight: isWeb ? 44 : 40,
+  },
+  subtitle: {
+    fontSize: isWeb ? 18 : 16,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.textOnPrimary,
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: spacing.xl,
+    opacity: 0.95,
+  },
+  sectionTitle: {
+    fontSize: isWeb ? 22 : 20,
+    fontFamily: 'Cormorant_600SemiBold',
+    color: colors.warmBrownLight,
+    textAlign: 'center',
+    marginBottom: spacing.md,
+    marginTop: spacing.xl,
+  },
+  description: {
+    fontSize: isWeb ? 18 : 16,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.textOnPrimary,
+    textAlign: 'center',
+    lineHeight: 32,
+    opacity: 0.95,
+  },
+  
   buttonContainer: {
     flexDirection: 'row',
     paddingHorizontal: spacing.lg,
@@ -201,19 +196,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  fullButton: {
-    flex: 1,
-  },
-  backButton: {
-    backgroundColor: colors.secondary,
-  },
-  backButtonText: {
-    fontSize: 16,
-    fontFamily: 'Nunito_700Bold',
-    color: colors.text,
-  },
   nextButton: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.warmBrownDark,
   },
   nextButtonText: {
     fontSize: 16,

@@ -56,6 +56,14 @@ export default function DiaryScreen() {
       dolor_difuso: t('dolor_difuso'),
       gratitud: t('gratitud'),
       tension: t('tension'),
+      saturada: t('saturada'),
+      desconectada: t('desconectada'),
+      sensible: t('sensible'),
+      abrumada: t('abrumada'),
+      vulnerable: t('vulnerable'),
+      tranquila: t('tranquila'),
+      energia: t('energia'),
+      sensibilidad: t('sensibilidad'),
     };
     return labels[key] || key;
   };
@@ -75,6 +83,14 @@ export default function DiaryScreen() {
       dolor_difuso: colors.emotion.dolor,
       gratitud: colors.emotion.gratitud,
       tension: colors.emotion.tension,
+      saturada: colors.emotion.saturada,
+      desconectada: colors.emotion.desconectada,
+      sensible: colors.emotion.sensible,
+      abrumada: colors.emotion.abrumada,
+      vulnerable: colors.emotion.vulnerable,
+      tranquila: colors.emotion.tranquila,
+      energia: colors.emotion.gratitud,
+      sensibilidad: colors.emotion.sensible,
     };
     return emotionColors[key] || colors.primary;
   };
@@ -169,7 +185,7 @@ export default function DiaryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.mossGreen,
+    backgroundColor: '#80704f',
   },
   listContent: {
     padding: spacing.lg,

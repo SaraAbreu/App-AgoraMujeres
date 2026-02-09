@@ -54,6 +54,12 @@ export const colors = {
     dolor: '#C9A59A',        // Rosa polvo
     gratitud: '#D4B896',     // Dorado cálido
     tension: '#C9A587',      // Terracota suave
+    saturada: '#C9A59A',     // Rosa polvo (sensación de saturación)
+    desconectada: '#B8AFA7', // Gris cálido (sensación de desapego)
+    sensible: '#D4B896',     // Dorado cálido (sensación de sensibilidad)
+    abrumada: '#C9A587',     // Terracota suave (sensación de agobio)
+    vulnerable: '#C4A484',   // Tan cálido (sensación de vulnerabilidad)
+    tranquila: '#9CAF88',    // Verde salvia suave (sensación de calma)
   },
   
   // Status colors (versiones suaves)

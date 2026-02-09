@@ -26,21 +26,27 @@ const { width } = Dimensions.get('window');
 
 // Emotion categories with their properties
 const emotionCategories = {
-  calming: {
-    title_es: 'Emociones calmantes',
-    title_en: 'Calming emotions',
+  mood: {
+    title_es: 'Cómo me siento',
+    title_en: 'How I feel',
     color: '#A8D5BA',
     emotions: [
-      { key: 'calma', label_es: 'Calma', label_en: 'Calm', question_es: '¿Cuánta calma sientes hoy?', question_en: 'How much calm do you feel today?' },
-      { key: 'gratitud', label_es: 'Gratitud', label_en: 'Gratitude', question_es: '¿Cuánta gratitud sientes?', question_en: 'How much gratitude do you feel?' },
+      { key: 'calma', label_es: '😔 Mal', label_en: '😔 Awful', question_es: 'Estoy pasando por algo difícil', question_en: 'I\'m going through something hard' },
+      { key: 'gratitud', label_es: '😐 Regular', label_en: '😐 Okay', question_es: 'Llevo lo que puedo', question_en: 'I\'m managing' },
+      { key: 'energia', label_es: '🙂 Bien', label_en: '🙂 Good', question_es: 'Hoy es un buen día', question_en: 'Today is a good day' },
     ]
   },
   cognitive: {
-    title_es: 'Estados cognitivos',
-    title_en: 'Cognitive states',
+    title_es: 'Estado emocional',
+    title_en: 'Emotional state',
     color: '#B8AFA7',
     emotions: [
-      { key: 'niebla_mental', label_es: 'Niebla mental', label_en: 'Brain fog', question_es: '¿Cómo está tu claridad mental?', question_en: 'How is your mental clarity?' },
+      { key: 'saturada', label_es: 'Me siento saturada', label_en: 'Overwhelmed', question_es: '¿Te sientes saturada?', question_en: 'Are you feeling overwhelmed?' },
+      { key: 'desconectada', label_es: 'Me siento desconectada', label_en: 'Disconnected', question_es: '¿Te sientes desconectada?', question_en: 'Are you feeling disconnected?' },
+      { key: 'sensible', label_es: 'Me siento sensible', label_en: 'Sensitive', question_es: '¿Te sientes sensible?', question_en: 'Are you feeling sensitive?' },
+      { key: 'abrumada', label_es: 'Me siento abrumada', label_en: 'Overwhelmed', question_es: '¿Te sientes abrumada?', question_en: 'Are you feeling overwhelmed?' },
+      { key: 'vulnerable', label_es: 'Me siento vulnerable', label_en: 'Vulnerable', question_es: '¿Te sientes vulnerable?', question_en: 'Are you feeling vulnerable?' },
+      { key: 'tranquila', label_es: 'Me siento tranquila', label_en: 'Calm', question_es: '¿Te sientes tranquila?', question_en: 'Are you feeling calm?' },
     ]
   },
   physical: {
@@ -48,16 +54,9 @@ const emotionCategories = {
     title_en: 'Physical symptoms',
     color: '#D4B896',
     emotions: [
-      { key: 'fatiga', label_es: 'Fatiga', label_en: 'Fatigue', question_es: 'Escucha tu cuerpo sin prisa', question_en: 'Listen to your body without rush' },
-      { key: 'dolor_difuso', label_es: 'Dolor difuso', label_en: 'Diffuse pain', question_es: '¿Cómo sientes tu cuerpo?', question_en: 'How does your body feel?' },
-    ]
-  },
-  tension: {
-    title_es: 'Tensión emocional',
-    title_en: 'Emotional tension',
-    color: '#C9A587',
-    emotions: [
-      { key: 'tension', label_es: 'Tensión', label_en: 'Tension', question_es: '¿Cuánta tensión llevas dentro?', question_en: 'How much tension are you carrying?' },
+      { key: 'fatiga', label_es: 'Cansancio profundo', label_en: 'Exhaustion', question_es: '¿Cuánto cansancio sientes?', question_en: 'How exhausted are you?' },
+      { key: 'dolor_difuso', label_es: 'Dolor en el cuerpo', label_en: 'Body pain', question_es: '¿Dónde sientes el dolor?', question_en: 'Where do you feel pain?' },
+      { key: 'sensibilidad', label_es: 'Sensibilidad táctil', label_en: 'Tactile sensitivity', question_es: '¿Cómo está tu sensibilidad?', question_en: 'How is your sensitivity?' },
     ]
   }
 };
@@ -78,10 +77,15 @@ export default function NewDiaryEntry() {
   const [emotionalState, setEmotionalState] = useState<EmotionalState>({
     calma: 0,
     fatiga: 0,
-    niebla_mental: 0,
+    saturada: 0,
+    desconectada: 0,
+    sensible: 0,
+    abrumada: 0,
+    vulnerable: 0,
+    tranquila: 0,
     dolor_difuso: 0,
     gratitud: 0,
-    tension: 0,
+    energia: 0,
   });
   const [physicalState, setPhysicalState] = useState<PhysicalState>({
     nivel_dolor: 0,
@@ -328,7 +332,7 @@ export default function NewDiaryEntry() {
               {language === 'es' ? 'Sin prisa, sin juicio. Aquí solo estás tú.' : 'No rush, no judgment. Just you here.'}
             </Text>
             <Text style={styles.emotionalSubtitle}>
-              {language === 'es' ? '¿Qué lleva tu cuerpo y corazón hoy?' : 'What are your body and heart carrying today?'}
+              {language === 'es' ? '¿Cómo estás hoy por dentro?' : 'How are you doing today inside?'}
             </Text>
             <Text style={styles.reminderText}>
               {language === 'es' 
@@ -402,7 +406,7 @@ export default function NewDiaryEntry() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.mossGreen,
+    backgroundColor: '#80704f',
   },
   keyboardView: {
     flex: 1,

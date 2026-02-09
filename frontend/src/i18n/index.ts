@@ -18,7 +18,7 @@ const resources = {
       
       // Home
       welcomeBack: 'Bienvenida, tu refugio está aquí',
-      howAreYou: 'Hoy puede ser un día difícil, regular o bueno. Sea cual sea, tu voz importa aquí.',
+      howAreYou: 'Hoy puede ser un día difícil, regular o bueno. Sea como sea, aquí tienes un espacio para ti.',
       quickEntry: 'Entrada rápida (30 segundos)',
       needHelp: 'Necesito ayuda ahora',
       crisisSupport: 'Centro de Crisis',
@@ -36,6 +36,12 @@ const resources = {
       dolor_difuso: 'Dolor difuso',
       gratitud: 'Gratitud',
       tension: 'Tensión',
+      saturada: 'Me siento saturada',
+      desconectada: 'Me siento desconectada',
+      sensible: 'Me siento sensible',
+      abrumada: 'Me siento abrumada',
+      vulnerable: 'Me siento vulnerable',
+      tranquila: 'Me siento tranquila',
       
       // Physical States
       nivel_dolor: 'Nivel de dolor',
@@ -46,7 +52,7 @@ const resources = {
       newEntry: 'Nueva entrada',
       howDoYouFeel: '¿Cómo te sientes?',
       writeThoughts: 'Desahógate sin filtro. Aquí no tienes que explicar, justificar ni ser fuerte.',
-      writeQuick: 'Cuéntame rápido: ¿Cómo está tu dolor? ¿Y tu ánimo?',
+      writeQuick: 'Si quieres, cuéntame cómo te sientes hoy.',
       physicalState: 'Estado físico (opcional)',
       saveEntry: 'Guardar',
       entrySaved: 'Guardado con cariño',
@@ -55,7 +61,7 @@ const resources = {
       
       // Chat
       chatWithAgora: 'Conversa con Ágora',
-      agoraIntro: 'Hola, soy Ágora. Estoy aquí 24/7 para escucharte sin juzgar, acompañarte en tus días malos, celebrar los buenos, y simplemente estar cuando lo necesites. Yo NO soy terapeuta, pero sí soy tu apoyo. ¿Cómo prefieres que te hable hoy? ¿Buscas desahogarte o prefieres consejos?',
+      agoraIntro: 'Hola, soy Ágora. Estoy aquí para ti, sin juzgar. ¿Cómo te sientes hoy?',
       justListen: 'Solo escúchame, sin soluciones',
       giveAdvice: 'Ayúdame a pensar diferente',
       typeMessage: 'Escribe lo que sientes...',
@@ -111,12 +117,27 @@ const resources = {
       monthlyRecordDesc: 'Para tu médico',
       
       // Motivational
-      dailyReminder: 'Día de mucho dolor, de niebla mental, o simplemente de dificultad. Sea cual sea, llegas aquí. Eso es toda la victoria que necesitas hoy.',
+      dailyReminder: 'Hoy puede ser un día difícil, regular o bueno. Sea como sea, aquí tienes un espacio para ti.',
       
       // Crisis & Support
       inCrisis: '¿Estás en crisis?',
       crisisMessage: 'Tu vida importa. Hay gente que puede ayudarte ahora mismo.',
       needProfessional: 'Necesito hablar con un profesional',
+      hurtsEverywhere: 'Me duele todo',
+      hurtsEverywhereSub: 'Cuando el dolor es insoportable',
+      crisisQuick: 'El dolor que sientes es REAL y completamente válido. Estoy aquí contigo ahora.',
+      
+      // Community & Social
+      communitySize: 'Eres parte de una comunidad de {{count}} mujeres que entienden fibromialgia',
+      communityHint: 'Muchas en la red tuvieron tu mismo nivel de dolor hoy',
+      
+      // Data Summary
+      weeklyStats: 'Esta semana:',
+      goodDays: 'Días buenos',
+      difficultDays: 'Días difíciles',
+      averagePain: 'Dolor promedio',
+      topEmotion: 'Emoción más frecuente',
+      keepWriting: 'Sigue escribiendo para descubrir tus patrones',
       
       // General
       loading: 'Cargando...',
@@ -146,7 +167,7 @@ const resources = {
       
       // Home
       welcomeBack: 'Welcome back, your refuge is here',
-      howAreYou: 'Today might be a hard day, an okay day, or a good day. Whatever it is, your voice matters here.',
+      howAreYou: 'Today might be a hard day, an okay day, or a good day. Whatever it is, here you have a space for yourself.',
       quickEntry: 'Quick entry (30 seconds)',
       needHelp: 'I need help now',
       crisisSupport: 'Crisis Support',
@@ -164,6 +185,12 @@ const resources = {
       dolor_difuso: 'Diffuse pain',
       gratitud: 'Gratitude',
       tension: 'Tension',
+      saturada: 'I feel overwhelmed',
+      desconectada: 'I feel disconnected',
+      sensible: 'I feel sensitive',
+      abrumada: 'I feel overwhelmed',
+      vulnerable: 'I feel vulnerable',
+      tranquila: 'I feel calm',
       
       // Physical States
       nivel_dolor: 'Pain level',
@@ -174,7 +201,7 @@ const resources = {
       newEntry: 'New entry',
       howDoYouFeel: 'How do you feel?',
       writeThoughts: 'Share without filter. You don\'t have to explain, justify, or be strong here.',
-      writeQuick: 'Tell me quickly: How\'s your pain? And your mood?',
+      writeQuick: 'If you want, tell me how you\'re feeling today.',
       physicalState: 'Physical state (optional)',
       saveEntry: 'Save',
       entrySaved: 'Saved with care',
@@ -183,7 +210,7 @@ const resources = {
       
       // Chat
       chatWithAgora: 'Chat with Ágora',
-      agoraIntro: "Hello, I'm Ágora. I'm here 24/7 to listen without judgment, walk with you through your hard days, celebrate the good ones, and simply be there when you need me. I'm NOT a therapist, but I am your support. How would you prefer I talk to you today? Do you want to share what\'s on your mind, or would talking through it help?",
+      agoraIntro: "Hi, I'm Ágora. I'm here for you, without judgment. How are you feeling today?",
       justListen: 'Just listen to me, no solutions',
       giveAdvice: 'Help me think differently',
       typeMessage: 'Share what you\'re feeling...',
@@ -245,6 +272,21 @@ const resources = {
       inCrisis: 'Are you in crisis?',
       crisisMessage: 'Your life matters. There are people who can help you right now.',
       needProfessional: 'I need to talk to a professional',
+      hurtsEverywhere: 'Everything hurts',
+      hurtsEverywhereSub: 'When pain is unbearable',
+      crisisQuick: 'The pain you feel is REAL and completely valid. I\'m here with you now.',
+      
+      // Community & Social
+      communitySize: 'You\'re part of a community of {{count}} women who understand fibromyalgia',
+      communityHint: 'Many in the network felt the same pain level as you today',
+      
+      // Data Summary
+      weeklyStats: 'This week:',
+      goodDays: 'Good days',
+      difficultDays: 'Difficult days',
+      averagePain: 'Average pain',
+      topEmotion: 'Most frequent emotion',
+      keepWriting: 'Keep writing to discover your patterns',
       
       // General
       loading: 'Loading...',

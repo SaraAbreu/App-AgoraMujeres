@@ -17,10 +17,14 @@ import { Image } from 'expo-image';
 import { colors, spacing, borderRadius, typography } from '../../src/theme/colors';
 import { useStore } from '../../src/store/useStore';
 import { getSubscriptionStatus, getWeather } from '../../src/services/api';
+import { WeeklyStatsCard } from '../../src/components/WeeklyStatsCard';
 import * as Location from 'expo-location';
 
-const LOGO_URL = require('../../assets/images/logo-agora.png');
-const ICON_SIZE = Platform.OS === 'web' ? 32 : 26;
+const LOGO_URL = require('../../assets/images/agora-logo.png');
+const ICON_SIZE = Platform.OS === 'web' ? 28 : 24;
+const isWeb = Platform.OS === 'web';
+const screenWidth = Dimensions.get('window').width;
+const MAX_WIDTH = isWeb ? 1200 : 800;
 
 export default function HomeScreen() {
   const { t } = useTranslation();
@@ -143,23 +147,25 @@ export default function HomeScreen() {
           )}
         </View>
 
-        {/* How Are You Card - Intro to Quick Actions */}
-        <View style={styles.howAreYouCard}>
-          <Text style={styles.howAreYouText}>{t('howAreYou')}</Text>
+        {/* Motivational Card */}
+        <View style={styles.reminderCard}>
+          <Ionicons name="heart" size={22} color={colors.warmBrown} />
+          <Text style={styles.reminderText}>
+            {t('dailyReminder')}
+          </Text>
         </View>
 
-        {/* Crisis Support Button */}
-        <TouchableOpacity 
+        {/* Crisis Button - Visible & Accessible */}
+        <TouchableOpacity
           style={styles.crisisButton}
-          onPress={() => {
-            // TODO: Implement crisis support navigation
-            alert('📞 Líneas de apoyo:\n\n🇪🇸 España:\n- Teléfono de la Esperanza: 717 003 717\n- Telediagnóstico: 971 439 500\n\n🇺🇸 International:\n- Crisis Text Line: Text HOME to 741741');
-          }}
-          activeOpacity={0.85}
+          onPress={() => router.push('/crisis')}
+          activeOpacity={0.75}
         >
-          <Ionicons name="alert-circle" size={20} color={colors.softWhite} />
-          <Text style={styles.crisisButtonText}>{t('needHelp')}</Text>
+          <Ionicons name="alert-circle" size={22} color={colors.softWhite} />
+          <Text style={styles.crisisButtonText}>{t('hurtsEverywhere')}</Text>
+          <Text style={styles.crisisButtonSub}>{t('hurtsEverywhereSub')}</Text>
         </TouchableOpacity>
+
 
         {/* Weather Card */}
         {weather && (
@@ -177,21 +183,6 @@ export default function HomeScreen() {
             </View>
           </View>
         )}
-
-        {/* Quick Entry for Bad Days */}
-        <View style={styles.quickEntryCard}>
-          <View>
-            <Text style={styles.quickEntryTitle}>¿Día de mucho dolor o niebla mental?</Text>
-            <Text style={styles.quickEntrySubtitle}>{t('writeQuick')}</Text>
-          </View>
-          <TouchableOpacity
-            style={styles.quickEntryButton}
-            onPress={() => router.push('/diary/new?mode=quick')}
-            activeOpacity={0.8}
-          >
-            <Ionicons name="arrow-forward" size={20} color={colors.softWhite} />
-          </TouchableOpacity>
-        </View>
 
         {/* Quick Actions */}
         <Text style={styles.sectionTitle}>{t('quickActions')}</Text>
@@ -270,13 +261,9 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Motivational Card */}
-        <View style={styles.reminderCard}>
-          <Ionicons name="heart" size={22} color={colors.warmBrown} />
-          <Text style={styles.reminderText}>
-            {t('dailyReminder')}
-          </Text>
-        </View>
+        {/* Weekly Stats Card */}
+        <WeeklyStatsCard deviceId={deviceId} />
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -285,42 +272,47 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.mossGreen,
+    backgroundColor: '#80704f',
   },
   scrollView: {
     flex: 1,
-    width: Platform.OS === 'web' ? Math.min(600, Dimensions.get('window').width) : '100%',
+    width: '100%',
     alignSelf: 'center',
   },
   content: {
-    padding: spacing.lg,
+    paddingHorizontal: isWeb ? Math.max(spacing.lg, (screenWidth - MAX_WIDTH) / 2) : spacing.lg,
+    paddingVertical: isWeb ? spacing.xl : spacing.lg,
     paddingBottom: spacing.xxl,
+    maxWidth: MAX_WIDTH,
+    alignSelf: 'center',
+    width: '100%',
   },
   header: {
     alignItems: 'center',
-    marginBottom: spacing.md,
+    marginBottom: isWeb ? spacing.md : spacing.lg,
     backgroundColor: 'transparent',
   },
   headerLogo: {
-    width: Platform.OS === 'web' ? 420 : 380,
-    height: Platform.OS === 'web' ? 420 : 380,
+    width: isWeb ? 240 : 320,
+    height: isWeb ? 240 : 320,
     backgroundColor: 'transparent',
     resizeMode: 'contain',
   },
   tagline: {
-    fontSize: Platform.OS === 'web' ? 16 : typography.sizes.sm,
-    fontFamily: 'Cormorant_600SemiBold',
+    fontSize: isWeb ? 16 : typography.sizes.sm,
+    fontFamily: 'Nunito_500Medium',
     color: '#8B5A2B',
     textAlign: 'center',
-    marginTop: spacing.xs,
-    marginBottom: spacing.sm,
+    marginTop: isWeb ? 0 : spacing.xs,
+    marginBottom: isWeb ? spacing.lg : spacing.md,
     fontStyle: 'italic',
+    lineHeight: isWeb ? 22 : 20,
   },
   welcomeCard: {
     backgroundColor: colors.surface,
-    padding: spacing.sm,
+    padding: isWeb ? spacing.md : spacing.md,
     borderRadius: borderRadius.lg,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.md,
     shadowColor: colors.shadowDark,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
@@ -329,14 +321,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   welcomeTitle: {
-    fontSize: Platform.OS === 'web' ? 26 : typography.sizes.md,
+    fontSize: isWeb ? 22 : typography.sizes.md,
     fontFamily: 'Cormorant_700Bold',
     color: colors.warmBrown,
     textAlign: 'center',
+    lineHeight: isWeb ? 28 : 26,
   },
   howAreYouCard: {
     backgroundColor: colors.surface,
-    padding: spacing.sm,
+    padding: isWeb ? spacing.md : spacing.md,
     borderRadius: borderRadius.lg,
     marginBottom: spacing.md,
     shadowColor: colors.shadow,
@@ -347,21 +340,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   howAreYouText: {
-    fontSize: Platform.OS === 'web' ? 20 : typography.sizes.md,
-    fontFamily: 'Cormorant_600SemiBold',
+    fontSize: isWeb ? 16 : typography.sizes.md,
+    fontFamily: 'Nunito_500Medium',
     color: colors.text,
+    lineHeight: 24,
   },
   crisisButton: {
-    backgroundColor: '#E8503D',
+    backgroundColor: '#8B5A2B',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing.md,
+    paddingVertical: isWeb ? spacing.lg : spacing.md,
     paddingHorizontal: spacing.lg,
     borderRadius: borderRadius.lg,
     marginBottom: spacing.lg,
     gap: spacing.sm,
-    shadowColor: '#E8503D',
+    shadowColor: '#8B5A2B',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
@@ -369,7 +363,7 @@ const styles = StyleSheet.create({
   },
   crisisButtonText: {
     color: colors.softWhite,
-    fontSize: Platform.OS === 'web' ? 16 : typography.sizes.md,
+    fontSize: isWeb ? 17 : typography.sizes.md,
     fontFamily: 'Nunito_700Bold',
   },
   quickEntryCard: {
@@ -377,7 +371,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: spacing.md,
+    padding: isWeb ? spacing.lg : spacing.md,
     borderRadius: borderRadius.lg,
     marginBottom: spacing.lg,
     borderLeftWidth: 4,
@@ -389,13 +383,14 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   quickEntryTitle: {
-    fontSize: Platform.OS === 'web' ? 16 : typography.sizes.sm,
-    fontFamily: 'Nunito_700Bold',
+    fontSize: isWeb ? 16 : typography.sizes.sm,
+    fontFamily: 'Nunito_600SemiBold',
     color: colors.text,
     marginBottom: spacing.xs,
+    lineHeight: 20,
   },
   quickEntrySubtitle: {
-    fontSize: Platform.OS === 'web' ? 14 : typography.sizes.xs,
+    fontSize: isWeb ? 14 : typography.sizes.xs,
     fontFamily: 'Nunito_400Regular',
     color: colors.textSecondary,
   },
@@ -435,7 +430,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surface,
-    padding: spacing.md,
+    padding: isWeb ? spacing.lg : spacing.md,
     borderRadius: borderRadius.md,
     marginBottom: spacing.lg,
     gap: spacing.md,
@@ -450,8 +445,9 @@ const styles = StyleSheet.create({
   },
   weatherTemp: {
     fontSize: typography.sizes.lg,
-    fontFamily: 'Cormorant_600SemiBold',
+    fontFamily: 'Nunito_600SemiBold',
     color: colors.text,
+    lineHeight: 22,
   },
   weatherDetail: {
     fontSize: typography.sizes.xs,
@@ -459,50 +455,61 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
   },
   sectionTitle: {
-    fontSize: Platform.OS === 'web' ? 22 : typography.sizes.lg,
+    fontSize: isWeb ? 26 : typography.sizes.lg,
     fontFamily: 'Cormorant_600SemiBold',
     color: colors.textOnDark,
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
+    marginTop: spacing.lg,
+    lineHeight: isWeb ? 30 : 28,
   },
   actionsGrid: {
     marginBottom: spacing.lg,
-    gap: spacing.md,
+    gap: isWeb ? 12 : 8,
+    flexWrap: isWeb ? 'wrap' : undefined,
+    flexDirection: isWeb ? 'row' : undefined,
   },
   actionsRow: {
     flexDirection: 'row',
-    gap: spacing.md,
+    gap: isWeb ? 16 : 0,
+    justifyContent: isWeb ? 'space-around' : 'space-between',
+    width: isWeb ? '100%' : undefined,
   },
   actionCard: {
-    flex: 1,
+    flex: isWeb ? undefined : 1,
+    width: isWeb ? 'calc(33.333% - 1px)' : undefined,
     backgroundColor: colors.surface,
-    padding: spacing.md,
+    padding: isWeb ? spacing.md : spacing.md,
     borderRadius: borderRadius.lg,
     alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 6,
     elevation: 2,
+    minHeight: isWeb ? 130 : 100,
+    marginHorizontal: isWeb ? 1 : undefined,
   },
   actionIcon: {
-    width: Platform.OS === 'web' ? 64 : 52,
-    height: Platform.OS === 'web' ? 64 : 52,
+    width: isWeb ? 56 : 52,
+    height: isWeb ? 56 : 52,
     borderRadius: borderRadius.md,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.sm,
   },
   actionTitle: {
-    fontSize: Platform.OS === 'web' ? 14 : typography.sizes.sm,
+    fontSize: isWeb ? 14 : typography.sizes.sm,
     fontFamily: 'Nunito_500Medium',
     color: colors.text,
     textAlign: 'center',
+    lineHeight: 18,
   },
   reminderCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     backgroundColor: colors.surface,
-    padding: spacing.lg,
+    padding: isWeb ? spacing.xl : spacing.lg,
     borderRadius: borderRadius.lg,
     gap: spacing.md,
     shadowColor: colors.shadow,
@@ -513,10 +520,39 @@ const styles = StyleSheet.create({
   },
   reminderText: {
     flex: 1,
-    fontSize: typography.sizes.sm,
+    fontSize: isWeb ? 15 : typography.sizes.sm,
     fontFamily: 'Nunito_400Regular',
     color: colors.text,
-    lineHeight: 22,
+    lineHeight: 24,
     fontStyle: 'italic',
+  },
+  crisisButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: '#C8514F',
+    padding: spacing.lg,
+    borderRadius: borderRadius.lg,
+    marginBottom: spacing.lg,
+    marginTop: spacing.md,
+    shadowColor: '#C8514F',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  crisisButtonText: {
+    flex: 1,
+    fontSize: isWeb ? 16 : typography.sizes.base,
+    fontFamily: 'Nunito_600SemiBold',
+    color: colors.softWhite,
+    lineHeight: 22,
+  },
+  crisisButtonSub: {
+    fontSize: isWeb ? 12 : 11,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.softWhite,
+    opacity: 0.9,
+    lineHeight: 16,
   },
 });

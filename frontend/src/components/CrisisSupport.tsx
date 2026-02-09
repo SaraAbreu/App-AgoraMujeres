@@ -140,7 +140,7 @@ export function CrisisSupport() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#80704f',
     padding: 20,
   },
   immediateCard: {

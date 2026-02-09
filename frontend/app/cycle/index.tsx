@@ -322,7 +322,7 @@ export default function CycleScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.mossGreen,
+    backgroundColor: '#80704f',
   },
   loadingContainer: {
     flex: 1,

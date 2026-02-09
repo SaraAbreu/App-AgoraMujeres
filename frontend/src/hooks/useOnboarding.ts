@@ -13,6 +13,13 @@ export function useOnboarding() {
 
   const checkOnboarding = async () => {
     try {
+      // RESET: Siempre mostrar onboarding en web durante desarrollo
+      if (typeof window !== 'undefined') {
+        setHasSeenOnboarding(false);
+        setLoading(false);
+        return;
+      }
+      
       const shown = await AsyncStorage.getItem(ONBOARDING_SHOWN_KEY);
       setHasSeenOnboarding(shown === 'true');
     } catch (error) {
