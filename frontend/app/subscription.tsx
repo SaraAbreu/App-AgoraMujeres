@@ -99,8 +99,12 @@ export default function SubscriptionScreen() {
 
   const formatTrialTime = () => {
     if (!subscriptionStatus?.trial_remaining_seconds) return '0h 0m';
-    const hours = Math.floor(subscriptionStatus.trial_remaining_seconds / 3600);
-    const minutes = Math.floor((subscriptionStatus.trial_remaining_seconds % 3600) / 60);
+
+    // Asegurarse de que el valor sea válido
+    const totalSeconds = Math.max(subscriptionStatus.trial_remaining_seconds, 0);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+
     return `${hours}h ${minutes}m`;
   };
 
@@ -178,27 +182,19 @@ export default function SubscriptionScreen() {
                 <View style={styles.features}>
                   <View style={styles.featureRow}>
                     <Ionicons name="checkmark" size={20} color={colors.mossGreen} />
-                    <Text style={styles.featureText}>
-                      {language === 'es' ? 'Diario emocional ilimitado' : 'Unlimited emotional diary'}
-                    </Text>
+                    <Text style={styles.featureText}>{t('unlimitedDiary')}</Text>
                   </View>
                   <View style={styles.featureRow}>
                     <Ionicons name="checkmark" size={20} color={colors.mossGreen} />
-                    <Text style={styles.featureText}>
-                      {language === 'es' ? 'Conversaciones con Ágora' : 'Conversations with Ágora'}
-                    </Text>
+                    <Text style={styles.featureText}>{t('conversationsWithAgora')}</Text>
                   </View>
                   <View style={styles.featureRow}>
                     <Ionicons name="checkmark" size={20} color={colors.mossGreen} />
-                    <Text style={styles.featureText}>
-                      {language === 'es' ? 'Análisis de patrones' : 'Pattern analysis'}
-                    </Text>
+                    <Text style={styles.featureText}>{t('patternAnalysis')}</Text>
                   </View>
                   <View style={styles.featureRow}>
                     <Ionicons name="checkmark" size={20} color={colors.mossGreen} />
-                    <Text style={styles.featureText}>
-                      {language === 'es' ? 'Privacidad total' : 'Total privacy'}
-                    </Text>
+                    <Text style={styles.featureText}>{t('totalPrivacy')}</Text>
                   </View>
                 </View>
               </View>
@@ -228,9 +224,7 @@ export default function SubscriptionScreen() {
                     {loading ? (
                       <ActivityIndicator color={colors.softWhite} />
                     ) : (
-                      <Text style={styles.continueButtonText}>
-                        {language === 'es' ? 'Continuar' : 'Continue'}
-                      </Text>
+                      <Text style={styles.continueButtonText}>{t('continue')}</Text>
                     )}
                   </TouchableOpacity>
                 </>

@@ -61,7 +61,7 @@ const resources = {
       
       // Chat
       chatWithAgora: 'Conversa con Ágora',
-      agoraIntro: 'Hola, soy Ágora. Estoy aquí para ti, sin juzgar. ¿Cómo te sientes hoy?',
+      agoraIntro: 'Hola. Soy Ágora, tu compañera en este camino. Sé que hay días difíciles y otros un poco mejores. ¿Cómo estás hoy?',
       justListen: 'Solo escúchame, sin soluciones',
       giveAdvice: 'Ayúdame a pensar diferente',
       typeMessage: 'Escribe lo que sientes...',

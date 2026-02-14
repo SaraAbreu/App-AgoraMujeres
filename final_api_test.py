@@ -11,29 +11,29 @@ from datetime import datetime
 
 # Configuration as requested by user
 DEVICE_ID = "test-final-check"
-BASE_URL = "https://comfort-coach.preview.emergentagent.com/api"  # Using production URL from frontend/.env
+BASE_URL = "http://localhost:8000/api"  # Usar backend local para pruebas
 
 def test_health_check():
     """Test GET /api/ - Health check"""
-    print("🔍 Testing Health Check Endpoint...")
+    print("Testing Health Check Endpoint...")
     try:
         response = requests.get(f"{BASE_URL}/")
         print(f"   Status Code: {response.status_code}")
         print(f"   Response: {response.json()}")
         
         if response.status_code == 200:
-            print("   ✅ Health check PASSED")
+            print("   Health check PASSED")
             return True
         else:
-            print("   ❌ Health check FAILED")
+            print("   Health check FAILED")
             return False
     except Exception as e:
-        print(f"   ❌ Health check ERROR: {e}")
+        print(f"   Health check ERROR: {e}")
         return False
 
 def test_subscription_status():
     """Test GET /api/subscription/{device_id} - Subscription status"""
-    print(f"\n🔍 Testing Subscription Status for device: {DEVICE_ID}...")
+    print(f"\nTesting Subscription Status for device: {DEVICE_ID}...")
     try:
         response = requests.get(f"{BASE_URL}/subscription/{DEVICE_ID}")
         print(f"   Status Code: {response.status_code}")
@@ -42,25 +42,25 @@ def test_subscription_status():
         if response.status_code == 200:
             data = response.json()
             if "status" in data:
-                print("   ✅ Subscription status PASSED")
+                print("   Subscription status PASSED")
                 return True
             else:
-                print("   ❌ Subscription status FAILED - missing status field")
+                print("   Subscription status FAILED - missing status field")
                 return False
         else:
-            print("   ❌ Subscription status FAILED")
+            print("   Subscription status FAILED")
             return False
     except Exception as e:
-        print(f"   ❌ Subscription status ERROR: {e}")
+        print(f"   Subscription status ERROR: {e}")
         return False
 
 def test_chat_ai():
     """Test POST /api/chat - Chat with AI"""
-    print(f"\n🔍 Testing AI Chat for device: {DEVICE_ID}...")
+    print(f"\nTesting AI Chat for device: {DEVICE_ID}...")
     try:
         payload = {
             "device_id": DEVICE_ID,
-            "message": "Hola Aurora, ¿cómo estás? Me siento un poco cansada hoy.",
+            "message": "Hola Ágora, ¿cómo estás? Me siento un poco cansada hoy.",
             "language": "es"
         }
         
@@ -72,22 +72,22 @@ def test_chat_ai():
             print(f"   Response keys: {list(data.keys())}")
             if "response" in data:
                 print(f"   AI Response: {data['response'][:100]}...")
-                print("   ✅ AI Chat PASSED")
+                print("   AI Chat PASSED")
                 return True
             else:
-                print("   ❌ AI Chat FAILED - missing response field")
+                print("   AI Chat FAILED - missing response field")
                 return False
         else:
             print(f"   Response: {response.text}")
-            print("   ❌ AI Chat FAILED")
+            print("   AI Chat FAILED")
             return False
     except Exception as e:
-        print(f"   ❌ AI Chat ERROR: {e}")
+        print(f"   AI Chat ERROR: {e}")
         return False
 
 def test_resources():
     """Test GET /api/resources - Get resources"""
-    print("\n🔍 Testing Resources Endpoint...")
+    print("\nTesting Resources Endpoint...")
     try:
         response = requests.get(f"{BASE_URL}/resources")
         print(f"   Status Code: {response.status_code}")
@@ -97,11 +97,11 @@ def test_resources():
             print(f"   Number of resources: {len(data)}")
             if len(data) > 0:
                 print(f"   Sample resource: {data[0].get('title', 'No title')}")
-            print("   ✅ Resources PASSED")
+                print("   Resources PASSED")
             return True
         else:
             print(f"   Response: {response.text}")
-            print("   ❌ Resources FAILED")
+            print("   Resources FAILED")
             return False
     except Exception as e:
         print(f"   ❌ Resources ERROR: {e}")
@@ -109,7 +109,7 @@ def test_resources():
 
 def test_resource_categories():
     """Test GET /api/resources/categories - Get resource categories"""
-    print("\n🔍 Testing Resource Categories Endpoint...")
+    print("\nTesting Resource Categories Endpoint...")
     try:
         response = requests.get(f"{BASE_URL}/resources/categories")
         print(f"   Status Code: {response.status_code}")
@@ -119,11 +119,11 @@ def test_resource_categories():
             print(f"   Number of categories: {len(data)}")
             if len(data) > 0:
                 print(f"   Sample category: {data[0].get('name', 'No name')}")
-            print("   ✅ Resource Categories PASSED")
+                print("   Resource Categories PASSED")
             return True
         else:
             print(f"   Response: {response.text}")
-            print("   ❌ Resource Categories FAILED")
+            print("   Resource Categories FAILED")
             return False
     except Exception as e:
         print(f"   ❌ Resource Categories ERROR: {e}")
@@ -131,7 +131,7 @@ def test_resource_categories():
 
 def test_admin_verify():
     """Test POST /api/admin/verify - Admin code verification"""
-    print(f"\n🔍 Testing Admin Code Verification for device: {DEVICE_ID}...")
+    print(f"\nTesting Admin Code Verification for device: {DEVICE_ID}...")
     try:
         # Test with correct admin code
         payload = {
@@ -146,14 +146,14 @@ def test_admin_verify():
             data = response.json()
             print(f"   Response: {data}")
             if "success" in data:
-                print("   ✅ Admin Verification PASSED")
+                print("   Admin Verification PASSED")
                 return True
             else:
-                print("   ❌ Admin Verification FAILED - missing success field")
+                print("   Admin Verification FAILED - missing success field")
                 return False
         else:
             print(f"   Response: {response.text}")
-            print("   ❌ Admin Verification FAILED")
+            print("   Admin Verification FAILED")
             return False
     except Exception as e:
         print(f"   ❌ Admin Verification ERROR: {e}")
@@ -162,7 +162,7 @@ def test_admin_verify():
 def main():
     """Run all tests"""
     print("=" * 60)
-    print("🚀 ÁGORA MUJERES API TESTING - FINAL CHECK")
+    print("AGORA MUJERES API TESTING - FINAL CHECK")
     print("=" * 60)
     print(f"Backend URL: {BASE_URL}")
     print(f"Device ID: {DEVICE_ID}")
@@ -186,14 +186,14 @@ def main():
     
     # Summary
     print("\n" + "=" * 60)
-    print("📊 TEST SUMMARY")
+    print("TEST SUMMARY")
     print("=" * 60)
     
     passed = 0
     total = len(results)
     
     for test_name, result in results:
-        status = "✅ PASS" if result else "❌ FAIL"
+        status = "PASS" if result else "FAIL"
         print(f"{test_name:<25} {status}")
         if result:
             passed += 1

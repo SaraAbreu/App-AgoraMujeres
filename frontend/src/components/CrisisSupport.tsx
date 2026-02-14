@@ -127,9 +127,9 @@ export function CrisisSupport() {
       {/* Back to Chat */}
       <TouchableOpacity
         style={styles.backButton}
-        onPress={() => router.back()}
+        onPress={() => router.push('/(tabs)/chat')}
       >
-        <Text style={styles.backButtonText}>Volver a Aurora</Text>
+        <Text style={styles.backButtonText}>Volver a Ágora</Text>
       </TouchableOpacity>
 
       <View style={styles.spacer} />

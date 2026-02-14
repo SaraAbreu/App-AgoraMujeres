@@ -148,7 +148,7 @@ class AgoraBackendTester:
             self.log_test("Pattern Analysis", False, f"Exception: {str(e)}")
     
     def test_ai_chat(self):
-        """Test POST /api/chat - Chat with Aurora AI"""
+        """Test POST /api/chat - Chat with Ágora AI"""
         try:
             chat_data = {
                 "device_id": self.device_id,
@@ -175,20 +175,20 @@ class AgoraBackendTester:
                     is_clinical = any(indicator in ai_response.lower() for indicator in clinical_indicators)
                     
                     if not is_clinical:
-                        self.log_test("AI Chat with Aurora", True, 
+                        self.log_test("AI Chat with Ágora", True, 
                                     f"Warm, non-clinical response received: '{ai_response[:100]}...'")
                     else:
-                        self.log_test("AI Chat with Aurora", False, 
+                        self.log_test("AI Chat with Ágora", False, 
                                     f"Response seems clinical: '{ai_response}'")
                 else:
-                    self.log_test("AI Chat with Aurora", False, 
+                    self.log_test("AI Chat with Ágora", False, 
                                 "Empty or too short response", data)
             else:
-                self.log_test("AI Chat with Aurora", False, 
+                self.log_test("AI Chat with Ágora", False, 
                             f"Status code: {response.status_code}", response.text)
                 
         except Exception as e:
-            self.log_test("AI Chat with Aurora", False, f"Exception: {str(e)}")
+            self.log_test("AI Chat with Ágora", False, f"Exception: {str(e)}")
     
     def test_chat_history(self):
         """Test GET /api/chat/{device_id}/history - Get chat history"""

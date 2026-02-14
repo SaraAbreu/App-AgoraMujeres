@@ -1,7 +1,7 @@
 # Ágora Mujeres - Product Requirements Document
 
 ## Overview
-Ágora Mujeres is a therapeutic companion mobile app specifically designed for women living with fibromyalgia. The app provides emotional support, daily journaling, and AI-powered conversation with a warm, empathetic virtual companion named Aurora.
+Ágora Mujeres is a therapeutic companion mobile app specifically designed for women living with fibromyalgia. The app provides emotional support, daily journaling, and AI-powered conversation with a warm, empathetic virtual companion named Ágora.
 
 ## Core Philosophy
 - **Privacy-first**: All data stored locally and encrypted
@@ -25,7 +25,7 @@
 - Weather integration for context
 - Local pattern analysis
 
-### 2. AI Companion (Aurora) (Priority: HIGH)
+### 2. AI Companion (Ágora) (Priority: HIGH)
 - Warm, empathetic conversation
 - Spanish and English support
 - Gentle suggestions (breathing, stretching, rest)
@@ -60,7 +60,7 @@
 - `GET /api/diary/{device_id}/patterns` - Get patterns
 
 ### Chat
-- `POST /api/chat` - Send message to Aurora
+- `POST /api/chat` - Send message to Ágora
 - `GET /api/chat/{device_id}/history` - Get chat history
 
 ### Subscription
@@ -103,7 +103,7 @@
 - ✅ Home screen with quick actions
 - ✅ Emotional diary with sliders
 - ✅ Physical state tracking (optional)
-- ✅ AI chat with Aurora (GPT-5.2)
+- ✅ AI chat with Ágora (GPT-5.2)
 - ✅ Pattern analysis
 - ✅ Multi-language (ES/EN)
 - ✅ Weather integration

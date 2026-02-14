@@ -9,398 +9,212 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Image,
   Alert,
 } from 'react-native';
-import { useTranslation } from 'react-i18next';
-import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, borderRadius, typography } from '../../src/theme/colors';
-import { useStore } from '../../src/store/useStore';
-import { sendChatMessage, getChatHistory, clearChatHistory, getConversationMessages, ChatMessage } from '../../src/services/api';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Constants from 'expo-constants';
+import { useRouter } from 'expo-router';
+import { sendChatMessage } from '../../src/services/api';
+
+const colors = {
+  mossGreen: '#6B8E6F',
+  mossGreenDark: '#4a4238',
+  mossGreenLight: '#8AA48F',
+  cream: '#FDFBF9',
+  text: '#333333',
+  lightText: '#888888',
+  gold: '#C9A876',
+  dustyRose: '#9B7A6B',
+};
+
+interface Message {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+}
 
 export default function ChatScreen() {
-  const { t } = useTranslation();
-  const router = useRouter();
-  const params = useLocalSearchParams<{ conversationId?: string }>();
-  const { deviceId, language } = useStore();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputText, setInputText] = useState('');
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      role: 'assistant',
+      content: 'Hola. Soy Ágora, tu compañera en este camino. Sé que hay días difíciles y otros un poco mejores. ¿Cómo estás hoy?',
+    }
+  ]);
+  
+  const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [currentConversationId, setCurrentConversationId] = useState<string | undefined>(params.conversationId);
-  const [reactions, setReactions] = useState<Record<number, string>>({}); // Track reactions
+  const [conversationId, setConversationId] = useState<string>('');
   const flatListRef = useRef<FlatList>(null);
+  const deviceId = 'test-device-' + Math.random().toString(36).substr(2, 9);
+  
+  // Get API URL from constants
+  const getApiUrl = () => {
+    const extraUrl = Constants.expoConfig?.extra?.EXPO_BACKEND_URL;
+    if (extraUrl) {
+      console.log('[Chat] Using backend URL:', extraUrl);
+      return extraUrl;
+    }
+    console.log('[Chat] Using fallback localhost URL');
+    return 'http://localhost:8001';
+  };
+  
+  const apiUrl = getApiUrl();
 
-  const QUICK_SUGGESTIONS = [
-    { text: language === 'es' ? '😣 Tengo mucho dolor' : '😣 I have a lot of pain', emoji: '😣' },
-    { text: language === 'es' ? '😴 Cansancio extremo' : '😴 Extreme fatigue', emoji: '😴' },
-    { text: language === 'es' ? '💤 No puedo dormir' : '💤 I can\'t sleep', emoji: '💤' },
-    { text: language === 'es' ? '🆘 Necesito ayuda' : '🆘 I need help', emoji: '🆘' },
-  ];
+  const sendMessage = async () => {
+    if (!input.trim()) return;
+    
+    setMessages(prev => [...prev, { id: Date.now().toString(), role: 'user', content: input }]);
+    const userMessage = input;
+    setInput('');
+    setLoading(true);
 
-  const CONTEXTUAL_SHORTCUTS: Record<string, Record<string, string>> = {
-    es: {
-      'dolor|duele|adolorida': '📌 Ver ejercicios suaves',
-      'cansado|cansancio|fatiga|agotada': '⚡ Técnicas de energía',
-      'no duermo|insomnio|dormir': '😴 Guía de sueño',
-      'ayuda|crisis|urgencia': '🆘 Recursos de crisis',
-    },
-    en: {
-      'pain|hurt|ache': '📌 View gentle exercises',
-      'tired|fatigue|exhausted': '⚡ Energy techniques',
-      'sleep|insomnia|cant sleep': '😴 Sleep guide',
-      'help|crisis|emergency': '🆘 Crisis resources',
+    try {
+      const data = await sendChatMessage(userMessage, conversationId, deviceId); // Se agregaron los argumentos faltantes
+      setMessages(prev => [...prev, {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: data.response || 'Error'
+      }]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      Alert.alert('Error', 'No se pudo enviar el mensaje. Por favor, intenta de nuevo.');
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (params.conversationId) {
-      setCurrentConversationId(params.conversationId);
-      loadConversation(params.conversationId);
-    } else {
-      loadHistory();
-    }
-  }, [deviceId, params.conversationId]);
+    flatListRef.current?.scrollToEnd({ animated: true });
+  }, [messages]);
 
-  const loadConversation = async (conversationId: string) => {
-    if (!deviceId) return;
-    setLoading(true);
-    try {
-      const history = await getConversationMessages(deviceId, conversationId);
-      if (history.length === 0) {
-        setMessages([{
-          role: 'assistant',
-          content: t('agoraIntro'),
-          created_at: new Date().toISOString(),
-        }]);
-      } else {
-        setMessages(history);
-      }
-    } catch (error) {
-      console.error('Error loading conversation:', error);
-      setMessages([{
-        role: 'assistant',
-        content: t('agoraIntro'),
-        created_at: new Date().toISOString(),
-      }]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const TypingIndicator = () => (
+    <View style={styles.typingContainer}>
+      <View style={[styles.typingDot, styles.dot1]} />
+      <View style={[styles.typingDot, styles.dot2]} />
+      <View style={[styles.typingDot, styles.dot3]} />
+    </View>
+  );
 
-  const loadHistory = async () => {
-    if (!deviceId) return;
-    setLoading(true);
-    try {
-      const history = await getChatHistory(deviceId);
-      if (history.length === 0) {
-        setMessages([{
-          role: 'assistant',
-          content: t('agoraIntro'),
-          created_at: new Date().toISOString(),
-        }]);
-        setCurrentConversationId(undefined);
-      } else {
-        setMessages(history);
-        // Get conversation_id from first message if available
-        if (history[0]?.conversation_id) {
-          setCurrentConversationId(history[0].conversation_id);
-        }
-      }
-    } catch (error) {
-      console.error('Error loading chat history:', error);
-      setMessages([{
-        role: 'assistant',
-        content: t('agoraIntro'),
-        created_at: new Date().toISOString(),
-      }]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const router = useRouter();
 
-  const handleNewChat = () => {
-    // Simply reset to a new conversation
-    setCurrentConversationId(undefined);
+  const startNewConversation = () => {
     setMessages([{
+      id: '1',
       role: 'assistant',
-      content: t('agoraIntro'),
-      created_at: new Date().toISOString(),
+      content: 'Hola. Soy Ágora, tu compañera en este camino. Sé que hay días difíciles y otros un poco mejores. ¿Cómo estás hoy?',
     }]);
+    setConversationId('');
   };
 
-  const handleViewHistory = () => {
+  const handleCrisis = () => {
+    router.push('/crisis');
+  };
+
+  const handleHistory = () => {
     router.push('/conversations');
   };
 
-  const handleSend = async () => {
-    if (!inputText.trim() || !deviceId || sending) return;
-    
-    const userMessage: ChatMessage = {
-      role: 'user',
-      content: inputText.trim(),
-      created_at: new Date().toISOString(),
-    };
-    
-    setMessages(prev => [...prev, userMessage]);
-    setInputText('');
-    setSending(true);
-    
-    try {
-      const response = await sendChatMessage(deviceId, userMessage.content, language, currentConversationId);
-      
-      if (response.requires_subscription) {
-        router.push('/subscription');
-        return;
-      }
-      
-      // Update the conversation ID if this was a new conversation
-      if (response.conversation_id && !currentConversationId) {
-        setCurrentConversationId(response.conversation_id);
-      }
-      
-      const assistantMessage: ChatMessage = {
-        role: 'assistant',
-        content: response.response,
-        created_at: new Date().toISOString(),
-      };
-      
-      setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
-      console.error('Error sending message:', error);
-      const errorMessage: ChatMessage = {
-        role: 'assistant',
-        content: language === 'es' 
-          ? 'Lo siento, ha ocurrido un error. ¿Puedes intentarlo de nuevo?' 
-          : 'Sorry, something went wrong. Can you try again?',
-        created_at: new Date().toISOString(),
-      };
-      setMessages(prev => [...prev, errorMessage]);
-    } finally {
-      setSending(false);
-    }
-  };
-
-  const getContextualShortcuts = (text: string): string[] => {
-    const langShortcuts = language === 'es' ? CONTEXTUAL_SHORTCUTS.es : CONTEXTUAL_SHORTCUTS.en;
-    const shortcuts: string[] = [];
-    
-    for (const [keywords, shortcut] of Object.entries(langShortcuts)) {
-      const keywordList = keywords.split('|');
-      if (keywordList.some(keyword => text.toLowerCase().includes(keyword))) {
-        shortcuts.push(shortcut);
-      }
-    }
-    
-    return shortcuts.slice(0, 2); // Max 2 shortcuts
-  };
-
-  const handleQuickSuggestion = (suggestion: string) => {
-    setInputText(suggestion);
-  };
-
-  const handleReaction = (messageIndex: number, emoji: string) => {
-    setReactions(prev => ({
-      ...prev,
-      [messageIndex]: prev[messageIndex] === emoji ? '' : emoji
-    }));
-  };
-
-  const renderMessage = ({ item, index }: { item: ChatMessage; index: number }) => {
-    const isUser = item.role === 'user';
-    const shortcuts = !isUser ? getContextualShortcuts(item.content) : [];
-    const reaction = reactions[index];
-    
-    return (
-      <View>
-        <View style={[
-          styles.messageContainer,
-          isUser ? styles.userMessageContainer : styles.assistantMessageContainer
-        ]}>
-          {!isUser && (
-            <View style={styles.avatarContainer}>
-              <Ionicons name="leaf" size={18} color={colors.mossGreen} />
-            </View>
-          )}
-          <View style={[
-            styles.messageBubble,
-            isUser ? styles.userBubble : styles.assistantBubble
-          ]}>
-            <Text style={[
-              styles.messageText,
-              isUser ? styles.userMessageText : styles.assistantMessageText
-            ]}>
-              {item.content}
-            </Text>
-          </View>
-        </View>
-        
-        {/* Reactions Row */}
-        {!isUser && (
-          <View style={styles.reactionsContainer}>
-            <TouchableOpacity
-              style={[styles.reactionButton, reaction === '👍' && styles.reactionActive]}
-              onPress={() => handleReaction(index, '👍')}
-            >
-              <Text style={styles.reactionEmoji}>👍</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.reactionButton, reaction === '💭' && styles.reactionActive]}
-              onPress={() => handleReaction(index, '💭')}
-            >
-              <Text style={styles.reactionEmoji}>💭</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.reactionButton, reaction === '🔖' && styles.reactionActive]}
-              onPress={() => handleReaction(index, '🔖')}
-            >
-              <Text style={styles.reactionEmoji}>🔖</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        
-        {/* Contextual Shortcuts */}
-        {shortcuts.length > 0 && (
-          <View style={styles.shortcutsContainer}>
-            {shortcuts.map((shortcut, idx) => (
-              <TouchableOpacity
-                key={idx}
-                style={styles.shortcutButton}
-                onPress={() => handleQuickSuggestion(shortcut)}
-              >
-                <Text style={styles.shortcutText}>{shortcut}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        )}
-      </View>
-    );
-  };
-
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.softWhite} />
-      </View>
-    );
-  }
-
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      {/* Custom Header with New Chat and History Buttons */}
+    <SafeAreaView style={styles.container}>
+      {/* Header con logo y botones */}
       <View style={styles.header}>
-        <View style={styles.headerCenter}>
-          <Ionicons name="leaf" size={20} color={colors.softWhite} />
-          <Text style={styles.headerTitle}>{t('chatWithAgora')}</Text>
+        <View style={styles.headerContent}>
+          <MaterialCommunityIcons name="leaf" size={24} color={colors.cream} />
+          <Text style={styles.headerTitle}>Conversa con Ágora</Text>
         </View>
-        <View style={styles.headerButtonsRight}>
-          <TouchableOpacity 
-            style={styles.crisisButton} 
-            onPress={() => router.push('/crisis')}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="alert-circle" size={24} color="white" />
+        <View style={styles.headerButtons}>
+          {/* Botón de emergencia */}
+          <TouchableOpacity style={styles.emergencyBtn} onPress={handleCrisis}>
+            <Ionicons name="alert-circle" size={24} color="#FF6B6B" />
           </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.historyButton} 
-            onPress={handleViewHistory}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="time-outline" size={24} color={colors.softWhite} />
+          {/* Botón de historial */}
+          <TouchableOpacity style={styles.headerBtn} onPress={handleHistory}>
+            <Ionicons name="time-outline" size={22} color={colors.cream} />
           </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.newChatButton} 
-            onPress={handleNewChat}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="add-circle-outline" size={24} color={colors.softWhite} />
+          {/* Botón de nuevo chat */}
+          <TouchableOpacity style={styles.headerBtn} onPress={startNewConversation}>
+            <Ionicons name="add-circle-outline" size={22} color={colors.cream} />
           </TouchableOpacity>
         </View>
       </View>
 
-      <KeyboardAvoidingView 
-        style={styles.chatContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 20}
-      >
-        {messages.length === 0 && (
-          <View style={styles.emptyState}>
-            <Ionicons name="leaf" size={48} color={colors.mossGreen} />
-            <Text style={styles.emptyStateTitle}>
-              {language === 'es' ? '¡Hola! Soy Ágora' : '\u00a1Hi! I\'m Ágora'}
-            </Text>
-            <Text style={styles.emptyStateSubtitle}>
-              {language === 'es' 
-                ? 'Tu compañera en fibromialgia. ¿Por dónde empezamos?'
-                : 'Your fibromyalgia companion. Where shall we start?'}
-            </Text>
-            <View style={styles.suggestionsGrid}>
-              {QUICK_SUGGESTIONS.map((suggestion, idx) => (
-                <TouchableOpacity
-                  key={idx}
-                  style={styles.suggestionButton}
-                  onPress={() => handleQuickSuggestion(suggestion.text)}
-                >
-                  <Text style={styles.suggestionEmoji}>{suggestion.emoji}</Text>
-                  <Text style={styles.suggestionText}>{suggestion.text}</Text>
-                </TouchableOpacity>
-              ))}
+      {/* Messages */}
+      <FlatList
+        ref={flatListRef}
+        data={messages}
+        renderItem={({ item }) => (
+          <View>
+            <View style={[styles.messageBubble, item.role === 'user' ? styles.userMsg : styles.agoraMsg]}>
+              {item.role === 'assistant' && (
+                <View style={styles.agoraAvatar}>
+                  <MaterialCommunityIcons name="leaf" size={16} color={colors.mossGreen} />
+                </View>
+              )}
+              <Text style={[styles.text, item.role === 'user' ? styles.userText : styles.agoraText]}>
+                {item.content}
+              </Text>
             </View>
+            {/* Botones de reacción para mensajes de Ágora */}
+            {item.role === 'assistant' && (
+              <View style={styles.reactionButtons}>
+                <TouchableOpacity style={styles.reactionBtn}>
+                  <Text style={styles.reactionEmoji}>🔥</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.reactionBtn}>
+                  <Text style={styles.reactionEmoji}>💜</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.reactionBtn}>
+                  <Text style={styles.reactionEmoji}>🚀</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         )}
-        
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          renderItem={({ item, index }) => renderMessage({ item, index })}
-          keyExtractor={(item, index) => `msg-${item.created_at}-${item.role}-${index}`}
-          contentContainerStyle={styles.messagesList}
-          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-          onLayout={() => flatListRef.current?.scrollToEnd({ animated: true })}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          removeClippedSubviews={false}
-        />
-      
-        {sending && (
-          <View style={styles.typingIndicator}>
-            <Ionicons name="leaf" size={14} color={colors.mossGreenLight} />
-            <Text style={styles.typingText}>{t('agoraTyping')}</Text>
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.messagesList}
+        scrollEnabled={true}
+      />
+
+      {loading && (
+        <View style={styles.typingSection}>
+          <View style={styles.agoraAvatar}>
+            <MaterialCommunityIcons name="leaf" size={16} color={colors.mossGreen} />
           </View>
-        )}
-      
+          <TypingIndicator />
+        </View>
+      )}
+
+      {/* Input */}
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.inputArea}>
         <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            value={inputText}
-            onChangeText={setInputText}
-            placeholder={t('typeMessage')}
-            placeholderTextColor={colors.textLight}
-            multiline
-            maxLength={500}
-            onFocus={() => {
-              setTimeout(() => {
-                flatListRef.current?.scrollToEnd({ animated: true });
-              }, 100);
-            }}
-          />
-        <TouchableOpacity
-          style={[
-            styles.sendButton,
-            (!inputText.trim() || sending) && styles.sendButtonDisabled
-          ]}
-          onPress={handleSend}
-          disabled={!inputText.trim() || sending}
-          activeOpacity={0.8}
-        >
-          <Ionicons 
-            name="send" 
-            size={20} 
-            color={inputText.trim() && !sending ? colors.softWhite : colors.textLight} 
-          />
-        </TouchableOpacity>
-      </View>
+          <View style={styles.inputWrapper}>
+            <TextInput
+              style={styles.input}
+              placeholder="Escribe lo que sientes..."
+              placeholderTextColor={colors.lightText}
+              value={input}
+              onChangeText={setInput}
+              multiline
+              editable={!loading}
+              maxLength={500}
+            />
+            <Text style={styles.charCount}>{input.length}/500</Text>
+          </View>
+          <TouchableOpacity
+            style={[styles.sendBtn, loading && styles.sendBtnDisabled]}
+            onPress={sendMessage}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color={colors.cream} size="small" />
+            ) : (
+              <Ionicons name="send" size={18} color={colors.cream} />
+            )}
+          </TouchableOpacity>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -409,237 +223,174 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#80704f',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#80704f',
+    backgroundColor: colors.mossGreenDark,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-    backgroundColor: '#80704f',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: colors.mossGreenDark,
     borderBottomWidth: 1,
-    borderBottomColor: colors.mossGreenLight,
+    borderBottomColor: colors.mossGreen,
   },
-  crisisButton: {
-    padding: spacing.xs,
-    backgroundColor: '#ff4444',
-    borderRadius: 50,
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  historyButton: {
-    padding: spacing.xs,
-  },
-  headerCenter: {
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
-  },
-  headerButtonsRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
+    gap: 12,
   },
   headerTitle: {
-    fontSize: typography.sizes.lg,
-    fontFamily: 'Cormorant_600SemiBold',
-    color: colors.textOnDark,
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.cream,
+    marginBottom: 2,
   },
-  newChatButton: {
-    padding: spacing.xs,
+  headerSubtitle: {
+    fontSize: 12,
+    color: colors.lightText,
+    fontWeight: '400',
   },
-  chatContainer: {
-    flex: 1,
-  },
-  messagesList: {
-    padding: spacing.md,
-    paddingBottom: spacing.lg,
-  },
-  messageContainer: {
-    flexDirection: 'row',
-    marginBottom: spacing.md,
-  },
-  userMessageContainer: {
-    justifyContent: 'flex-end',
-  },
-  assistantMessageContainer: {
-    justifyContent: 'flex-start',
-  },
-  avatarContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: colors.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: spacing.sm,
-  },
-  messageBubble: {
-    maxWidth: '75%',
-    padding: spacing.md,
-    borderRadius: borderRadius.lg,
-  },
-  userBubble: {
-    backgroundColor: colors.warmBrown,
-    borderBottomRightRadius: spacing.xs,
-  },
-  assistantBubble: {
-    backgroundColor: colors.surface,
-    borderBottomLeftRadius: spacing.xs,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  messageText: {
-    fontSize: typography.sizes.md,
-    lineHeight: 24,
-    fontFamily: 'Nunito_400Regular',
-  },
-  userMessageText: {
-    color: colors.softWhite,
-  },
-  assistantMessageText: {
-    color: colors.text,
-  },
-  typingIndicator: {
+  headerButtons: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    gap: spacing.xs,
+    gap: 8,
   },
-  typingText: {
-    fontSize: typography.sizes.sm,
-    fontFamily: 'Nunito_400Regular',
-    color: colors.textOnDark,
-    fontStyle: 'italic',
-    opacity: 0.8,
+  headerBtn: {
+    padding: 6,
   },
-  reactionsContainer: {
+  emergencyBtn: {
+    padding: 6,
+  },
+  reactionButtons: {
     flexDirection: 'row',
-    gap: spacing.sm,
-    marginLeft: spacing.xl,
-    marginVertical: spacing.xs,
-    paddingHorizontal: spacing.lg,
+    marginLeft: 36,
+    marginTop: 4,
+    marginBottom: 8,
+    gap: 8,
   },
-  reactionButton: {
-    backgroundColor: colors.creamLight,
-    borderRadius: borderRadius.full,
+  reactionBtn: {
     width: 32,
     height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.15)',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  reactionActive: {
-    borderColor: colors.mossGreen,
   },
   reactionEmoji: {
     fontSize: 16,
   },
-  shortcutsContainer: {
-    marginLeft: spacing.xl,
-    marginVertical: spacing.xs,
+  messagesList: {
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+  },
+  messageBubble: {
+    marginVertical: 8,
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.lg,
+    alignItems: 'flex-end',
   },
-  shortcutButton: {
-    backgroundColor: '#E8F4FF',
-    borderRadius: borderRadius.full,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.md,
+  userMsg: {
+    justifyContent: 'flex-end',
   },
-  shortcutText: {
-    fontSize: typography.sizes.xs,
-    fontFamily: 'Nunito_500Medium',
-    color: colors.mossGreen,
+  agoraMsg: {
+    justifyContent: 'flex-start',
   },
-  emptyState: {
-    flex: 1,
+  agoraAvatar: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: colors.cream,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: spacing.lg,
+    marginRight: 8,
   },
-  emptyStateTitle: {
-    fontSize: typography.sizes.lg,
-    fontFamily: 'Cormorant_700Bold',
-    color: colors.softWhite,
-    marginTop: spacing.md,
+  text: {
+    maxWidth: '75%',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 18,
+    fontSize: 14,
+    lineHeight: 20,
   },
-  emptyStateSubtitle: {
-    fontSize: typography.sizes.sm,
-    fontFamily: 'Nunito_400Regular',
-    color: colors.textOnDark,
-    marginTop: spacing.sm,
-    textAlign: 'center',
+  userText: {
+    backgroundColor: '#C9976B',
+    color: colors.cream,
+    marginRight: 8,
+    borderBottomRightRadius: 4,
   },
-  suggestionsGrid: {
-    width: '100%',
-    marginTop: spacing.lg,
-    gap: spacing.sm,
+  agoraText: {
+    backgroundColor: colors.cream,
+    color: colors.text,
+    borderBottomLeftRadius: 4,
   },
-  suggestionButton: {
+  typingSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.lg,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    gap: spacing.md,
-    marginBottom: spacing.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 8,
   },
-  suggestionEmoji: {
-    fontSize: 24,
+  typingContainer: {
+    flexDirection: 'row',
+    gap: 4,
+    marginLeft: 8,
   },
-  suggestionText: {
-    fontSize: typography.sizes.md,
-    fontFamily: 'Nunito_500Medium',
-    color: colors.text,
-    flex: 1,
+  typingDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.lightText,
+  },
+  dot1: {
+    opacity: 0.4,
+  },
+  dot2: {
+    opacity: 0.7,
+  },
+  dot3: {
+    opacity: 1,
+  },
+  inputArea: {
+    backgroundColor: colors.mossGreenDark,
+    borderTopWidth: 1,
+    borderTopColor: colors.mossGreen,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    padding: spacing.md,
-    paddingBottom: Platform.OS === 'ios' ? spacing.lg : spacing.md,
-    backgroundColor: colors.mossGreenDark,
+    gap: 10,
+  },
+  inputWrapper: {
+    flex: 1,
+    backgroundColor: colors.cream,
+    borderRadius: 24,
+    paddingHorizontal: 14,
+    paddingVertical: 4,
   },
   input: {
-    flex: 1,
-    minHeight: 44,
-    maxHeight: 120,
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.lg,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    fontSize: typography.sizes.md,
-    fontFamily: 'Nunito_400Regular',
     color: colors.text,
+    fontSize: 14,
+    maxHeight: 100,
+    minHeight: 40,
+    paddingVertical: 10,
   },
-  sendButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.warmBrown,
+  charCount: {
+    fontSize: 10,
+    color: colors.lightText,
+    textAlign: 'right',
+    marginBottom: 2,
+  },
+  sendBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.mossGreen,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: spacing.sm,
   },
-  sendButtonDisabled: {
-    backgroundColor: colors.mossGreenLight,
+  sendBtnDisabled: {
+    opacity: 0.6,
   },
 });

@@ -300,6 +300,7 @@ export default function NewDiaryEntry() {
       <KeyboardAvoidingView
         style={styles.keyboardView}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
       >
         {/* Header */}
         <View style={styles.header}>
@@ -322,7 +323,7 @@ export default function NewDiaryEntry() {
 
         <Animated.ScrollView 
           style={[styles.scrollView, { opacity: fadeAnim }]}
-          contentContainerStyle={styles.content}
+          contentContainerStyle={{...styles.content, paddingBottom: styles.content.paddingBottom + 80}}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >

@@ -1,7 +1,8 @@
+import { useTrialCheck } from '../src/hooks/useTrialCheck';
 import React, { useEffect, useState, useRef } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { View, ActivityIndicator, StyleSheet, Text, Animated, Platform, Dimensions } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, Text, Animated, Platform, Dimensions, TouchableOpacity } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { I18nextProvider } from 'react-i18next';
 import { useFonts } from 'expo-font';
@@ -104,6 +105,8 @@ export default function RootLayout() {
     }
   }, [fontsLoaded]);
 
+  const { isTrialExpired } = useTrialCheck();
+
   if (!fontsLoaded || onboardingLoading) {
     return (
       <View style={styles.loading}>
@@ -147,39 +150,55 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <I18nextProvider i18n={i18n}>
         <StatusBar style="light" />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { 
-              backgroundColor: colors.background,
-              maxWidth: Platform.OS === 'web' ? 600 : '100%',
-              alignSelf: 'center',
-              width: '100%',
-            },
-            animation: 'fade',
-          }}
-        >
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="crisis" options={{ headerShown: false }} />
-          <Stack.Screen 
-            name="diary/new" 
-            options={{ 
-              presentation: 'modal',
-              animation: 'slide_from_bottom'
-            }} 
-          />
-          <Stack.Screen 
-            name="subscription" 
-            options={{ 
-              presentation: 'modal',
-              animation: 'slide_from_bottom'
-            }} 
-          />
-          <Stack.Screen name="conversations/index" options={{ headerShown: false }} />
-          <Stack.Screen name="cycle/index" options={{ headerShown: false }} />
-          <Stack.Screen name="monthly-record/index" options={{ headerShown: false }} />
-          <Stack.Screen name="resources/index" options={{ headerShown: false }} />
-        </Stack>
+        {isTrialExpired ? (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+            <View style={{ backgroundColor: colors.surface, padding: 32, borderRadius: 24, alignItems: 'center', shadowColor: colors.shadowDark, shadowOpacity: 0.2, shadowRadius: 12 }}>
+              <Text style={{ fontSize: 22, fontFamily: 'Cormorant_700Bold', color: colors.error, marginBottom: 12 }}>
+                {i18n.t('trialExpired')}
+              </Text>
+              <Text style={{ fontSize: 16, fontFamily: 'Nunito_400Regular', color: colors.textSecondary, marginBottom: 24, textAlign: 'center' }}>
+                {i18n.t('continueUsing')}
+              </Text>
+              <TouchableOpacity style={{ backgroundColor: colors.mossGreen, paddingVertical: 12, paddingHorizontal: 32, borderRadius: 12 }} onPress={() => {}}>
+                <Text style={{ color: colors.softWhite, fontSize: 18, fontFamily: 'Nunito_600SemiBold' }}>{i18n.t('subscribe')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : (
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { 
+                backgroundColor: colors.background,
+                maxWidth: Platform.OS === 'web' ? 600 : '100%',
+                alignSelf: 'center',
+                width: '100%',
+              },
+              animation: 'fade',
+            }}
+          >
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="crisis" options={{ headerShown: false }} />
+            <Stack.Screen 
+              name="diary/new" 
+              options={{ 
+                presentation: 'modal',
+                animation: 'slide_from_bottom'
+              }} 
+            />
+            <Stack.Screen 
+              name="subscription" 
+              options={{ 
+                presentation: 'modal',
+                animation: 'slide_from_bottom'
+              }} 
+            />
+            <Stack.Screen name="conversations/index" options={{ headerShown: false }} />
+            <Stack.Screen name="cycle/index" options={{ headerShown: false }} />
+            <Stack.Screen name="monthly-record/index" options={{ headerShown: false }} />
+            <Stack.Screen name="resources/index" options={{ headerShown: false }} />
+          </Stack>
+        )}
       </I18nextProvider>
     </SafeAreaProvider>
   );

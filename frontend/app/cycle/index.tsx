@@ -226,6 +226,11 @@ export default function CycleScreen() {
               <Text style={styles.lastCycleDays}>
                 {lastCycleInfo.daysSince} {language === 'es' ? 'días' : 'days'}
               </Text>
+              <Text style={styles.cycleImpactText}>
+                {language === 'es'
+                  ? 'El ciclo hormonal puede influir en tus síntomas de dolor. Observa si hay patrones entre tu ciclo y los días de mayor dolor.'
+                  : 'The hormonal cycle can influence your pain symptoms. Notice if there are patterns between your cycle and high pain days.'}
+              </Text>
             </View>
           </View>
         )}
@@ -235,8 +240,8 @@ export default function CycleScreen() {
           <Ionicons name="information-circle-outline" size={20} color={colors.textSecondary} />
           <Text style={styles.instructionsText}>
             {language === 'es' 
-              ? 'Toca una fecha para marcar el inicio de tu período. Opcionalmente, toca otra fecha para marcar el final.'
-              : 'Tap a date to mark the start of your period. Optionally, tap another date to mark the end.'}
+              ? 'Toca una fecha para marcar el inicio de tu período. Opcionalmente, toca otra fecha para marcar el final. Puedes usar esta información para entender cómo el ciclo afecta tu dolor.'
+              : 'Tap a date to mark the start of your period. Optionally, tap another date to mark the end. Use this info to understand how your cycle affects your pain.'}
           </Text>
         </View>
 

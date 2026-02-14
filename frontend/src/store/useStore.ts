@@ -33,24 +33,18 @@ interface AppState {
 // Helper for secure storage (works on web and native)
 const secureStorage = {
   async getItem(key: string): Promise<string | null> {
-    if (Platform.OS === 'web') {
-      return AsyncStorage.getItem(key);
-    }
+    // Siempre usar SecureStore para datos sensibles
     try {
       return await SecureStore.getItemAsync(key);
     } catch {
-      return AsyncStorage.getItem(key);
+      return null;
     }
   },
   async setItem(key: string, value: string): Promise<void> {
-    if (Platform.OS === 'web') {
-      await AsyncStorage.setItem(key, value);
-      return;
-    }
     try {
       await SecureStore.setItemAsync(key, value);
     } catch {
-      await AsyncStorage.setItem(key, value);
+      // No fallback, datos sensibles deben ir cifrados
     }
   }
 };
@@ -66,20 +60,16 @@ export const useStore = create<AppState>((set, get) => ({
   initializeDevice: async () => {
     try {
       let deviceId = await secureStorage.getItem('agora_device_id');
-      
       if (!deviceId) {
         deviceId = uuidv4();
         await secureStorage.setItem('agora_device_id', deviceId);
       }
-      
-      // Load saved language
-      const savedLang = await AsyncStorage.getItem('agora_language');
-      
+      // Load saved language (cifrado)
+      const savedLang = await secureStorage.getItem('agora_language');
       set({ 
         deviceId,
         language: savedLang || 'es'
       });
-      
       return deviceId;
     } catch (error) {
       console.error('Error initializing device:', error);
@@ -98,7 +88,7 @@ export const useStore = create<AppState>((set, get) => ({
   
   // Set language
   setLanguage: async (lang: string) => {
-    await AsyncStorage.setItem('agora_language', lang);
+    await secureStorage.setItem('agora_language', lang);
     set({ language: lang });
   },
   

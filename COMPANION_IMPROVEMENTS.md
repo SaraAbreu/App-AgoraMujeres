@@ -1,4 +1,4 @@
-# 🌸 Plan: Aurora - Acompañante para Fibromialgia
+# 🌸 Plan: Ágora - Acompañante para Fibromialgia
 
 ## 6 Mejoras Principales
 
@@ -6,7 +6,7 @@
 **Cuándo:** Cuando el dolor es insoportable (8+/10)
 **Qué hace:**
 - Botón rojo destacado en Home: "Necesito ayuda AHORA"
-- Aurora responde en <2 segundos con técnicas de:
+- Ágora responde en <2 segundos con técnicas de:
   - Respiración guiada (4-7-8)
   - Grounding corporal
   - Autocompasión
@@ -35,11 +35,11 @@
 
 **Frontend:**
 - Configurar hora en Settings
-- Notificación push con link directo a Aurora
+- Notificación push con link directo a Ágora
 
 ---
 
-### 3. 💾 Guardar Mensajes de Aurora
+### 3. 💾 Guardar Mensajes de Ágora
 **Para:** Releerlos cuando duela
 **Qué permite:**
 - ❤️ Marcar mensajes como favoritos
@@ -60,7 +60,7 @@
 **Sistema:**
 - Rota según estado emocional usuario
 - Personalizada a su diagnosis (fibromialgia)
-- Aurora la dice al abrir la app
+- Ágora la dice al abrir la app
 
 **Ejemplos:**
 - "Tu cuerpo no es tu enemigo, es tu maestro"

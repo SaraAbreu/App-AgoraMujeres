@@ -5,19 +5,30 @@ import Constants from 'expo-constants';
 const getApiUrl = () => {
   // First try extra config from app.json
   const extraUrl = Constants.expoConfig?.extra?.EXPO_BACKEND_URL;
-  if (extraUrl) {
+  if (extraUrl && extraUrl.trim()) {
     console.log('[API] Using extra config URL:', extraUrl);
     return extraUrl;
   }
   
   // Then try environment variables
   const envUrl = process.env.EXPO_PUBLIC_BACKEND_URL;
-  if (envUrl) {
+  if (envUrl && envUrl.trim()) {
     console.log('[API] Using env URL:', envUrl);
     return envUrl;
   }
   
-  // Fallback for development (empty string means relative URL)
+  // For development: detect if running locally and default to localhost:8001
+  try {
+    // In web/native dev, fallback to localhost:8001
+    if (typeof window !== 'undefined' || typeof global !== 'undefined') {
+      console.log('[API] Using development fallback: http://localhost:8001');
+      return 'http://localhost:8001';
+    }
+  } catch (e) {
+    // Ignore
+  }
+  
+  // Last resort: relative URL
   console.log('[API] Using relative URL (fallback)');
   return '';
 };
@@ -35,7 +46,7 @@ const api = axios.create({
 
 // Types
 export interface EmotionalState {
-  [key: string]: number;
+  [key: string]: number | undefined; // Permitir valores undefined para las propiedades
   calma?: number;
   fatiga?: number;
   niebla_mental?: number;
