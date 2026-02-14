@@ -10,7 +10,7 @@ import sys
 from datetime import datetime
 
 # Backend URL from frontend/.env
-BACKEND_URL = "https://comfort-coach.preview.emergentagent.com/api"
+BACKEND_URL = "https://agora-mujeres-mvp.preview.emergentagent.com/api"
 
 def test_stripe_customer_creation():
     """Test POST /api/subscription/create-customer"""

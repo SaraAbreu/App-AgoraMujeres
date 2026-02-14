@@ -11,7 +11,7 @@ from datetime import datetime
 
 # Configuration as requested by user
 DEVICE_ID = "test-final-check"
-BASE_URL = "https://comfort-coach.preview.emergentagent.com/api"  # Using production URL from frontend/.env
+BASE_URL = "https://agora-mujeres-mvp.preview.emergentagent.com/api"  # Using production URL from frontend/.env
 
 def test_health_check():
     """Test GET /api/ - Health check"""
