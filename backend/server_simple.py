@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field
 from typing import Optional
 import uuid
 from datetime import datetime
-from emergentintegrations.llm.chat import LlmChat, UserMessage
+from .llm_adapter import MyLLMInterface, UserMessage
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 ROOT_DIR = Path(__file__).parent
@@ -340,11 +340,11 @@ async def chat_with_agora(request: ChatRequest):
             }
         
         # Create chat instance
-        chat = LlmChat(
+        chat = MyLLMInterface(
             api_key=api_key,
             session_id=f"agora_{request.device_id}_{conversation_id}",
             system_message=system_prompt
-        ).with_model("openai", "gpt-3.5-turbo")
+        ).set_model("openai", "gpt-3.5-turbo")
         
         # Add previous messages to context (last 10)
         for msg in messages_store[conversation_id][-10:]:

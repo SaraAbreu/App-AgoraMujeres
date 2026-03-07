@@ -14,7 +14,7 @@ import uuid
 from datetime import datetime, timedelta
 import stripe
 import httpx
-from emergentintegrations.llm.chat import LlmChat, UserMessage
+from .llm_adapter import MyLLMInterface, UserMessage
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -964,11 +964,11 @@ async def chat_with_agora(request: ChatRequest):
                     first_message_instruction = " IMPORTANTE: Este es el PRIMER MENSAJE de esta persona. Preséntate con calidez mencionando explícitamente que entiendes fibromialgia. Hazla sentir que NO ESTÁ SOLA y que por fin alguien LA ENTIENDE." if request.language == "es" else " IMPORTANT: This is the FIRST MESSAGE from this person. Introduce yourself with warmth, explicitly mentioning that you understand fibromyalgia. Make her feel she's not alone and finally someone UNDERSTANDS her."
                     system_prompt = system_prompt + "\n\n" + first_message_instruction
                 
-                chat = LlmChat(
+                chat = MyLLMInterface(
                     api_key=api_key,
                     session_id=f"agora_{request.device_id}_{conversation_id}",
                     system_message=system_prompt
-                ).with_model("openai", "gpt-4o-mini")
+                ).set_model("openai", "gpt-4o-mini")
                 
                 # Construir mensajes estructurados para OpenAI
                 messages = [
