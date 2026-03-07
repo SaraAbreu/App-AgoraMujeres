@@ -59,6 +59,11 @@ class MyLLMInterface:
         )
     
     @property
+    def client(self):
+        """Acceso directo al cliente del LLM interno (OpenAI, etc)."""
+        return self.chat_client.client
+    
+    @property
     def messages(self) -> List[Dict[str, str]]:
         """Acceso directo al historial de mensajes del cliente."""
         return self.chat_client.messages
