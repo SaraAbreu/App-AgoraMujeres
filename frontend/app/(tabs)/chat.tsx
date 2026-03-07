@@ -57,13 +57,17 @@ export default function ChatScreen() {
   
   // Get API URL from constants
   const getApiUrl = () => {
-    const extraUrl = Constants.expoConfig?.extra?.EXPO_BACKEND_URL;
-    if (extraUrl) {
-      console.log('[Chat] Using backend URL:', extraUrl);
-      return extraUrl;
+    try {
+      const extraUrl = Constants.expoConfig?.extra?.EXPO_PUBLIC_BACKEND_URL;
+      if (extraUrl) {
+        console.log('[Chat] Using backend URL:', extraUrl);
+        return extraUrl;
+      }
+    } catch (e) {
+      console.log('[Chat] Could not read expo config:', e);
     }
     console.log('[Chat] Using fallback localhost URL');
-    return 'http://localhost:8001';
+    return 'http://localhost:8000';
   };
   
   const apiUrl = getApiUrl();

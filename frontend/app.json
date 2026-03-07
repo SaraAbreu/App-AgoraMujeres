@@ -9,7 +9,7 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": false,
     "extra": {
-      "EXPO_BACKEND_URL": "http://localhost:8000"
+      "EXPO_PUBLIC_BACKEND_URL": "http://localhost:8000"
     },
     "ios": {
       "supportsTablet": true,
