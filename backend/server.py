@@ -7,6 +7,7 @@ import os
 import logging
 import random
 import inspect
+import asyncio
 from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
@@ -107,10 +108,14 @@ async def lifespan(app: FastAPI):
     # Startup: Connect to MongoDB
     try:
         client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=2000)
-        # Test connection asynchronously
-        await client.server_info()
-        db = client[db_name]
-        logger.info("✅ Connected to MongoDB")
+        # Test connection asynchronously with timeout
+        try:
+            await asyncio.wait_for(client.server_info(), timeout=2.0)
+            db = client[db_name]
+            logger.info("✅ Connected to MongoDB")
+            using_mongomock = False
+        except asyncio.TimeoutError:
+            raise Exception("MongoDB connection timeout")
     except Exception as e:
         # Fallback to mongomock for development/testing
         import mongomock
@@ -119,12 +124,16 @@ async def lifespan(app: FastAPI):
         db = client[db_name]
         using_mongomock = True
     
-    yield  # App is running
-    
-    # Shutdown: Close connections
-    if client and not using_mongomock:
-        client.close()
-        logger.info("MongoDB connection closed")
+    try:
+        yield  # App is running
+    finally:
+        # Shutdown: Close connections safely
+        try:
+            if client and not using_mongomock:
+                client.close()
+                logger.info("MongoDB connection closed")
+        except Exception as e:
+            logger.error(f"Error closing MongoDB: {e}")
 
 # Create the main app with lifespan
 app = FastAPI(
