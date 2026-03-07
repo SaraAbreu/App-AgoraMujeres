@@ -11,6 +11,8 @@ import {
   ActivityIndicator,
   Image,
   Alert,
+  ImageBackground,
+  Dimensions,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,14 +21,16 @@ import { useRouter } from 'expo-router';
 import { sendChatMessage } from '../../src/services/api';
 
 const colors = {
-  mossGreen: '#6B8E6F',
-  mossGreenDark: '#4a4238',
-  mossGreenLight: '#8AA48F',
-  cream: '#FDFBF9',
-  text: '#333333',
-  lightText: '#888888',
-  gold: '#C9A876',
-  dustyRose: '#9B7A6B',
+  // Paleta calmante y suave para acompañamiento emocional
+  mossGreen: '#7A9B82',      // Verde musgo más suave
+  mossGreenDark: '#5A7A63',  // Verde oscuro pero cálido
+  mossGreenLight: '#A3B8AB', // Verde claro para acompañamiento
+  cream: '#FDFBF9',          // Off-white cálido
+  text: '#3D3D3D',           // Gris oscuro suave
+  lightText: '#8B8B8B',      // Gris claro
+  accentWarm: '#D4A574',     // Dorado cálido para usuario
+  accentSoft: '#E8D5C4',     // Beige muy suave
+  background: '#F5F3F0',     // Fondo muy cálido
 };
 
 interface Message {
@@ -40,7 +44,7 @@ export default function ChatScreen() {
     {
       id: '1',
       role: 'assistant',
-      content: 'Hola. Soy Ágora, tu compañera en este camino. Sé que hay días difíciles y otros un poco mejores. ¿Cómo estás hoy?',
+      content: 'Hola, soy Ágora. Fui creada para mujeres como tú, que viven con fibromialgia - ese dolor que no tiene lógica, esa fatiga que deja sin respiración, esos días donde todo duele sin razón. Entiendo que nadie te cree del todo. Aquí sí. Sin preguntas. ¿Cómo estás hoy?',
     }
   ]);
   
@@ -48,6 +52,8 @@ export default function ChatScreen() {
   const [loading, setLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string>('');
   const flatListRef = useRef<FlatList>(null);
+  const [deviceId] = useState(() => `device-${Date.now()}`);
+  const screenWidth = Dimensions.get('window').width;
   const deviceId = 'test-device-' + Math.random().toString(36).substr(2, 9);
   
   // Get API URL from constants
@@ -104,7 +110,7 @@ export default function ChatScreen() {
     setMessages([{
       id: '1',
       role: 'assistant',
-      content: 'Hola. Soy Ágora, tu compañera en este camino. Sé que hay días difíciles y otros un poco mejores. ¿Cómo estás hoy?',
+      content: 'Hola, soy Ágora. Fui creada para mujeres como tú, que viven con fibromialgia - ese dolor que no tiene lógica, esa fatiga que deja sin respiración, esos días donde todo duele sin razón. Entiendo que nadie te cree del todo. Aquí sí. Sin preguntas. ¿Cómo estás hoy?',
     }]);
     setConversationId('');
   };
@@ -223,17 +229,28 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.mossGreenDark,
+    backgroundColor: colors.background,
+  },
+  backgroundLogo: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    opacity: 0.03, // Muy tenue, casi imperceptible
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 14,
     backgroundColor: colors.mossGreenDark,
     borderBottomWidth: 1,
     borderBottomColor: colors.mossGreen,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   headerContent: {
     flexDirection: 'row',
@@ -241,10 +258,10 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 19,
     fontWeight: '700',
     color: colors.cream,
-    marginBottom: 2,
+    letterSpacing: 0.3,
   },
   headerSubtitle: {
     fontSize: 12,
@@ -254,38 +271,42 @@ const styles = StyleSheet.create({
   headerButtons: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
   },
   headerBtn: {
-    padding: 6,
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
   },
   emergencyBtn: {
-    padding: 6,
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 107, 107, 0.15)',
   },
   reactionButtons: {
     flexDirection: 'row',
     marginLeft: 36,
-    marginTop: 4,
-    marginBottom: 8,
+    marginTop: 8,
+    marginBottom: 12,
     gap: 8,
   },
   reactionBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.15)',
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.accentSoft,
     justifyContent: 'center',
     alignItems: 'center',
   },
   reactionEmoji: {
-    fontSize: 16,
+    fontSize: 18,
   },
   messagesList: {
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
   },
   messageBubble: {
-    marginVertical: 8,
+    marginVertical: 10,
     flexDirection: 'row',
     alignItems: 'flex-end',
   },
@@ -296,56 +317,68 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   agoraAvatar: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: colors.cream,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.mossGreenLight,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 8,
+    marginRight: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
   },
   text: {
-    maxWidth: '75%',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 18,
-    fontSize: 14,
-    lineHeight: 20,
+    maxWidth: '78%',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 20,
+    fontSize: 15,
+    lineHeight: 22,
   },
   userText: {
-    backgroundColor: '#C9976B',
+    backgroundColor: colors.accentWarm,
     color: colors.cream,
     marginRight: 8,
     borderBottomRightRadius: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
   },
   agoraText: {
     backgroundColor: colors.cream,
     color: colors.text,
     borderBottomLeftRadius: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
   },
   typingSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     marginBottom: 8,
   },
   typingContainer: {
     flexDirection: 'row',
-    gap: 4,
-    marginLeft: 8,
+    gap: 6,
+    marginLeft: 42,
   },
   typingDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: colors.lightText,
+    backgroundColor: colors.mossGreenLight,
   },
   dot1: {
-    opacity: 0.4,
+    opacity: 0.3,
   },
   dot2: {
-    opacity: 0.7,
+    opacity: 0.6,
   },
   dot3: {
     opacity: 1,
@@ -354,41 +387,58 @@ const styles = StyleSheet.create({
     backgroundColor: colors.mossGreenDark,
     borderTopWidth: 1,
     borderTopColor: colors.mossGreen,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 3,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    gap: 10,
+    gap: 12,
   },
   inputWrapper: {
     flex: 1,
     backgroundColor: colors.cream,
-    borderRadius: 24,
-    paddingHorizontal: 14,
+    borderRadius: 26,
+    paddingHorizontal: 16,
     paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: colors.accentSoft,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
   },
   input: {
     color: colors.text,
-    fontSize: 14,
+    fontSize: 15,
     maxHeight: 100,
-    minHeight: 40,
+    minHeight: 42,
     paddingVertical: 10,
+    fontFamily: 'System',
   },
   charCount: {
-    fontSize: 10,
+    fontSize: 11,
     color: colors.lightText,
     textAlign: 'right',
     marginBottom: 2,
   },
   sendBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.mossGreen,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: colors.mossGreenLight,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+    elevation: 3,
   },
   sendBtnDisabled: {
     opacity: 0.6,
