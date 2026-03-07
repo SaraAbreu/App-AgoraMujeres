@@ -55,8 +55,6 @@
         "expo-secure-store"
       ]
     ],
-    "experiments": {
-      "typedRoutes": false
-    }
+    "runtimeVersion": "1.0.0"
   }
 }
