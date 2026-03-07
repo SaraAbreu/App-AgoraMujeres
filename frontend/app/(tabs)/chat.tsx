@@ -54,7 +54,6 @@ export default function ChatScreen() {
   const flatListRef = useRef<FlatList>(null);
   const [deviceId] = useState(() => `device-${Date.now()}`);
   const screenWidth = Dimensions.get('window').width;
-  const deviceId = 'test-device-' + Math.random().toString(36).substr(2, 9);
   
   // Get API URL from constants
   const getApiUrl = () => {
