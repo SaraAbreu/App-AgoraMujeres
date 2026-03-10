@@ -174,10 +174,14 @@ export default function RootLayout() {
                 alignSelf: 'center',
                 width: '100%',
               },
+              // 🚀 OPTIMIZACIÓN: Usar fade para transiciones más suaves =  mejor rendimiento
               animation: 'fade',
             }}
           >
+            {/* Rutas principales - Cargan con el app */}
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            
+            {/* Rutas modales - Lazy loaded por Expo Router automáticamente */}
             <Stack.Screen name="crisis" options={{ headerShown: false }} />
             <Stack.Screen 
               name="diary/new" 
@@ -186,6 +190,7 @@ export default function RootLayout() {
                 animation: 'slide_from_bottom'
               }} 
             />
+            {/* 🚀 OPTIMIZACIÓN: Subscription es pesado, lazy loaded automáticamente */}
             <Stack.Screen 
               name="subscription" 
               options={{ 
@@ -193,6 +198,8 @@ export default function RootLayout() {
                 animation: 'slide_from_bottom'
               }} 
             />
+            
+            {/* Rutas secundarias - Lazy loaded cuando se navega */}
             <Stack.Screen name="conversations/index" options={{ headerShown: false }} />
             <Stack.Screen name="cycle/index" options={{ headerShown: false }} />
             <Stack.Screen name="monthly-record/index" options={{ headerShown: false }} />

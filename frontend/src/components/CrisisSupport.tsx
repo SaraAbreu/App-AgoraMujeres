@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { colors } from '@/src/theme/colors';
+import { colors } from '../theme/colors';
 import Feather from '@expo/vector-icons/Feather';
 import axios from 'axios';
 

@@ -22,12 +22,16 @@ interface AppState {
   // UI State
   isLoading: boolean;
   
+  // Diary to Chat integration
+  diaryMessageToPushToChat: string | null;
+  
   // Actions
   initializeDevice: () => Promise<string>;
   setLanguage: (lang: string) => Promise<void>;
   setSubscriptionStatus: (status: SubscriptionStatus) => void;
   setLoading: (loading: boolean) => void;
   getDeviceId: () => Promise<string>;
+  setDiaryMessageToPushToChat: (message: string | null) => void;
 }
 
 // Helper for secure storage (works on web and native)
@@ -55,6 +59,7 @@ export const useStore = create<AppState>((set, get) => ({
   language: 'es',
   subscriptionStatus: null,
   isLoading: false,
+  diaryMessageToPushToChat: null,
   
   // Initialize device ID (create if not exists)
   initializeDevice: async () => {
@@ -100,5 +105,10 @@ export const useStore = create<AppState>((set, get) => ({
   // Set loading state
   setLoading: (loading: boolean) => {
     set({ isLoading: loading });
+  },
+  
+  // Set diary message to push to chat
+  setDiaryMessageToPushToChat: (message: string | null) => {
+    set({ diaryMessageToPushToChat: message });
   }
 }));

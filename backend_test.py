@@ -11,7 +11,7 @@ import uuid
 import time
 
 # Configuration
-BASE_URL = "https://comfort-coach.preview.emergentagent.com/api"
+BASE_URL = "http://localhost:8000/api"
 TEST_DEVICE_ID = "test-device-abc"
 
 class AgoraBackendTester:

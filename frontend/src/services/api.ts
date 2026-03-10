@@ -17,12 +17,12 @@ const getApiUrl = () => {
     return envUrl;
   }
   
-  // For development: detect if running locally and default to localhost:8001
+  // For development: detect if running locally and default to localhost:9000
   try {
-    // In web/native dev, fallback to localhost:8001
+    // In web/native dev, fallback to localhost:9000
     if (typeof window !== 'undefined' || typeof global !== 'undefined') {
-      console.log('[API] Using development fallback: http://localhost:8001');
-      return 'http://localhost:8001';
+      console.log('[API] Using development fallback: http://localhost:9000');
+      return 'http://localhost:9000';
     }
   } catch (e) {
     // Ignore
@@ -81,7 +81,15 @@ export interface DiaryEntry {
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
+  exercises?: Exercise[];
   created_at: string;
+}
+
+export interface Exercise {
+  title: string;
+  description: string;
+  duration: string;
+  difficulty: 'fácil' | 'moderado' | 'avanzado';
 }
 
 export interface SubscriptionStatus {
@@ -161,19 +169,72 @@ export interface Conversation {
   updated_at: string;
 }
 
+/**
+ * Parsear ejercicios de la respuesta de IA
+ * Busca el formato: ---EJERCICIOS_RECOMENDADOS---{json}---FIN_EJERCICIOS---
+ */
+function parseExercisesFromResponse(response: string): { cleanResponse: string, exercises?: Exercise[] } {
+  try {
+    const exercisesRegex = /---EJERCICIOS_RECOMENDADOS---([\s\S]*?)---FIN_EJERCICIOS---/;
+    const match = response.match(exercisesRegex);
+    
+    if (match && match[1]) {
+      try {
+        const exercisesJson = JSON.parse(match[1].trim());
+        
+        // Validate exercises array
+        if (!Array.isArray(exercisesJson.exercises)) {
+          console.warn('[API] Invalid exercises format, expected array');
+          return { cleanResponse: response };
+        }
+        
+        const cleanResponse = response.replace(exercisesRegex, '').trim();
+        return {
+          cleanResponse,
+          exercises: exercisesJson.exercises || [],
+        };
+      } catch (parseError) {
+        console.warn('[API] Error parsing exercises JSON:', parseError);
+        return { cleanResponse: response.replace(exercisesRegex, '').trim() };
+      }
+    }
+    
+    return { cleanResponse: response };
+  } catch (error) {
+    console.error('[API] Unexpected error in parseExercisesFromResponse:', error);
+    return { cleanResponse: response };
+  }
+}
+
 export const sendChatMessage = async (
-  deviceId: string, 
-  message: string, 
-  language: string,
-  conversationId?: string
-): Promise<{ response: string; conversation_id: string; requires_subscription: boolean }> => {
+  message: string,
+  conversationId?: string,
+  deviceId?: string
+): Promise<{ response: string; conversation_id: string; requires_subscription: boolean; exercises?: Exercise[] }> => {
+  // Validate message input
+  if (!message || message.trim().length === 0) {
+    throw new Error('[API] Chat message cannot be empty');
+  }
+  
+  if (message.length > 5000) {
+    throw new Error('[API] Chat message is too long (max 5000 characters)');
+  }
+  
   const response = await api.post('/chat', {
-    device_id: deviceId,
-    message,
-    language,
+    device_id: deviceId || 'default-device',
+    message: message.trim(),
+    language: 'es',
     conversation_id: conversationId
   });
-  return response.data;
+  
+  // Parsear ejercicios de la respuesta
+  const { cleanResponse, exercises } = parseExercisesFromResponse(response.data.response || '');
+  
+  return {
+    ...response.data,
+    response: cleanResponse,
+    exercises,
+  };
 };
 
 export const getConversations = async (deviceId: string, limit = 20): Promise<Conversation[]> => {
@@ -314,5 +375,19 @@ export const verifyAdminCode = async (deviceId: string, code: string): Promise<{
   const response = await api.post('/admin/verify', { device_id: deviceId, code });
   return response.data;
 };
+// Message Reactions
+export const saveMessageReaction = async (deviceId: string, conversationId: string, messageId: string, reaction: string): Promise<{ status: string; reaction_id: string }> => {
+  const response = await api.post('/chat/reaction', {
+    device_id: deviceId,
+    conversation_id: conversationId,
+    message_id: messageId,
+    reaction
+  });
+  return response.data;
+};
 
+export const getMessageReactions = async (deviceId: string, messageId: string): Promise<{ reactions: Record<string, number> }> => {
+  const response = await api.get(`/chat/${deviceId}/reaction/${messageId}`);
+  return response.data;
+};
 export default api;

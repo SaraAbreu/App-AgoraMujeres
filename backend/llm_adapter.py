@@ -15,7 +15,10 @@ from typing import List, Dict, Any, Optional
 logger = logging.getLogger(__name__)
 
 # Importamos las clases de emergentintegrations
-from .emergentintegrations.llm.chat import LlmChat, UserMessage as EmergentUserMessage
+try:
+    from .emergentintegrations.llm.chat import LlmChat, UserMessage as EmergentUserMessage
+except ImportError:
+    from emergentintegrations.llm.chat import LlmChat, UserMessage as EmergentUserMessage
 
 # Exportamos UserMessage para mantener compatibilidad
 UserMessage = EmergentUserMessage

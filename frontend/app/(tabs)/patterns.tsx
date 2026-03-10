@@ -24,8 +24,8 @@ export default function PatternsScreen() {
     if (!deviceId) return;
     try {
       const data = await getPatterns(deviceId, 7);
-      if (data.patterns !== null) {
-        setPatterns(data as Patterns);
+      if (data !== null) {
+        setPatterns(data);
       }
     } catch (error) {
       console.error('Error loading patterns:', error);

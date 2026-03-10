@@ -382,6 +382,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Cormorant_700Bold',
     color: colors.warmBrown,
   },
+  cycleImpactText: {
+    fontSize: typography.sizes.sm,
+    fontFamily: 'Nunito_400Regular',
+    color: colors.textSecondary,
+    lineHeight: 20,
+    marginTop: spacing.sm,
+  },
   instructionsCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',

@@ -55,6 +55,9 @@
         "expo-secure-store"
       ]
     ],
-    "runtimeVersion": "1.0.0"
+    "experiments": {
+      "typedRoutes": false,
+      "tsconfigPaths": false
+    }
   }
 }

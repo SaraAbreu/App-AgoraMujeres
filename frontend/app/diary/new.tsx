@@ -192,8 +192,44 @@ export default function NewDiaryEntry() {
     }
   };
 
-  const goToChat = () => {
-    router.replace('/(tabs)/chat');
+  const handleWantToTalk = async () => {
+    if (!deviceId) return;
+    
+    setSaving(true);
+    try {
+      // Save the diary entry
+      await createDiaryEntry({
+        device_id: deviceId,
+        texto: texto.trim() || undefined,
+        emotional_state: emotionalState,
+        physical_state: physicalState,
+        weather: weather || undefined,
+      });
+      
+      // Pass the message to chat through store (if there's text)
+      if (texto.trim()) {
+        const { setDiaryMessageToPushToChat } = useStore.getState();
+        setDiaryMessageToPushToChat(texto.trim());
+      }
+      
+      // Show confirmation and navigate to chat
+      Alert.alert(
+        '',
+        language === 'es' ? '✨ Guardado y pasado a Ágora' : '✨ Saved and sent to Ágora',
+        [{ 
+          text: 'OK', 
+          onPress: () => router.replace('/(tabs)/chat')
+        }]
+      );
+    } catch (error) {
+      console.error('Error in handleWantToTalk:', error);
+      Alert.alert(
+        '',
+        language === 'es' ? 'No se pudo procesar' : 'Could not process'
+      );
+    } finally {
+      setSaving(false);
+    }
   };
 
   const renderEmotionBubble = (emotion: any, categoryColor: string, isPhysical: boolean = false) => {
@@ -371,8 +407,9 @@ export default function NewDiaryEntry() {
               {/* Want to Talk Button */}
               <TouchableOpacity 
                 style={styles.wantToTalkButton}
-                onPress={goToChat}
+                onPress={handleWantToTalk}
                 activeOpacity={0.8}
+                disabled={saving}
               >
                 <Ionicons name="leaf-outline" size={18} color={colors.softWhite} />
                 <Text style={styles.wantToTalkText}>

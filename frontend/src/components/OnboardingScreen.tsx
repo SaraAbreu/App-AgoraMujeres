@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions, Image, Platform } from 'react-native';
-import { colors, spacing } from '@/src/theme/colors';
+import { colors, spacing } from '../theme/colors';
 
 interface OnboardingProps {
   onComplete: () => void;

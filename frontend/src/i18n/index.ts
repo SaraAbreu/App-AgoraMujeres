@@ -137,7 +137,6 @@ const resources = {
       difficultDays: 'Días difíciles',
       averagePain: 'Dolor promedio',
       topEmotion: 'Emoción más frecuente',
-      keepWriting: 'Sigue escribiendo para descubrir tus patrones',
       
       // General
       loading: 'Cargando...',
@@ -286,7 +285,6 @@ const resources = {
       difficultDays: 'Difficult days',
       averagePain: 'Average pain',
       topEmotion: 'Most frequent emotion',
-      keepWriting: 'Keep writing to discover your patterns',
       
       // General
       loading: 'Loading...',

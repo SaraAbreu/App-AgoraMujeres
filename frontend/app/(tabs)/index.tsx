@@ -107,7 +107,7 @@ export default function HomeScreen() {
         <View style={styles.header}>
           <Image
             source={LOGO_URL}
-            style={styles.headerLogo}
+            style={styles.headerLogo as any}
             contentFit="contain"
           />
         </View>
@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
   },
   actionCard: {
     flex: isWeb ? undefined : 1,
-    width: isWeb ? 'calc(33.333% - 1px)' : undefined,
+    width: isWeb ? '33.33%' : undefined,
     backgroundColor: colors.surface,
     padding: isWeb ? spacing.md : spacing.md,
     borderRadius: borderRadius.lg,
@@ -525,28 +525,6 @@ const styles = StyleSheet.create({
     color: colors.text,
     lineHeight: 24,
     fontStyle: 'italic',
-  },
-  crisisButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    backgroundColor: '#C8514F',
-    padding: spacing.lg,
-    borderRadius: borderRadius.lg,
-    marginBottom: spacing.lg,
-    marginTop: spacing.md,
-    shadowColor: '#C8514F',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  crisisButtonText: {
-    flex: 1,
-    fontSize: isWeb ? 16 : typography.sizes.base,
-    fontFamily: 'Nunito_600SemiBold',
-    color: colors.softWhite,
-    lineHeight: 22,
   },
   crisisButtonSub: {
     fontSize: isWeb ? 12 : 11,

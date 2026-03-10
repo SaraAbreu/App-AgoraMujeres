@@ -23,7 +23,7 @@ export default function SettingsScreen() {
   const { language, setLanguage, subscriptionStatus, deviceId, setSubscriptionStatus } = useStore();
   const [showAdminModal, setShowAdminModal] = useState(false);
   const [adminCode, setAdminCode] = useState('');
-  const [isAdmin, setIsAdmin] = useState(subscriptionStatus?.is_admin || false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(() => {
     try {
       const saved = localStorage?.getItem('notificationsEnabled');
@@ -113,7 +113,7 @@ export default function SettingsScreen() {
       const result = await verifyAdminCode(deviceId, adminCode.trim());
       if (result.success) {
         setIsAdmin(true);
-        setSubscriptionStatus({ ...subscriptionStatus, status: 'active', is_admin: true });
+        setSubscriptionStatus({ ...subscriptionStatus, status: 'active' });
         setShowAdminModal(false);
         setAdminCode('');
         Alert.alert(

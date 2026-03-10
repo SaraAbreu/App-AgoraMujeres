@@ -45,7 +45,7 @@ export const getNotificationPreference = (): NotificationPreference => {
   }
 };
 
-let notificationCheckInterval: number | null = null;
+let notificationCheckInterval: NodeJS.Timeout | null = null;
 let lastNotificationTime: string | null = null;
 
 export const startNotificationCheck = () => {

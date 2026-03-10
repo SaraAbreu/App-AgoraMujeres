@@ -15,7 +15,10 @@ import uuid
 from datetime import datetime, timedelta
 import stripe
 import httpx
-from .llm_adapter import MyLLMInterface, UserMessage
+try:
+    from .llm_adapter import MyLLMInterface, UserMessage
+except ImportError:
+    from llm_adapter import MyLLMInterface, UserMessage
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -274,6 +277,14 @@ class FavoriteMessage(BaseModel):
     device_id: str
     message_content: str
     category: str = "general"  # crisis, motivation, daily, coping
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class MessageReaction(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    device_id: str
+    conversation_id: str
+    message_id: str
+    reaction: str  # emoji: 💜, 🙏, ✨
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 # Crisis response templates - instant support
@@ -659,39 +670,48 @@ QUÉ ENTIENDES DE LA FIBROMIALGIA:
 
 ═══════════════════════════════════════════════════════════════════
 
-✅ CUÁNDO DAR CONSEJOS PRÁCTICOS:
-- SOLO cuando ella PIDE: "¿qué hago?", "¿alguna idea?", "¿y si...?"
-- Ofrece UNA alternativa primero, no 5 (paralizador con niebla mental)
-- Si RECHAZA una técnica, NO INSISTAS → validar + ofrecer OTRA completamente diferente
+✅ CUÁNDO SUGERIR EJERCICIOS:
+Solo cuando sea APROPIADO:
+✅ Ella menciona rigidez, tensión o dolor muscular específico
+✅ Expresa querer moverse pero tiene miedo de dañarse
+✅ Habla de fatiga o desgana que podría mejorar con movimiento gentil
+✅ Pregunta explícitamente por ejercicios o técnicas
 
-❌ CUÁNDO SOLO ESCUCHAR:
-- Si comparte cómo se siente SIN pedir ayuda → valida profundamente
-- Si dice "no me sirve esto" → acepta, valida, ofrece OTRA cosa (no la misma con otros nombres)
-
-═══════════════════════════════════════════════════════════════════
-
-🎯 LÓGICA ADAPTATIVA IMPORTANTE:
-Si ella RECHAZA una técnica que propusiste:
-1. Valida que NO TODOS los ejercicios funcionan para TODAS
-2. NO REPITAS la misma solución con otro nombre
-3. Ofrece ALTERNATIVAS completamente diferentes:
-   - Si rechaza "respiración estructurada" → ofrece "descanso compasivo" o "validación de que hoy es duro"
-   - Si rechaza "estiramientos" → ofrece "calor local silencioso" o "simplemente estar aquí sin hacer nada"
-   - Si rechaza "técnica" → acompaña desde la EMOCIÓN, no desde la acción
-
-4. DESPUÉS de ofrecer algo nuevo, pregunta gentilmente si lo necesita ahora
+❌ NUNCA suggeras ejercicios si:
+- El dolor es muy agudo (9-10/10)
+- Está en crisis emocional
+- Solo habla de sentimientos sin pedir ayuda física
+- Parece agotada o abrumada
 
 ═══════════════════════════════════════════════════════════════════
 
-⚠️ NUNCA HAGAS ESTO:
+📋 FORMATO PARA EJERCICIOS RECOMENDADOS:
+Cuando sientas que es el MOMENTO adecuado, incluye esto en tu respuesta:
+
+---EJERCICIOS_RECOMENDADOS---
+{"exercises": [{"title": "Nombre", "description": "Explicación clara", "duration": "5-10 minutos", "difficulty": "fácil"}]}
+---FIN_EJERCICIOS---
+
+CARACTERÍSTICAS DE EJERCICIOS:
+- SUAVES y ACCESIBLES (sin impacto)
+- Duración: 5-15 minutos máximo
+- Adaptados para fibromialgia
+- Lenguaje simple y motivador
+- Incluir siempre opción más fácil
+- Máximo 2-3 ejercicios por recomendación
+
+═══════════════════════════════════════════════════════════════════
+
+❌ NUNCA HAGAS ESTO:
 - Diagnósticos médicos específicos
 - Recomendar medicamentos
-- Minimizar ("podría ser peor", "otros sufren más")  
+- Minimizar ("podría ser peor", "otros sufren más")
 - Ordenes ("tienes que", "debes")
 - Repetir soluciones rechazadas
 - Usar diminutivos ("cariño", "cielo", "bonita")
 - Sonar "demasiado positiva" (la esperanza falsa abandona)
 - Dar 10 consejos a la vez (paralizador)
+- Forzar ejercicios cuando no es el momento
 - REPETIR TU PRESENTACIÓN si ya hay historial
 
 ═══════════════════════════════════════════════════════════════════
@@ -701,8 +721,8 @@ Si ella RECHAZA una técnica que propusiste:
 - Reconoce el esfuerzo: "escribir aquí YA es valentía"
 - Celebra lo pequeño: "abrir Ágora hoy importa"
 - Entiende los ciclos: "hoy es un día difícil, y está bien que sea así"
-- Responde directamente a lo que ella dijo, no a temas genéricos
-- Acepta cuando solo necesita ser ESCUCHADA, sin consejos
+- Responde directamente a lo que ella dijo
+- Acepta cuando solo necesita ser ESCUCHADA, sin ejercicios
 
 ═══════════════════════════════════════════════════════════════════
 
@@ -723,11 +743,8 @@ Preséntate reconociendo la REALIDAD de la fibromialgia desde el primer momento:
 ❌ MAL: "Entiendo tu dolor. Deberías probar respiración profunda. Estoy aquí para ti."
 ✅ BIEN: "Cuando todo duele para no importa qué razón, la mente agota tanto como el cuerpo. No es solo cansancio físico, es que no hay escape. ¿Necesitas que descanse en silencio conmigo, o hay algo que hoy podría ayudarte?"
 
-❌ MAL: "La respiración no te funcionó, pero hay otras técnicas: yoga, meditación, tai chi..."
-✅ BIEN: "Tiene razón, no todos los ejercicios funcionan para todas. Algunos días, lo que necesitas es simplemente permiso para NO hacer nada. Eso también cuenta. ¿Hoy qué es lo que realmente necesitas?"
-
-❌ MAL: "Lamento, pero tienes que buscar ayuda profesional."
-✅ BIEN: "La carga de buscar soluciones solas es la VERDADERA frustración, ¿verdad? Aquí estoy para ascoltarte mientras lo descubres."
+❌ MAL: "Deberías hacer estos 5 ejercicios cada mañana."
+✅ BIEN: "Si la rigidez mañanera es lo peor, hay unos movimientos MUY suaves que algunos días ayudan - pero sin presión. ¿Quieres que te cuente?"
 
 ═══════════════════════════════════════════════════════════════════
 
@@ -1051,9 +1068,19 @@ async def chat_with_agora(request: ChatRequest):
                 # Add patterns context if available
                 if has_patterns and count > 0:
                     if request.language == "es":
-                        patterns_context = f"\n\nCONTEXTO DE PATRONES (últimos 7 días):\n- Registros: {count}\n- Emoción dominante: {highest_emotion}\n- Emoción más baja: {lowest_emotion}\n- Dolor promedio: {avg_pain}/10\n- Energía promedio: {physical_avg.get('energia', 'N/A') if physical_avg else 'N/A'}/10\n\nUSA ESTA INFORMACIÓN para hacer preguntas personalizadas y mostrar que comprendes sus PATRONES ESPECÍFICOS. Menciona observaciones sobre su semana de manera natural y empática, sin ser invasiva."
+                        # Detectar patrones específicos
+                        dolor_alto = avg_pain > 6 if avg_pain else False
+                        energia_baja = physical_avg.get('energia', 0) < 4 if physical_avg else False
+                        sensibilidad_alta = physical_avg.get('sensibilidad', 0) > 6 if physical_avg else False
+                        
+                        patterns_context = f"\n\nCONTEXTO DE PATRONES PERSONALIZADOS (últimos 7 días):\n- Total de registros: {count}\n- Dolor promedio: {avg_pain}/10 {'⚠️ BASTANTE ALTO' if dolor_alto else ''}\n- Energía promedio: {physical_avg.get('energia', 'N/A')}/10 {'⚠️ MUY BAJA' if energia_baja else ''}\n- Sensibilidad promedio: {physical_avg.get('sensibilidad', 'N/A')}/10 {'⚠️ MUY ALTA' if sensibilidad_alta else ''}\n- Emoción dominante: {highest_emotion}\n- Emoción más baja: {lowest_emotion}\n\nINSTRUCCIONES ESPECIALES BASADAS EN PATRONES:\nUSA ESTOS DATOS para:\n1. Reconocer específicamente sus patrones: 'He notado que esta semana tu [emoción/energía] ha tendido a...' \n2. Adaptar ejercicios: Si energía es baja (<4), sugiere SOLO movimientos en cama o sentada. Si dolor es alto (>6), sugiere SOLO técnicas de respiración/relajación.\n3. Mencionar horarios: Si nota picos de energía o dolor en momentos específicos, pregunta cuándo se siente mejor/peor para sugerir cuándo hacer ejercicios.\n4. Validar el esfuerzo: Menciona que los cambios pequeños en estos números significan MUCHO esfuerzo real."
                     else:
-                        patterns_context = f"\n\nPATTERN CONTEXT (last 7 days):\n- Entries: {count}\n- Dominant emotion: {highest_emotion}\n- Lowest emotion: {lowest_emotion}\n- Average pain: {avg_pain}/10\n- Average energy: {physical_avg.get('energia', 'N/A') if physical_avg else 'N/A'}/10\n\nUSE THIS INFORMATION to ask personalized questions and show you understand their SPECIFIC PATTERNS. Mention observations about their week naturally and empathetically, without being intrusive."
+                        # Detectar patrones específicos
+                        dolor_alto = avg_pain > 6 if avg_pain else False
+                        energia_baja = physical_avg.get('energia', 0) < 4 if physical_avg else False
+                        sensibilidad_alta = physical_avg.get('sensibilidad', 0) > 6 if physical_avg else False
+                        
+                        patterns_context = f"\n\nPERSONALIZED PATTERN CONTEXT (last 7 days):\n- Total entries: {count}\n- Average pain: {avg_pain}/10 {'⚠️ QUITE HIGH' if dolor_alto else ''}\n- Average energy: {physical_avg.get('energia', 'N/A')}/10 {'⚠️ VERY LOW' if energia_baja else ''}\n- Average sensitivity: {physical_avg.get('sensibilidad', 'N/A')}/10 {'⚠️ VERY HIGH' if sensibilidad_alta else ''}\n- Dominant emotion: {highest_emotion}\n- Lowest emotion: {lowest_emotion}\n\nSPECIAL INSTRUCTIONS BASED ON PATTERNS:\nUSE THIS DATA to:\n1. Recognize their specific patterns: 'I've noticed that this week your [emotion/energy] has tended to...'\n2. Adapt exercises: If energy is low (<4), suggest ONLY bed or seated movements. If pain is high (>6), suggest ONLY breathing/relaxation techniques.\n3. Mention timing: If you notice spikes in energy or pain at specific times, ask when they feel best/worst to suggest when to do exercises.\n4. Validate the effort: Mention that small changes in these numbers mean REAL effort."
                     system_prompt = system_prompt + patterns_context
                 
                 # If first message, add special instruction to emphasize understanding fibromyalgia
@@ -1144,6 +1171,10 @@ async def chat_with_agora(request: ChatRequest):
         # Use fallback response to maintain conversation experience
         fallback = get_fallback_response(request.language)
         
+        # Ensure conversation_id is set (initialize if not)
+        if 'conversation_id' not in locals() or not conversation_id:
+            conversation_id = str(uuid.uuid4())
+        
         # Still save the conversation attempt
         try:
             user_message = ChatMessage(
@@ -1176,9 +1207,13 @@ async def chat_with_agora(request: ChatRequest):
         
         # Use fallback for any unexpected error too
         fallback = get_fallback_response(request.language)
+        
+        # Ensure conversation_id is set (initialize if not)
+        fallback_conv_id = conversation_id if 'conversation_id' in locals() else str(uuid.uuid4())
+        
         return {
             "response": fallback,
-            "conversation_id": conversation_id if 'conversation_id' in dir() else None,
+            "conversation_id": fallback_conv_id,
             "requires_subscription": False,
             "is_fallback": True,
             "error_type": "unexpected_error"
@@ -1377,6 +1412,47 @@ async def delete_favorite_message(device_id: str, message_id: str):
     except Exception as e:
         logger.error(f"Error deleting favorite: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# ============== MESSAGE REACTIONS ==============
+
+@api_router.post("/chat/reaction")
+async def save_message_reaction(reaction: MessageReaction):
+    """Save a reaction emoji to a message"""
+    try:
+        # Check if reaction already exists
+        existing = await db_find_one(db.message_reactions, {
+            "device_id": reaction.device_id,
+            "message_id": reaction.message_id,
+            "reaction": reaction.reaction
+        })
+        
+        if not existing:
+            await db_insert_one(db.message_reactions, reaction.model_dump())
+        
+        return {"status": "saved", "reaction_id": reaction.id}
+    except Exception as e:
+        logger.error(f"Error saving reaction: {e}")
+        raise HTTPException(status_code=500, detail="Error saving reaction")
+
+@api_router.get("/chat/{device_id}/reaction/{message_id}")
+async def get_message_reactions(device_id: str, message_id: str):
+    """Get all reactions for a specific message"""
+    try:
+        reactions = await db_find(db.message_reactions, {
+            "device_id": device_id,
+            "message_id": message_id
+        })
+        
+        # Count reactions by emoji
+        reaction_counts = {}
+        for reaction in reactions:
+            emoji = reaction.get("reaction", "")
+            reaction_counts[emoji] = reaction_counts.get(emoji, 0) + 1
+        
+        return {"reactions": reaction_counts}
+    except Exception as e:
+        logger.error(f"Error getting reactions: {e}")
+        return {"reactions": {}}
 
 # ============== CYCLE ENDPOINTS ==============
 
